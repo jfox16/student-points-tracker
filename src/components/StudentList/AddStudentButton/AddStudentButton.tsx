@@ -1,9 +1,9 @@
-import { useTabContext } from "../../context/TabContext"
+import { useStudentsContext } from "../../../context/StudentsContext";
 
 import './AddStudentButton.css';
 
 export const AddStudentButton = () => {
-  const { addStudent } = useTabContext();
+  const { addStudent } = useStudentsContext();
 
   const onClick = () => {
     addStudent();

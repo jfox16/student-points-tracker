@@ -1,12 +1,15 @@
 
 import cns from 'classnames';
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { Student } from "../../types/studentTypes";
 
-import { useTabContext } from "../../context/TabContext";
+import { Student } from "../../types/studentTypes";
+import { useStudentsContext } from "../../context/StudentsContext";
+import { HoverInput } from '../HoverInput/HoverInput';
+import { PointsCounter } from "./PointsCounter/PointsCounter";
 
 import './StudentCard.css';
-import { PointsCounter } from "./PointsCounter";
+import { useModal } from '../../context/ModalContext';
+import { CardHeader } from '../CardHeader/CardHeader';
 
 interface StudentCardProps {
   student: Student;
@@ -14,7 +17,9 @@ interface StudentCardProps {
 
 export const StudentCard = (props: StudentCardProps) => {
   const { student } = props;
-  const { updateStudent } = useTabContext();
+
+  const { showModal } = useModal();
+  const { updateStudent, deleteStudent } = useStudentsContext();
 
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
@@ -32,8 +37,22 @@ export const StudentCard = (props: StudentCardProps) => {
   useEffect(() => {
     setIsTransparent(!student.name && !student.points);
   }, [
-    student.name
-  ])
+    student.name,
+    student.points,
+  ]);
+
+  const openDeleteStudentModal = useCallback(() => {
+    const studentName = student.name ? ` (${student.name})` : '';
+    showModal(
+      `Are you sure you want to delete this student?${studentName}`,
+      () => deleteStudent(student.id),
+    )
+  }, [
+    deleteStudent,
+    showModal,
+    student.id,
+    student.name,
+  ]);
 
   return (
     <div
@@ -43,13 +62,15 @@ export const StudentCard = (props: StudentCardProps) => {
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
     >
+      <CardHeader
+        hide={!isCardHovered}
+        onClickDelete={openDeleteStudentModal}
+      />
       <div>
-        <input
-          className="name-input"
-          value={student.name}
+        <HoverInput
           onChange={onNameChange}
-          onFocus={(e) => e.target.select()}
           placeholder="Type name here..."
+          value={student.name}
         />
       </div>
       <PointsCounter student={student} />

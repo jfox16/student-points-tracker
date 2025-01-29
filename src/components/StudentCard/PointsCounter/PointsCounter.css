@@ -1,0 +1,30 @@
+
+.PointsCounter {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  height: 48px;
+}
+
+.PointsCounter .points-input {
+  flex: 1;
+}
+
+.PointsCounter .plus-minus {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.PointsCounter .plus-minus span {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.PointsCounter .plus-minus:hover {
+  background: #e0e0e0;
+}

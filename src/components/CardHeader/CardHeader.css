@@ -1,0 +1,27 @@
+
+.CardHeader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  pointer-events: none;
+}
+
+.CardHeader .expand {
+  flex: 1;
+}
+
+.CardHeader .icon {
+  opacity: 50%;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.CardHeader .icon:hover {
+  opacity: 80%;
+}
+
+.hide {
+  display: none;
+}

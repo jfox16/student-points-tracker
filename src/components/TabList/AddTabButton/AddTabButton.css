@@ -1,0 +1,22 @@
+
+.AddTabButton {
+  all: unset;
+  display: block;
+  background-color: #f0f0f0;
+  box-sizing: border-box;
+  color: #707070;
+  font-size: 1.5em;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.AddTabButton:hover {
+  background-color: #e7e7e7;
+}
+
+.AddTabButton:active {
+  background-color: #d0d0d0;
+}

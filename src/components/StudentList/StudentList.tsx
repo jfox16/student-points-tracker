@@ -1,11 +1,11 @@
-import { useTabContext } from "../../context/TabContext";
-import { AddStudentButton } from "../AddStudentButton/AddStudentButton";
+import { useStudentsContext } from "../../context/StudentsContext";
+import { AddStudentButton } from "./AddStudentButton/AddStudentButton";
 import { StudentCard } from "../StudentCard/StudentCard";
 
 import './StudentList.css';
 
 export const StudentList = () => {
-  const { students } = useTabContext();
+  const { students } = useStudentsContext();
 
   return (
     <div>

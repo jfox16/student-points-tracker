@@ -4,6 +4,6 @@ export type TabId = string;
 
 export interface Tab {
   id: TabId;
-  tabName: string;
+  name: string;
   students: Student[];
 }
