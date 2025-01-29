@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/student-points-tracker/static/css/main.9a4f2323.css",
-    "main.js": "/student-points-tracker/static/js/main.d9296bf9.js",
+    "main.css": "/student-points-tracker/static/css/main.7b617013.css",
+    "main.js": "/student-points-tracker/static/js/main.3eefd70f.js",
     "static/js/453.db7e1ce4.chunk.js": "/student-points-tracker/static/js/453.db7e1ce4.chunk.js",
     "index.html": "/student-points-tracker/index.html",
-    "main.9a4f2323.css.map": "/student-points-tracker/static/css/main.9a4f2323.css.map",
-    "main.d9296bf9.js.map": "/student-points-tracker/static/js/main.d9296bf9.js.map",
+    "main.7b617013.css.map": "/student-points-tracker/static/css/main.7b617013.css.map",
+    "main.3eefd70f.js.map": "/student-points-tracker/static/js/main.3eefd70f.js.map",
     "453.db7e1ce4.chunk.js.map": "/student-points-tracker/static/js/453.db7e1ce4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9a4f2323.css",
-    "static/js/main.d9296bf9.js"
+    "static/css/main.7b617013.css",
+    "static/js/main.3eefd70f.js"
   ]
 }
