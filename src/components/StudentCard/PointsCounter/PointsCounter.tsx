@@ -22,8 +22,8 @@ export const PointsCounter = (props: PointsCounterProps) => {
     updateStudent
   ]);
 
-  const handleInputOnChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const number = Number(e.target.value);
+  const onInputChange = useCallback((text: string) => {
+    const number = Number(text);
     if (typeof number === 'number' && number % 1 === 0 && number >= 0) {
       updatePoints(number);
     }
@@ -51,7 +51,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
       <HoverInput
         className="points-input"
         value={student.points}
-        onChange={handleInputOnChange}
+        onChange={onInputChange}
       />
       <div className="plus-minus" onClick={increment}><span>+</span></div>
     </div>

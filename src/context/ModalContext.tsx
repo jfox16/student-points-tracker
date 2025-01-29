@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { Modal, Box, Button } from "@mui/material";
+import { useKeypress } from "../utils/useKeypress";
 
 interface ModalContextProps {
   showModal: (content: ReactNode, onAccept?: () => void, onCancel?: () => void) => void;
@@ -13,6 +14,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [onAccept, setOnAccept] = useState<(() => void) | undefined>();
   const [onCancel, setOnCancel] = useState<(() => void) | undefined>();
+
 
   const hideModal = useCallback(() => {
     setIsOpen(false);
@@ -30,10 +32,36 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     ]
   );
 
+  const cancel = useCallback(() => {
+    onCancel?.();
+    hideModal();
+  }, [
+    onCancel,
+    hideModal,
+  ])
+
+  const accept = useCallback(() => {
+    onAccept?.();
+    hideModal();
+  }, [
+    onAccept,
+    hideModal,
+  ])
+
+  useKeypress('Enter', accept);
+
   return (
     <ModalContext.Provider value={{ showModal, hideModal }}>
       {children}
-      <Modal open={isOpen} onClose={hideModal}>
+      <Modal
+        open={isOpen}
+        onClose={hideModal}
+        slotProps={{
+          backdrop: {
+            sx: { backgroundColor: "rgba(0, 0, 0, 0.1)" } // Adjust opacity here
+          },
+        }}
+      >
         <Box
           sx={{
             position: "absolute",
@@ -49,16 +77,10 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         >
           <div>{modalContent}</div>
           <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-            <Button variant="outlined" color="error" onClick={() => {
-              onCancel?.();
-              hideModal();
-            }}>
+            <Button variant="outlined" color="error" onClick={cancel}>
               Cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={() => {
-              onAccept?.();
-              hideModal();
-            }}>
+            <Button variant="contained" color="primary" onClick={accept}>
               Accept
             </Button>
           </Box>

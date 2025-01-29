@@ -24,11 +24,8 @@ export const StudentCard = (props: StudentCardProps) => {
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
 
-  const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    updateStudent(
-      student.id,
-      { name: e.target.value }
-    )
+  const onNameInputChange = useCallback((name: string) => {
+    updateStudent(student.id, { name });
   }, [
     student.id,
     updateStudent,
@@ -68,7 +65,7 @@ export const StudentCard = (props: StudentCardProps) => {
       />
       <div>
         <HoverInput
-          onChange={onNameChange}
+          onChange={onNameInputChange}
           placeholder="Type name here..."
           value={student.name}
         />

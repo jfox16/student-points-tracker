@@ -26,11 +26,8 @@ export const TabCard = ({
     setActiveTabId,
   ])
   
-  const onNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateTab(
-      tab.id,
-      { name: e.target.value }
-    )
+  const onNameChange = useCallback((name: string) => {
+    updateTab(tab.id, { name });
   }, [
     tab.id,
     updateTab,
@@ -67,7 +64,7 @@ export const TabCard = ({
       <HoverInput
         value={tab.name}
         onChange={onNameChange}
-        placeholder="Tab name here..."
+        placeholder="Class name here..."
       />
     </div>
   )

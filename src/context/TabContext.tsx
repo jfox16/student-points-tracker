@@ -1,9 +1,10 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+
 import { Tab, TabId } from '../types/tabTypes';
-import useLocalStorage, { LocalStorageKey } from '../utils/useLocalStorage';
 import { useDebounce } from '../utils/useDebounce';
+import useLocalStorage, { LocalStorageKey } from '../utils/useLocalStorage';
+import { generateUuid } from '../utils/generateUuid';
 
 interface TabContextValue {
   activeTab: Tab;
@@ -18,6 +19,20 @@ export const DEFAULT_TAB = {
   id: 'default1',
   students: [],
   name: '',
+}
+
+export const generateStudents = (n: number = 30) => {
+  const students = Array.from({ length: n }, (_, i) => ({
+    id: '',
+    name: '',
+    points: 0,
+  }));
+
+  for (const student of students) {
+    student.id = generateUuid();
+  }
+
+  return students;
 }
 
 interface LocalStorageTabData {
@@ -91,15 +106,19 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ])
 
   const addTab = useCallback(() => {
-    const id = uuidv4();
+    const id = generateUuid();
+    const students = generateStudents(32);
     const newTab = {
       ...DEFAULT_TAB,
       id,
+      students,
     }
+
     const newTabs = [
       ...tabs,
       newTab
     ];
+
     setTabs(newTabs);
   }, [
     setTabs,
@@ -127,7 +146,8 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ])
 
   const value: TabContextValue = useMemo(() => {
-    return {
+
+    const value = {
       activeTab,
       setActiveTabId,
       addTab,
@@ -135,6 +155,10 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
       tabs,
       updateTab
     };
+
+    console.info('TabContextProvider', value);
+
+    return value;
   }, [
     activeTab,
     setActiveTabId,

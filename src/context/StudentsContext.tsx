@@ -1,11 +1,13 @@
 
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import { Student, StudentId } from '../types/studentTypes';
 import { useTabContext } from './TabContext';
+import { Tab } from '../types/tabTypes';
+import { generateUuid } from '../utils/generateUuid';
 
 interface StudentsContextValue {
+  activeTab: Tab;
   addStudent: () => void;
   deleteStudent: (id: StudentId) => void;
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
@@ -21,7 +23,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   console.log('StudentsContextProvider', { activeTab });
 
   const addStudent = useCallback(() => {
-    const id = uuidv4();
+    const id = generateUuid();
     const newStudent: Student = {
       id,
       points: 0,
@@ -65,13 +67,14 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
 
   const value: StudentsContextValue = useMemo(() => {
     return {
+      activeTab,
       addStudent,
       deleteStudent,
       updateStudent,
       students: activeTab.students
     };
   }, [
-    activeTab.students,
+    activeTab,
     addStudent,
     deleteStudent,
     updateStudent
