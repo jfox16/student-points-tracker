@@ -12,24 +12,24 @@ import './StudentList.css';
 
 export const StudentList = () => {
 
-  const { activeTab, updateTab } = useTabContext();
-  const { students, } = useStudentsContext();
+  const { updateTab } = useTabContext();
+  const { activeTab, students, } = useStudentsContext();
 
   const onTitleInputChange = useCallback((name: string) => {
-    updateTab(activeTab.id, { name });
+    updateTab(activeTab?.id, { name });
   }, [
+    activeTab?.id,
     updateTab,
   ]);
 
   return (
     <div className="StudentList">
-      {activeTab.name && (
-        <HoverInput
-          className="title"
-          onChange={onTitleInputChange}
-          value={activeTab.name}
-        />
-      )}
+      <HoverInput
+        className="title"
+        onChange={onTitleInputChange}
+        value={activeTab.name}
+        placeholder="Type class name here..."
+      />
       <div className="students">
         {students.map(student => {
           return <StudentCard student={student} key={student.id}/>

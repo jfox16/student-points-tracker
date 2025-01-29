@@ -2,21 +2,21 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Tab, TabId } from '../types/tabTypes';
+import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import useLocalStorage, { LocalStorageKey } from '../utils/useLocalStorage';
-import { generateUuid } from '../utils/generateUuid';
 
 interface TabContextValue {
   activeTab: Tab;
   setActiveTabId: (id: TabId) => void;
-  addTab: () => void;
   tabs: Tab[];
-  updateTab: (id: TabId, updates: Partial<Tab>) => void;
-  deleteTab: (id: TabId) => void;
+  addTab: () => void;
+  updateTab: (id: TabId|undefined, updates: Partial<Tab>) => void;
+  deleteTab: (id: TabId|undefined) => void;
 }
 
 export const DEFAULT_TAB = {
-  id: 'default1',
+  id: '',
   students: [],
   name: '',
 }
@@ -37,39 +37,48 @@ export const generateStudents = (n: number = 30) => {
 
 interface LocalStorageTabData {
   activeTabId?: TabId,
-  tabs: Tab[];
+  tabs?: Tab[];
 }
 
-const DEFAULT_TABS: LocalStorageTabData = {
-  tabs: [
-    {
-      id: 'default1',
-      name: 'Class 1',
-      students: [],
+const DEFAULT_TABS: Tab[] = [
+  {
+    id: 'default1',
+    name: 'Class 1',
+    students: [],
 
-    },
-    {
-      id: 'default2',
-      name: 'Class 2',
-      students: [],
-    }
-  ]
-}
+  },
+  {
+    id: 'default2',
+    name: 'Class 2',
+    students: [],
+  }
+]
 
 const TabContext = createContext<TabContextValue|undefined>(undefined);
 
 export const TabContextProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
 
-  const [savedTabData, setSavedTabData] = useLocalStorage<LocalStorageTabData>(LocalStorageKey.SAVED_TABS, DEFAULT_TABS);
-  const [tabs, setTabs] = useState<Tab[]>(savedTabData.tabs);
+  const [savedTabData, setSavedTabData] = useLocalStorage<LocalStorageTabData>(LocalStorageKey.SAVED_TABS, {});
+  const [tabs, setTabs] = useState<Tab[]>(savedTabData?.tabs ?? []);
   const [activeTabId, setActiveTabId] = useState<TabId|undefined>(savedTabData.activeTabId);
+
+  useEffect(() => {
+    if (tabs.length === 0) {
+      const newTabs = [ ...DEFAULT_TABS ];
+      for (const tab of newTabs) {
+        tab.students = generateStudents();
+      }
+      setTabs(newTabs);
+    }
+  }, [
+    tabs
+  ])
 
   useEffect(() => {
     const isValid = tabs.some(tab => tab.id === activeTabId);
 
     if (!isValid) {
-      console.log('activeTabId is invalid. setting to', tabs[0].id);
       setActiveTabId(tabs[0]?.id);
     }
   }, [
@@ -125,7 +134,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
   ])
 
-  const updateTab = useCallback((id: TabId, updates: Partial<Tab>) => {
+  const updateTab: TabContextValue['updateTab'] = useCallback((id, updates) => {
     const newTabs = tabs.map(tab => {
       return tab.id === id ? { ...tab, ...updates } : tab;
     });
@@ -135,7 +144,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
   ]);
 
-  const deleteTab = useCallback((id: TabId) => {
+  const deleteTab: TabContextValue['deleteTab'] = useCallback((id) => {
     const newTabs = tabs.filter(tab => {
       return tab.id !== id;
     });

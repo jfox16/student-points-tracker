@@ -51,7 +51,7 @@ export const TabCard = ({
     <div
       className={cns(
         "TabCard",
-        { active: activeTab.id === tab.id }
+        { active: activeTab?.id === tab.id }
       )}
       onClick={onClick}
       onMouseEnter={() => setIsCardHovered(true)}

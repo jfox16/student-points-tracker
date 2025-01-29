@@ -7,11 +7,15 @@
 }
 
 .PointsCounter .points-input {
-  flex: 1;
+  flex: 1;  
+}
+
+.PointsCounter .points-input.negative {
+  color: red;
 }
 
 .PointsCounter .plus-minus {
-  flex: 2;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;

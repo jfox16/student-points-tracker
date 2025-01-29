@@ -1,3 +1,4 @@
+import cns from 'classnames';
 import { useCallback } from "react";
 
 import { useStudentsContext } from "../../../context/StudentsContext";
@@ -49,7 +50,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
     <div className="PointsCounter">
       <div className="plus-minus" onClick={decrement}><span>-</span></div>
       <HoverInput
-        className="points-input"
+        className={cns("points-input", { 'negative': student.points < 0 })} 
         value={student.points}
         onChange={onInputChange}
       />

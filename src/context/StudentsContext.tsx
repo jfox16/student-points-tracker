@@ -2,7 +2,7 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { Student, StudentId } from '../types/studentTypes';
-import { useTabContext } from './TabContext';
+import { DEFAULT_TAB, useTabContext } from './TabContext';
 import { Tab } from '../types/tabTypes';
 import { generateUuid } from '../utils/generateUuid';
 

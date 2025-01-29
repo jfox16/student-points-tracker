@@ -48,6 +48,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     hideModal,
   ])
 
+  useKeypress('Escape', cancel);
   useKeypress('Enter', accept);
 
   return (
