@@ -3,11 +3,9 @@ import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { Student, StudentId } from '../types/studentTypes';
 import { DEFAULT_TAB, useTabContext } from './TabContext';
-import { Tab } from '../types/tabTypes';
 import { generateUuid } from '../utils/generateUuid';
 
 interface StudentsContextValue {
-  activeTab: Tab;
   addStudent: () => void;
   deleteStudent: (id: StudentId) => void;
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
@@ -20,7 +18,10 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   const { children } = props;
   const { activeTab, updateTab } = useTabContext();
 
-  console.log('StudentsContextProvider', { activeTab });
+  const students = activeTab.students;
+  const setStudents = (students: Student[]) => {
+    updateTab(activeTab.id, { students });
+  }
 
   const addStudent = useCallback(() => {
     const id = generateUuid();
@@ -44,10 +45,10 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   ])
 
   const deleteStudent = useCallback((id: StudentId) => {
-    const students = activeTab.students.filter(student => {
+    const newStudents = activeTab.students.filter(student => {
       return student.id !== id;
     });
-    updateTab(activeTab.id, { students });
+    setStudents(newStudents);
   }, [
     activeTab.id,
     activeTab.students,
@@ -55,10 +56,10 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   ])
 
   const updateStudent = useCallback((id: StudentId, changes: Partial<Student>) => {
-    const students = activeTab.students.map(student => {
+    const newStudents = activeTab.students.map(student => {
       return student.id === id ? { ...student, ...changes } : student
     });
-    updateTab(activeTab.id, { students });
+    setStudents(newStudents);
   }, [
     activeTab.id,
     activeTab.students,
@@ -67,14 +68,13 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
 
   const value: StudentsContextValue = useMemo(() => {
     return {
-      activeTab,
       addStudent,
       deleteStudent,
       updateStudent,
-      students: activeTab.students
+      students,
     };
   }, [
-    activeTab,
+    students,
     addStudent,
     deleteStudent,
     updateStudent

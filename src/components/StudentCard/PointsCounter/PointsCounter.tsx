@@ -6,6 +6,7 @@ import { Student } from "../../../types/studentTypes";
 import { HoverInput } from "../../HoverInput/HoverInput";
 
 import './PointsCounter.css';
+import { NumberInput } from '../../NumberInput/NumberInput';
 
 interface PointsCounterProps {
   student: Student;
@@ -22,15 +23,6 @@ export const PointsCounter = (props: PointsCounterProps) => {
     student.id,
     updateStudent
   ]);
-
-  const onInputChange = useCallback((text: string) => {
-    const number = Number(text);
-    if (typeof number === 'number' && number % 1 === 0 && number >= 0) {
-      updatePoints(number);
-    }
-  }, [
-    updatePoints,
-  ])
 
   const increment = useCallback(() => {
     updatePoints(student.points + 1);
@@ -51,10 +43,10 @@ export const PointsCounter = (props: PointsCounterProps) => {
   return (
     <div className="PointsCounter">
       <div className="plus-minus" onClick={decrement}><span>-</span></div>
-      <HoverInput
-        className={cns("points-input")} 
+      <NumberInput
+        className={cns("points-input", "w-full")} 
         value={student.points}
-        onChange={onInputChange}
+        onChange={updatePoints}
         inputProps={{
           style: { color: getDynamicColor(student.points) }
         }}

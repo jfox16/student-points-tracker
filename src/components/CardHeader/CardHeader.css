@@ -13,7 +13,7 @@
 }
 
 .CardHeader .icon {
-  opacity: 50%;
+  opacity: 30%;
   cursor: pointer;
   pointer-events: all;
 }

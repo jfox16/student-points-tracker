@@ -4,11 +4,16 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { StudentList } from "./components/StudentList/StudentList";
 import { TabList } from "./components/TabList/TabList";
+import { TabTitle } from "./components/TabTitle/TabTitle";
+
+import { ModalProvider } from "./context/ModalContext";
 import { StudentsContextProvider } from "./context/StudentsContext";
 import { TabContextProvider } from "./context/TabContext";
 
 import './App.css';
-import { ModalProvider } from "./context/ModalContext";
+// import generated tailwind styles
+import './output.css';
+import { TabOptionsRow } from "./components/TabOptionsRow/TabOptionsRow";
 
 const App: React.FC = () => {
 
@@ -16,13 +21,17 @@ const App: React.FC = () => {
     <ModalProvider>
       <TabContextProvider>
           <DndProvider backend={HTML5Backend}>
-            <div className="App">
+            <div className="App h-screen">
               <div className="App-row">
 
                 <TabList />
 
                 <StudentsContextProvider>
-                  <StudentList />
+                  <div className="flex flex-col">
+                    <TabOptionsRow />
+                    <TabTitle />
+                    <StudentList />
+                  </div>
                 </StudentsContextProvider>
 
               </div>

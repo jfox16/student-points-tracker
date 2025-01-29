@@ -65,6 +65,7 @@ export const StudentCard = (props: StudentCardProps) => {
       />
       <div>
         <HoverInput
+          className="w-full"
           onChange={onNameInputChange}
           placeholder="Type name here..."
           value={student.name}

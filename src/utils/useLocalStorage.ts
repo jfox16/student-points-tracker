@@ -4,7 +4,7 @@ export enum LocalStorageKey {
   SAVED_TABS = 'saved_tabs',
 }
 
-function useLocalStorage<T>(key: LocalStorageKey, initialValue: T) {
+export function useLocalStorage<T>(key: LocalStorageKey, initialValue: T) {
   const [value, setValue] = useState<T>(() => {
     try {
       const storedValue = localStorage.getItem(key);
@@ -26,5 +26,3 @@ function useLocalStorage<T>(key: LocalStorageKey, initialValue: T) {
 
   return [value, setValue] as const;
 }
-
-export default useLocalStorage;

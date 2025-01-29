@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import './HoverInput.css';
 
 
-interface HoverInputProps {
+export interface HoverInputProps {
   className?: string;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>; // Overrides other values
   onChange?: (text: string) => void;

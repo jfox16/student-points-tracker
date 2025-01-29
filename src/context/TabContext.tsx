@@ -1,24 +1,28 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Tab, TabId } from '../types/tabTypes';
+import { Tab, TabId, TabOptions } from '../types/tabTypes';
 import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
-import useLocalStorage, { LocalStorageKey } from '../utils/useLocalStorage';
+import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 
 interface TabContextValue {
-  activeTab: Tab;
-  setActiveTabId: (id: TabId) => void;
   tabs: Tab[];
   addTab: () => void;
   updateTab: (id: TabId|undefined, updates: Partial<Tab>) => void;
   deleteTab: (id: TabId|undefined) => void;
+  activeTab: Tab;
+  setActiveTabId: (id: TabId) => void;
 }
 
-export const DEFAULT_TAB = {
+export const DEFAULT_TAB: Tab = {
   id: '',
   students: [],
   name: '',
+}
+
+export const DEFAULT_TAB_OPTIONS: TabOptions = {
+  columns: 8,
 }
 
 export const generateStudents = (n: number = 30) => {
@@ -45,12 +49,13 @@ const DEFAULT_TABS: Tab[] = [
     id: 'default1',
     name: 'Class 1',
     students: [],
-
+    tabOptions: { ...DEFAULT_TAB_OPTIONS }
   },
   {
     id: 'default2',
     name: 'Class 2',
     students: [],
+    tabOptions: { ...DEFAULT_TAB_OPTIONS }
   }
 ]
 
@@ -155,26 +160,22 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ])
 
   const value: TabContextValue = useMemo(() => {
-
     const value = {
-      activeTab,
-      setActiveTabId,
+      tabs,
       addTab,
       deleteTab,
-      tabs,
-      updateTab
+      updateTab,
+      activeTab,
+      setActiveTabId,
     };
-
-    console.info('TabContextProvider', value);
-
     return value;
   }, [
-    activeTab,
-    setActiveTabId,
+    tabs,
     addTab,
     deleteTab,
-    tabs,
     updateTab,
+    activeTab,
+    setActiveTabId,
   ])
 
   return (
