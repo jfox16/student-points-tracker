@@ -19,6 +19,7 @@ interface TabContextValue {
 export const DEFAULT_TAB: Tab = {
   id: '',
   students: [],
+  selectedStudentIds: new Set(),
   name: '',
 }
 
@@ -48,15 +49,15 @@ interface LocalStorageTabData {
 
 const DEFAULT_TABS: Tab[] = [
   {
+    ...DEFAULT_TAB,
     id: 'default1',
     name: 'Class 1',
-    students: [],
     tabOptions: { ...DEFAULT_TAB_OPTIONS }
   },
   {
+    ...DEFAULT_TAB,
     id: 'default2',
     name: 'Class 2',
-    students: [],
     tabOptions: { ...DEFAULT_TAB_OPTIONS }
   }
 ]

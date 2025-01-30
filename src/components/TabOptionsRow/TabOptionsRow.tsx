@@ -10,7 +10,7 @@ import { GroupSelectWidget } from "./GroupSelectWidget";
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
 
-  const [ isHovered, setIsHovered ] = useState(false);
+  const [ _isHovered, setIsHovered ] = useState(false);
   
   const updateTabOptions = useCallback((changes: Partial<TabOptions>) => {
     updateTab(activeTab.id, {

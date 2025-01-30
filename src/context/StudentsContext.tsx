@@ -1,5 +1,5 @@
 
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { Student, StudentId } from '../types/student.type';
 import { useTabContext } from './TabContext';
@@ -38,7 +38,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
       name: ''
     };
     const students = [
-      ...activeTab.students,
+      ...activeTab.students ?? [],
       newStudent,
     ];
 
@@ -70,20 +70,38 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     activeTab.students,
     setStudents,
   ]);
-  
-  const [selectedStudentIds, setSelectedStudentIds] = useState(new Set<StudentId>());
+
+  const selectedStudentIds = useMemo(() => {
+    return activeTab.selectedStudentIds ?? new Set<StudentId>();
+  }, [
+    activeTab.selectedStudentIds,
+  ]);
+
+  const setSelectedStudentIds = useCallback((selectedStudentIds: Set<StudentId>) => {
+    updateTab(activeTab.id, {
+      selectedStudentIds
+    });
+  }, [
+    activeTab.id,
+    updateTab,
+  ])
 
   const setStudentSelected = useCallback((id: StudentId, selected?: boolean) => {
-    setSelectedStudentIds(prevSet => {
-      console.info({ id, selected })
-      if (prevSet.has(id) === !!selected) {
-        return prevSet;
-      }
-      const newSet = new Set(prevSet);
-      selected ? newSet.add(id) : newSet.delete(id);
-      return newSet;
-    });
-  }, [setSelectedStudentIds]);
+    if (selectedStudentIds.has(id) === !!selected) {
+      return;
+    }
+
+    const newSet = new Set<StudentId>(selectedStudentIds);
+    if (selected) {
+      newSet.add(id)
+    } else {
+      newSet.delete(id);
+    }
+    setSelectedStudentIds(newSet);
+  }, [
+    selectedStudentIds,
+    setSelectedStudentIds
+  ]);
 
   const value: StudentsContextValue = useMemo(() => {
     return {

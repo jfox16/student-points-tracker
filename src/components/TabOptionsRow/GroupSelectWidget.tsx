@@ -4,8 +4,8 @@ import { useCallback, useMemo } from "react";
 
 import { useStudentsContext } from "../../context/StudentsContext"
 import { cnsMerge } from "../../utils/cnsMerge";
-import { StudentId } from '../../types/student.type';
 import { Tooltip } from '@mui/material';
+import { StudentId } from '../../types/student.type';
 
 export const GroupSelectWidget = () => {
 
@@ -19,7 +19,7 @@ export const GroupSelectWidget = () => {
 
   const deselectAll = useCallback(() => {
     if (selectedStudentIds.size > 0) {
-      setSelectedStudentIds(new Set());
+      setSelectedStudentIds(new Set<StudentId>());
     }
   }, [
     selectedStudentIds.size,
@@ -54,7 +54,7 @@ export const GroupSelectWidget = () => {
         numSelected <= 0 && 'hidden',
       )}
     >
-      <Tooltip title="Deselect all" enterDelay={500}>
+      <Tooltip title="Deselect" enterDelay={500}>
         <button
           className="px-2 pb-1 border-r border-blue-800 hover:bg-blue-700 active:bg-blue-900 cursor-pointer"
           onClick={deselectAll}

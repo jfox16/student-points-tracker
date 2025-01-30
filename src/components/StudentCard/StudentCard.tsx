@@ -27,13 +27,6 @@ export const StudentCard = (props: StudentCardProps) => {
   } = useStudentsContext();
 
   const [isCardHovered, setIsCardHovered] = useState(false);
-  const [isTransparent, setIsTransparent] = useState(false);
-
-  useEffect(() => {
-    console.info({ selectedStudentIds });
-  }, [
-    selectedStudentIds
-  ])
 
   const onNameInputChange = useCallback((name: string) => {
     updateStudent(student.id, { name });
@@ -42,11 +35,11 @@ export const StudentCard = (props: StudentCardProps) => {
     updateStudent,
   ]);
 
-  useEffect(() => {
-    setIsTransparent(!student.name && !student.points);
+  const isTransparent = useMemo(() => {
+    return !student.name && !student.points
   }, [
     student.name,
-    student.points,
+    student.points
   ]);
 
   const openDeleteStudentModal = useCallback(() => {
@@ -70,6 +63,7 @@ export const StudentCard = (props: StudentCardProps) => {
   ])
 
   const selected = useMemo(() => {
+    console.log({ selectedStudentIds })
     return selectedStudentIds.has(student.id);
   }, [
     student.id,
