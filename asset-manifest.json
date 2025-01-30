@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/student-points-tracker/static/css/main.249b52bf.css",
-    "main.js": "/student-points-tracker/static/js/main.cc5269f7.js",
+    "main.js": "/student-points-tracker/static/js/main.109cd91f.js",
     "static/js/453.db7e1ce4.chunk.js": "/student-points-tracker/static/js/453.db7e1ce4.chunk.js",
     "index.html": "/student-points-tracker/index.html",
     "main.249b52bf.css.map": "/student-points-tracker/static/css/main.249b52bf.css.map",
-    "main.cc5269f7.js.map": "/student-points-tracker/static/js/main.cc5269f7.js.map",
+    "main.109cd91f.js.map": "/student-points-tracker/static/js/main.109cd91f.js.map",
     "453.db7e1ce4.chunk.js.map": "/student-points-tracker/static/js/453.db7e1ce4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.249b52bf.css",
-    "static/js/main.cc5269f7.js"
+    "static/js/main.109cd91f.js"
   ]
 }
