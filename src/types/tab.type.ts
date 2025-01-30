@@ -7,6 +7,5 @@ export interface Tab {
   id: TabId;
   name: string;
   students: Student[];
-  selectedStudentIds?: Set<StudentId>;
   tabOptions?: TabOptions;
 }

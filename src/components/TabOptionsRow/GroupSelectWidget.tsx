@@ -5,43 +5,40 @@ import { useCallback, useMemo } from "react";
 import { useStudentsContext } from "../../context/StudentsContext"
 import { cnsMerge } from "../../utils/cnsMerge";
 import { Tooltip } from '@mui/material';
-import { StudentId } from '../../types/student.type';
 
 export const GroupSelectWidget = () => {
 
-  const { students, setStudents, selectedStudentIds, setSelectedStudentIds } = useStudentsContext();
+  const { students, setStudents } = useStudentsContext();
 
-  const numSelected = useMemo(() => {
-    return selectedStudentIds.size;
+  const selectedStudents = useMemo(() => {
+    return students.filter(student => student.selected);
   }, [
-    selectedStudentIds.size
-  ]);
+    students
+  ])
 
   const deselectAll = useCallback(() => {
-    if (selectedStudentIds.size > 0) {
-      setSelectedStudentIds(new Set<StudentId>());
-    }
+    setStudents(students.map(student => {
+      return student.selected ? { ...student, selected: false } : student;
+    }));
   }, [
-    selectedStudentIds.size,
-    setSelectedStudentIds
+    students,
+    setStudents
   ])
 
   const incrementSelected = useCallback(() => {
     setStudents(students.map(student => {
-      return selectedStudentIds.has(student.id) ? { ...student, points: student.points + 1 } : student;
+      return student.selected ? { ...student, points: student.points + 1 } : student;
     }))
   }, [
-    selectedStudentIds,
     students,
     setStudents,
   ]);
 
   const decrementSelected = useCallback(() => {
     setStudents(students.map(student => {
-      return selectedStudentIds.has(student.id) ? { ...student, points: student.points - 1 } : student;
+      return student.selected ? { ...student, points: student.points - 1 } : student;
     }))
   }, [
-    selectedStudentIds,
     students,
     setStudents,
   ])
@@ -51,7 +48,7 @@ export const GroupSelectWidget = () => {
       className={cnsMerge(
         "GroupSelectWidget",
         "flex bg-blue-600 border-blue-800 text-white rounded-lg overflow-hidden",
-        numSelected <= 0 && 'hidden',
+        selectedStudents.length <= 0 && 'hidden',
       )}
     >
       <Tooltip title="Deselect" enterDelay={500}>
@@ -62,7 +59,7 @@ export const GroupSelectWidget = () => {
       </Tooltip>
 
       <div className="px-2 border-r border-blue-900">
-        {`${numSelected} students selected`}
+        {`${selectedStudents.length} students selected`}
       </div>
 
       <Tooltip title="Subtract 1 point" enterDelay={500}>

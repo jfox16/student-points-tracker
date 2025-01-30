@@ -9,9 +9,6 @@ interface StudentsContextValue {
   addStudent: () => void;
   deleteStudent: (id: StudentId) => void;
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
-  selectedStudentIds: Set<StudentId>;
-  setSelectedStudentIds: (set: Set<StudentId>) => void;
-  setStudentSelected: (id: StudentId, selected?: boolean) => void;
   students: Student[];
   setStudents: (students: Student[]) => void;
 }
@@ -71,38 +68,6 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     setStudents,
   ]);
 
-  const selectedStudentIds = useMemo(() => {
-    return activeTab.selectedStudentIds ?? new Set<StudentId>();
-  }, [
-    activeTab.selectedStudentIds,
-  ]);
-
-  const setSelectedStudentIds = useCallback((selectedStudentIds: Set<StudentId>) => {
-    updateTab(activeTab.id, {
-      selectedStudentIds
-    });
-  }, [
-    activeTab.id,
-    updateTab,
-  ])
-
-  const setStudentSelected = useCallback((id: StudentId, selected?: boolean) => {
-    if (selectedStudentIds.has(id) === !!selected) {
-      return;
-    }
-
-    const newSet = new Set<StudentId>(selectedStudentIds);
-    if (selected) {
-      newSet.add(id)
-    } else {
-      newSet.delete(id);
-    }
-    setSelectedStudentIds(newSet);
-  }, [
-    selectedStudentIds,
-    setSelectedStudentIds
-  ]);
-
   const value: StudentsContextValue = useMemo(() => {
     return {
       students,
@@ -110,9 +75,6 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
       addStudent,
       deleteStudent,
       updateStudent,
-      selectedStudentIds,
-      setSelectedStudentIds,
-      setStudentSelected,
     };
   }, [
     students,
@@ -120,9 +82,6 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     addStudent,
     deleteStudent,
     updateStudent,
-    selectedStudentIds,
-    setSelectedStudentIds,
-    setStudentSelected,
   ])
 
   return (

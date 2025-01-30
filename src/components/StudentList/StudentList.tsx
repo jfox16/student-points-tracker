@@ -1,6 +1,7 @@
 
 import { useStudentsContext } from "../../context/StudentsContext";
 import { useTabContext } from "../../context/TabContext";
+import { clamp } from "../../utils/clamp";
 
 import { StudentCard } from "../StudentCard/StudentCard";
 import { AddStudentButton } from "./AddStudentButton/AddStudentButton";
@@ -14,7 +15,7 @@ export const StudentList = () => {
 
   return (
     <div className="StudentList" style={{
-      fontSize: tabOptions?.fontSize
+      fontSize: clamp(tabOptions?.fontSize ?? 16, 8, 48)
     }}>
       <div
         className="students"

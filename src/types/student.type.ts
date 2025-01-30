@@ -5,4 +5,5 @@ export interface Student {
   id: StudentId;
   name: string;
   points: number;
+  selected?: boolean;
 }

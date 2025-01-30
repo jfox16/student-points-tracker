@@ -22,8 +22,6 @@ export const StudentCard = (props: StudentCardProps) => {
   const {
     deleteStudent,
     updateStudent,
-    selectedStudentIds,
-    setStudentSelected
   } = useStudentsContext();
 
   const [isCardHovered, setIsCardHovered] = useState(false);
@@ -56,18 +54,10 @@ export const StudentCard = (props: StudentCardProps) => {
   ]);
 
   const handleSelectChange = useCallback((selected: boolean) => {
-    setStudentSelected(student.id, selected);
+    updateStudent(student.id, { selected });
   }, [
     student.id,
-    setStudentSelected
-  ])
-
-  const selected = useMemo(() => {
-    console.log({ selectedStudentIds })
-    return selectedStudentIds.has(student.id);
-  }, [
-    student.id,
-    selectedStudentIds,
+    updateStudent,
   ])
 
   return (
@@ -82,7 +72,7 @@ export const StudentCard = (props: StudentCardProps) => {
         autoHide={!isCardHovered}
         onClickDelete={openDeleteStudentModal}
         onSelectChange={handleSelectChange}
-        selected={selected}
+        selected={student.selected}
       />
       <div>
         <HoverInput

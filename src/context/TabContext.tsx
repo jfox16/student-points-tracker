@@ -2,10 +2,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Tab, TabId } from '../types/tab.type';
+import { TabOptions } from '../types/tabOptions.type';
 import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
-import { TabOptions } from '../types/tabOptions.type';
 
 interface TabContextValue {
   tabs: Tab[];
@@ -19,7 +19,6 @@ interface TabContextValue {
 export const DEFAULT_TAB: Tab = {
   id: '',
   students: [],
-  selectedStudentIds: new Set(),
   name: '',
 }
 
@@ -85,7 +84,6 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const isValid = tabs.some(tab => tab.id === activeTabId);
-
     if (!isValid) {
       setActiveTabId(tabs[0]?.id);
     }
@@ -94,7 +92,9 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
   ]);
 
-  const debouncedSaveTabData = useDebounce(setSavedTabData, 500);
+  const debouncedSaveTabData = useDebounce((tabData: LocalStorageTabData) => {
+    setSavedTabData(tabData);
+  }, 500);
 
   useEffect(() => {
     const tabData: LocalStorageTabData = {

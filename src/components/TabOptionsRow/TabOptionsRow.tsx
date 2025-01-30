@@ -24,7 +24,7 @@ export const TabOptionsRow = () => {
 
   const onColumnsChange = useCallback((columns: number) => {
     updateTabOptions({
-      columns,
+      columns
     });
   }, [
     updateTabOptions,

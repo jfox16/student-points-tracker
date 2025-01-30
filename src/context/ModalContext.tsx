@@ -33,16 +33,20 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   );
 
   const cancel = useCallback(() => {
-    onCancel?.();
-    hideModal();
+    if (isOpen) {
+      onCancel?.();
+      hideModal();
+    }
   }, [
     onCancel,
     hideModal,
   ])
 
   const accept = useCallback(() => {
-    onAccept?.();
-    hideModal();
+    if (isOpen) {
+      onAccept?.();
+      hideModal();
+    }
   }, [
     onAccept,
     hideModal,
