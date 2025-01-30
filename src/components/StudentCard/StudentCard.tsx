@@ -1,8 +1,8 @@
 
 import cns from 'classnames';
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Student } from "../../types/studentTypes";
+import { Student } from "../../types/student.type";
 import { useStudentsContext } from "../../context/StudentsContext";
 import { HoverInput } from '../HoverInput/HoverInput';
 import { PointsCounter } from "./PointsCounter/PointsCounter";
@@ -19,10 +19,21 @@ export const StudentCard = (props: StudentCardProps) => {
   const { student } = props;
 
   const { showModal } = useModal();
-  const { updateStudent, deleteStudent } = useStudentsContext();
+  const {
+    deleteStudent,
+    updateStudent,
+    selectedStudentIds,
+    setStudentSelected
+  } = useStudentsContext();
 
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
+
+  useEffect(() => {
+    console.info({ selectedStudentIds });
+  }, [
+    selectedStudentIds
+  ])
 
   const onNameInputChange = useCallback((name: string) => {
     updateStudent(student.id, { name });
@@ -51,6 +62,20 @@ export const StudentCard = (props: StudentCardProps) => {
     student.name,
   ]);
 
+  const handleSelectChange = useCallback((selected: boolean) => {
+    setStudentSelected(student.id, selected);
+  }, [
+    student.id,
+    setStudentSelected
+  ])
+
+  const selected = useMemo(() => {
+    return selectedStudentIds.has(student.id);
+  }, [
+    student.id,
+    selectedStudentIds,
+  ])
+
   return (
     <div
       className={cns("StudentCard", {
@@ -60,8 +85,10 @@ export const StudentCard = (props: StudentCardProps) => {
       onMouseLeave={() => setIsCardHovered(false)}
     >
       <CardHeader
-        hide={!isCardHovered}
+        autoHide={!isCardHovered}
         onClickDelete={openDeleteStudentModal}
+        onSelectChange={handleSelectChange}
+        selected={selected}
       />
       <div>
         <HoverInput

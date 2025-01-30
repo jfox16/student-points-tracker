@@ -27,7 +27,7 @@ const App: React.FC = () => {
                 <TabList />
 
                 <StudentsContextProvider>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-4">
                     <TabOptionsRow />
                     <TabTitle />
                     <StudentList />

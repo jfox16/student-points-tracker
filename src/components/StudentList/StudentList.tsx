@@ -13,11 +13,13 @@ export const StudentList = () => {
   const { students, } = useStudentsContext();
 
   return (
-    <div className="StudentList">
+    <div className="StudentList" style={{
+      fontSize: tabOptions?.fontSize
+    }}>
       <div
         className="students"
         style={{
-          gridTemplateColumns: `repeat(${tabOptions?.columns ?? 8}, minmax(50px, 1fr))`
+          gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (tabOptions?.columns ?? 8)))}, minmax(50px, 1fr))`
         }}
       >
         {students.map(student => {

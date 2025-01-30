@@ -10,10 +10,10 @@
 
 .HoverInput:hover {
   background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(208, 208, 208, 0.7);
+  border-color: rgba(208, 208, 208, 0.9);
 }
 
 .HoverInput:focus {
   background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(208, 208, 208, 0.7);
+  border-color: rgba(208, 208, 208, 0.9);
 }

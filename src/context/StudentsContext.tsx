@@ -1,15 +1,19 @@
 
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
-import { Student, StudentId } from '../types/studentTypes';
-import { DEFAULT_TAB, useTabContext } from './TabContext';
+import { Student, StudentId } from '../types/student.type';
+import { useTabContext } from './TabContext';
 import { generateUuid } from '../utils/generateUuid';
 
 interface StudentsContextValue {
   addStudent: () => void;
   deleteStudent: (id: StudentId) => void;
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
+  selectedStudentIds: Set<StudentId>;
+  setSelectedStudentIds: (set: Set<StudentId>) => void;
+  setStudentSelected: (id: StudentId, selected?: boolean) => void;
   students: Student[];
+  setStudents: (students: Student[]) => void;
 }
 
 const StudentsContext = createContext<StudentsContextValue|undefined>(undefined);
@@ -19,9 +23,12 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   const { activeTab, updateTab } = useTabContext();
 
   const students = activeTab.students;
-  const setStudents = (students: Student[]) => {
+  const setStudents = useCallback((students: Student[]) => {
     updateTab(activeTab.id, { students });
-  }
+  }, [
+    activeTab.id,
+    updateTab
+  ])
 
   const addStudent = useCallback(() => {
     const id = generateUuid();
@@ -50,9 +57,8 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     });
     setStudents(newStudents);
   }, [
-    activeTab.id,
     activeTab.students,
-    updateTab
+    setStudents,
   ])
 
   const updateStudent = useCallback((id: StudentId, changes: Partial<Student>) => {
@@ -61,23 +67,44 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     });
     setStudents(newStudents);
   }, [
-    activeTab.id,
     activeTab.students,
-    updateTab,
+    setStudents,
   ]);
+  
+  const [selectedStudentIds, setSelectedStudentIds] = useState(new Set<StudentId>());
+
+  const setStudentSelected = useCallback((id: StudentId, selected?: boolean) => {
+    setSelectedStudentIds(prevSet => {
+      console.info({ id, selected })
+      if (prevSet.has(id) === !!selected) {
+        return prevSet;
+      }
+      const newSet = new Set(prevSet);
+      selected ? newSet.add(id) : newSet.delete(id);
+      return newSet;
+    });
+  }, [setSelectedStudentIds]);
 
   const value: StudentsContextValue = useMemo(() => {
     return {
+      students,
+      setStudents,
       addStudent,
       deleteStudent,
       updateStudent,
-      students,
+      selectedStudentIds,
+      setSelectedStudentIds,
+      setStudentSelected,
     };
   }, [
     students,
+    setStudents,
     addStudent,
     deleteStudent,
-    updateStudent
+    updateStudent,
+    selectedStudentIds,
+    setSelectedStudentIds,
+    setStudentSelected,
   ])
 
   return (

@@ -8,20 +8,15 @@
   pointer-events: none;
 }
 
-.CardHeader .expand {
-  flex: 1;
-}
-
 .CardHeader .icon {
   opacity: 30%;
   cursor: pointer;
+}
+
+.CardHeader > * {
   pointer-events: all;
 }
 
 .CardHeader .icon:hover {
   opacity: 80%;
-}
-
-.hide {
-  display: none;
 }

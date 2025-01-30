@@ -1,7 +1,7 @@
 import cns from 'classnames';
 import { useCallback, useState } from "react";
 import { useTabContext } from "../../context/TabContext";
-import { Tab } from "../../types/tabTypes"
+import { Tab } from "../../types/tab.type"
 import './TabCard.css';
 import { HoverInput } from '../HoverInput/HoverInput';
 import { CardHeader } from '../CardHeader/CardHeader';
@@ -58,7 +58,7 @@ export const TabCard = ({
       onMouseLeave={() => setIsCardHovered(false)}
     >
       <CardHeader
-        hide={!isCardHovered}
+        autoHide={!isCardHovered}
         onClickDelete={openDeleteTabModal}
       />
       <HoverInput

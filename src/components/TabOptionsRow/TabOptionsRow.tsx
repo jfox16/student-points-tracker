@@ -1,45 +1,74 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useState } from "react";
+
 import { useTabContext } from "../../context/TabContext"
+import { TabOptions } from "../../types/tabOptions.type";
+import { cnsMerge } from "../../utils/cnsMerge";
+
 import { NumberInput } from "../NumberInput/NumberInput";
-import { TabOptions } from "../../types/tabTypes";
+import { GroupSelectWidget } from "./GroupSelectWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
+
+  const [ isHovered, setIsHovered ] = useState(false);
   
   const updateTabOptions = useCallback((changes: Partial<TabOptions>) => {
     updateTab(activeTab.id, {
       tabOptions: { ...activeTab.tabOptions, ...changes }
     })
   }, [
+    activeTab.id,
+    activeTab.tabOptions,
     updateTab,
-  ])
-
-  const columnsValue = useMemo(() => {
-    return activeTab.tabOptions?.columns ?? 8;
-  }, [
-    activeTab.tabOptions?.columns
   ])
 
   const onColumnsChange = useCallback((columns: number) => {
     updateTabOptions({
-      columns: Math.max(1, Math.min(columns, 16))
+      columns,
     });
   }, [
     updateTabOptions,
+  ]);
+
+  const onFontSizeChange = useCallback((fontSize: number) => {
+    updateTabOptions({
+      fontSize
+    });
+  }, [
+    updateTabOptions
   ])
 
   return (
     <div
-      className="flex p-4"
+      className={cnsMerge(
+        "TabOptionsRow",
+        "flex p-4 gap-4",
+        "bg-gray-200",
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Columns Input */}
       <div className="flex flex-row">
-        <div className="flex-none"># of columns:</div>
+        <div className="flex-none">Columns:</div>
         <NumberInput
-          className="w-5"
-          value={columnsValue}
+          className="w-6 pb-1"
+          value={activeTab.tabOptions?.columns ?? 8}
           onChange={onColumnsChange}
         />
       </div>
+
+      {/* Columns Input */}
+      <div className="flex flex-row">
+        <div className="flex-none">Font Size:</div>
+        <NumberInput
+          className="w-6 pb-1"
+          value={activeTab.tabOptions?.fontSize ?? 16}
+          onChange={onFontSizeChange}
+        />
+      </div>
+      
+      <GroupSelectWidget />
     </div>
   )
 }

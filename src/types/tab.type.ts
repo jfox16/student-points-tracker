@@ -1,4 +1,5 @@
-import { Student } from "./studentTypes";
+import { Student } from "./student.type";
+import { TabOptions } from "./tabOptions.type";
 
 export type TabId = string;
 
@@ -7,8 +8,4 @@ export interface Tab {
   name: string;
   students: Student[];
   tabOptions?: TabOptions;
-}
-
-export interface TabOptions {
-  columns?: number;
 }

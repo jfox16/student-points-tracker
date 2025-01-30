@@ -1,9 +1,8 @@
 import cns from 'classnames';
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useStudentsContext } from "../../../context/StudentsContext";
-import { Student } from "../../../types/studentTypes";
-import { HoverInput } from "../../HoverInput/HoverInput";
+import { Student } from "../../../types/student.type";
 
 import './PointsCounter.css';
 import { NumberInput } from '../../NumberInput/NumberInput';
@@ -38,7 +37,11 @@ export const PointsCounter = (props: PointsCounterProps) => {
     updatePoints
   ]);
 
-  console.log('color', getDynamicColor(student.points));
+  const dynamicTextColor = useMemo(() => {
+    return getDynamicColor(student.points);
+  }, [
+    student.points,
+  ])
 
   return (
     <div className="PointsCounter">
@@ -48,7 +51,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
         value={student.points}
         onChange={updatePoints}
         inputProps={{
-          style: { color: getDynamicColor(student.points) }
+          style: { color: dynamicTextColor }
         }}
       />
       <div className="plus-minus" onClick={increment}><span>+</span></div>
@@ -101,6 +104,5 @@ function getDynamicColor(value: number) {
   }
   
   const color = `rgb(${red}, ${green}, ${blue})`;
-  console.info('color', color);
   return color;
 }
