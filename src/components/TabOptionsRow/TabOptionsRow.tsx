@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { useTabContext } from "../../context/TabContext"
 import { TabOptions } from "../../types/tabOptions.type";
@@ -9,8 +9,6 @@ import { GroupSelectWidget } from "./GroupSelectWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
-
-  const [ _isHovered, setIsHovered ] = useState(false);
   
   const updateTabOptions = useCallback((changes: Partial<TabOptions>) => {
     updateTab(activeTab.id, {
@@ -45,8 +43,6 @@ export const TabOptionsRow = () => {
         "flex p-4 gap-4",
         "bg-gray-200",
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Columns Input */}
       <div className="flex flex-row">

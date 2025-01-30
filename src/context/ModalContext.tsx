@@ -40,6 +40,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [
     onCancel,
     hideModal,
+    isOpen,
   ])
 
   const accept = useCallback(() => {
@@ -50,6 +51,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [
     onAccept,
     hideModal,
+    isOpen,
   ])
 
   useKeypress('Escape', cancel);

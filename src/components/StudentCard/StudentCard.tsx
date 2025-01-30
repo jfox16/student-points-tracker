@@ -1,6 +1,6 @@
 
 import cns from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Student } from "../../types/student.type";
 import { useStudentsContext } from "../../context/StudentsContext";
