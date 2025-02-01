@@ -18,7 +18,7 @@ export const TabOptionsRow = () => {
     activeTab.id,
     activeTab.tabOptions,
     updateTab,
-  ])
+  ]);
 
   const onColumnsChange = useCallback((columns: number) => {
     updateTabOptions({
@@ -28,13 +28,13 @@ export const TabOptionsRow = () => {
     updateTabOptions,
   ]);
 
-  const onFontSizeChange = useCallback((fontSize: number) => {
-    updateTabOptions({
-      fontSize
-    });
-  }, [
-    updateTabOptions
-  ])
+  // const onFontSizeChange = useCallback((fontSize: number) => {
+  //   updateTabOptions({
+  //     fontSize
+  //   });
+  // }, [
+  //   updateTabOptions
+  // ])
 
   return (
     <div
@@ -54,15 +54,15 @@ export const TabOptionsRow = () => {
         />
       </div>
 
-      {/* Columns Input */}
-      <div className="flex flex-row">
+      {/* Font Input */}
+      {/* <div className="flex flex-row">
         <div className="flex-none">Font Size:</div>
         <NumberInput
           className="w-6 pb-1"
           value={activeTab.tabOptions?.fontSize ?? 16}
           onChange={onFontSizeChange}
         />
-      </div>
+      </div> */}
       
       <GroupSelectWidget />
     </div>

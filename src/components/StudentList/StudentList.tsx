@@ -1,7 +1,8 @@
 
+import { useMemo } from "react";
+
 import { useStudentsContext } from "../../context/StudentsContext";
 import { useTabContext } from "../../context/TabContext";
-import { clamp } from "../../utils/clamp";
 
 import { StudentCard } from "../StudentCard/StudentCard";
 import { AddStudentButton } from "./AddStudentButton/AddStudentButton";
@@ -13,9 +14,13 @@ export const StudentList = () => {
   const { activeTab: { tabOptions } } = useTabContext();
   const { students, } = useStudentsContext();
 
+  const fontSize = useMemo(() => getDynamicFontSize(tabOptions?.columns), [
+    tabOptions?.columns,
+  ]);
+
   return (
     <div className="StudentList" style={{
-      fontSize: clamp(tabOptions?.fontSize ?? 16, 8, 48)
+      fontSize
     }}>
       <div
         className="students"
@@ -23,11 +28,32 @@ export const StudentList = () => {
           gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (tabOptions?.columns ?? 8)))}, minmax(50px, 1fr))`
         }}
       >
-        {students.map(student => {
-          return <StudentCard student={student} key={student.id}/>
+        {students.map((student, i) => {
+          return <StudentCard
+            student={student}
+            index={i}
+            key={student.id}
+          />
         })}
         <AddStudentButton />
       </div>
     </div>
   )
+}
+
+const getDynamicFontSize = (columns: number = 0) => {
+  const minColumns = 6;
+  const maxColumns = 12;
+  const minFontSize = 12;
+  const maxFontSize = 18;
+
+  if (columns <= minColumns) return `${maxFontSize}px`;
+  if (columns >= maxColumns) return `${minFontSize}px`;
+
+  const calculatedSize =
+    maxFontSize -
+    ((columns - minColumns) / (maxColumns - minColumns)) *
+      (maxFontSize - minFontSize);
+
+  return `${calculatedSize}px`;
 }

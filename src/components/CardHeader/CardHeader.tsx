@@ -1,8 +1,9 @@
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Checkbox } from '@mui/material';
 import cns from 'classnames';
 import React, { useMemo } from 'react';
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Checkbox } from '@mui/material';
 
 import { cnsMerge } from '../../utils/cnsMerge';
 
@@ -13,6 +14,7 @@ interface CardHeaderProps {
   onClickDelete?: () => void;
   onSelectChange?: (selected: boolean) => void;
   selected?: boolean;
+  dragHandleRef?: React.Ref<HTMLDivElement>;
 }
 
 export const CardHeader = (props: CardHeaderProps) => {
@@ -21,7 +23,10 @@ export const CardHeader = (props: CardHeaderProps) => {
     selected = false,
     onClickDelete,
     onSelectChange,
+    dragHandleRef,
   } = props;
+
+  // const autoHide = false;
 
   const handleSelectedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSelectChange?.(e.target.checked);
@@ -47,7 +52,21 @@ export const CardHeader = (props: CardHeaderProps) => {
       )}
       <div className={cnsMerge('flex w-full', autoHide && 'hidden')}>
         {/* Left Side */}
-        <div className="flex-1" />
+        <div
+          className="flex-1"
+        >
+          {dragHandleRef && (
+            <div
+              className="w-full h-[18px] cursor-grab active:cursor-grabbing"
+              ref={dragHandleRef}
+            >
+              {/* <div className="w-full h-[9px] border-b-3 border-gray-200" />
+              <div className="w-full h-[5px] border-b-3 border-gray-200" /> */}
+              <div className="h-[7px]" />
+              <div className="w-full bg-gray-200 h-[5px]" />
+            </div>
+          )}
+        </div>
         {/* Right Side */}
         {onClickDelete && <DeleteIcon className="icon" onClick={onClickDelete} fontSize="small" />}
       </div>

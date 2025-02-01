@@ -9,5 +9,5 @@
 .StudentList .students {
   display: grid;
   grid-auto-rows: minmax(100px, 1fr);
-  gap: 16px;
+  /* gap: 16px; */
 }

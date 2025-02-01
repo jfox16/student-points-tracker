@@ -6,6 +6,7 @@ import { TabOptions } from '../types/tabOptions.type';
 import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
+import useDocumentTitle from '../utils/useDocumentTitle';
 
 interface TabContextValue {
   tabs: Tab[];
@@ -24,7 +25,6 @@ export const DEFAULT_TAB: Tab = {
 
 export const DEFAULT_TAB_OPTIONS: TabOptions = {
   columns: 8,
-  fontSize: 16,
 }
 
 export const generateStudents = (n: number = 30) => {
@@ -70,6 +70,8 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   const [tabs, setTabs] = useState<Tab[]>(savedTabData?.tabs ?? []);
   const [activeTabId, setActiveTabId] = useState<TabId|undefined>(savedTabData.activeTabId);
 
+  const [documentTitle, setDocumentTitle] = useDocumentTitle();
+
   useEffect(() => {
     if (tabs.length === 0) {
       const newTabs = [ ...DEFAULT_TABS ];
@@ -92,21 +94,26 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
   ]);
 
-  const debouncedSaveTabData = useDebounce((tabData: LocalStorageTabData) => {
-    setSavedTabData(tabData);
-  }, 500);
-
-  useEffect(() => {
+  const saveTabData = useCallback(() => {
     const tabData: LocalStorageTabData = {
       activeTabId,
       tabs
     };
-    debouncedSaveTabData(tabData);
+    setSavedTabData(tabData)
   }, [
     activeTabId,
-    debouncedSaveTabData,    
-    tabs
+    tabs,
+    setSavedTabData,
   ]);
+
+  const debouncedSaveTabData = useDebounce(saveTabData, 1000);
+
+  useEffect(() => {
+    debouncedSaveTabData();
+  }, [
+    debouncedSaveTabData,
+    tabs
+  ])
 
   const activeTab = useMemo(() => {
     const active = tabs.find(tab => tab.id === activeTabId);
@@ -137,6 +144,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ])
 
   const updateTab: TabContextValue['updateTab'] = useCallback((id, updates) => {
+    console.log('updateTab')
     const newTabs = tabs.map(tab => {
       return tab.id === id ? { ...tab, ...updates } : tab;
     });
@@ -154,6 +162,21 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   }, [
     setTabs,
     tabs,
+  ]);
+
+  // Update document title with tab.name
+  useEffect(() => {
+    let title = 'Student Points Tracker';
+    if (activeTab.name) {
+      title = `${activeTab.name} - Student Points Tracker`;
+    }
+    if (title !== documentTitle) {
+      setDocumentTitle(title);
+    }
+  }, [
+    activeTab.name,
+    documentTitle,
+    setDocumentTitle,
   ])
 
   const value: TabContextValue = useMemo(() => {

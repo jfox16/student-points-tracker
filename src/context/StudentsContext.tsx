@@ -1,16 +1,20 @@
 
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Student, StudentId } from '../types/student.type';
 import { useTabContext } from './TabContext';
 import { generateUuid } from '../utils/generateUuid';
+import { moveItem } from '../utils/moveItem';
 
 interface StudentsContextValue {
   addStudent: () => void;
   deleteStudent: (id: StudentId) => void;
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
+  moveStudent: (fromIndex: number, toIndex: number) => void;
   students: Student[];
   setStudents: (students: Student[]) => void;
+  dragHoverIndex: number;
+  setDragHoverIndex: (dragHoverIndex: number) => void;
 }
 
 const StudentsContext = createContext<StudentsContextValue|undefined>(undefined);
@@ -18,6 +22,11 @@ const StudentsContext = createContext<StudentsContextValue|undefined>(undefined)
 export const StudentsContextProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
   const { activeTab, updateTab } = useTabContext();
+  const [ dragHoverIndex, setDragHoverIndex ] = useState(-1);
+
+  useEffect(() => {
+    console.log({ dragHoverIndex });
+  }, [ dragHoverIndex ])
 
   const students = activeTab.students;
   const setStudents = useCallback((students: Student[]) => {
@@ -68,6 +77,17 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     setStudents,
   ]);
 
+  const moveStudent = useCallback((fromIndex: number, toIndex: number) => {
+    if (fromIndex !== toIndex) {
+      console.info({ students, fromIndex, toIndex });
+      const newStudents = moveItem(students, fromIndex, toIndex);
+      setStudents(newStudents);
+    }
+  }, [
+    students,
+    setStudents,
+  ])
+
   const value: StudentsContextValue = useMemo(() => {
     return {
       students,
@@ -75,6 +95,9 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
       addStudent,
       deleteStudent,
       updateStudent,
+      moveStudent,
+      dragHoverIndex,
+      setDragHoverIndex,
     };
   }, [
     students,
@@ -82,6 +105,9 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     addStudent,
     deleteStudent,
     updateStudent,
+    moveStudent,
+    dragHoverIndex,
+    setDragHoverIndex,
   ])
 
   return (

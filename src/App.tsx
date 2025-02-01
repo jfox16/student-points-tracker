@@ -4,6 +4,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { StudentList } from "./components/StudentList/StudentList";
 import { TabList } from "./components/TabList/TabList";
+import { TabOptionsRow } from "./components/TabOptionsRow/TabOptionsRow";
 import { TabTitle } from "./components/TabTitle/TabTitle";
 
 import { ModalProvider } from "./context/ModalContext";
@@ -11,9 +12,7 @@ import { StudentsContextProvider } from "./context/StudentsContext";
 import { TabContextProvider } from "./context/TabContext";
 
 import './App.css';
-// import generated tailwind styles
-import './output.css';
-import { TabOptionsRow } from "./components/TabOptionsRow/TabOptionsRow";
+import './output.css'; // import generated tailwind styles
 
 const App: React.FC = () => {
 
