@@ -5,7 +5,8 @@ import { TabOptions } from "../../types/tabOptions.type";
 import { cnsMerge } from "../../utils/cnsMerge";
 
 import { NumberInput } from "../NumberInput/NumberInput";
-import { GroupSelectWidget } from "./GroupSelectWidget";
+import { GroupSelectWidget } from "./Widgets/GroupSelectWidget/GroupSelectWidget";
+import { AllActionsWidget } from "./Widgets/AllActionsWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -27,14 +28,6 @@ export const TabOptionsRow = () => {
   }, [
     updateTabOptions,
   ]);
-
-  // const onFontSizeChange = useCallback((fontSize: number) => {
-  //   updateTabOptions({
-  //     fontSize
-  //   });
-  // }, [
-  //   updateTabOptions
-  // ])
 
   return (
     <div
@@ -65,6 +58,8 @@ export const TabOptionsRow = () => {
       </div> */}
       
       <GroupSelectWidget />
+
+      <AllActionsWidget />
     </div>
   )
 }

@@ -1,6 +1,4 @@
-
-import cns from 'classnames';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Checkbox } from '@mui/material';
@@ -40,9 +38,10 @@ export const CardHeader = (props: CardHeaderProps) => {
   ])
 
   return (
-    <div className={cns('CardHeader')}>
+    <div className={cnsMerge('CardHeader', 'background-gray-200')}>
       {(onSelectChange || selected) && (
         <Checkbox
+          className={cnsMerge(!selected && 'opacity-20')}
           checked={selected}
           onChange={handleSelectedChange}
           size="small"
@@ -62,8 +61,8 @@ export const CardHeader = (props: CardHeaderProps) => {
             >
               {/* <div className="w-full h-[9px] border-b-3 border-gray-200" />
               <div className="w-full h-[5px] border-b-3 border-gray-200" /> */}
-              <div className="h-[7px]" />
-              <div className="w-full bg-gray-200 h-[5px]" />
+              {/* <div className="h-[7px]" />
+              <div className="w-full bg-gray-200 h-[5px]" /> */}
             </div>
           )}
         </div>

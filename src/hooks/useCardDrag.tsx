@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 /** Predefined drag types */

@@ -41,12 +41,12 @@ export const HoverInput = (props: HoverInputProps) => {
   
   return (
     <input
-      className={cns('HoverInput', props.className, className )}
+      {...inputProps}
       onChange={handleChange}
       onFocus={handleFocus}
       value={value}
       placeholder={placeholder}
-      {...inputProps}
+      className={cns('HoverInput', props.className, className )}
     />
   );
 }

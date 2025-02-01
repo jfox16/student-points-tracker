@@ -1,5 +1,5 @@
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 import { Student, StudentId } from '../types/student.type';
 import { useTabContext } from './TabContext';
@@ -23,10 +23,6 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   const { children } = props;
   const { activeTab, updateTab } = useTabContext();
   const [ dragHoverIndex, setDragHoverIndex ] = useState(-1);
-
-  useEffect(() => {
-    console.log({ dragHoverIndex });
-  }, [ dragHoverIndex ])
 
   const students = activeTab.students;
   const setStudents = useCallback((students: Student[]) => {

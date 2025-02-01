@@ -7,6 +7,7 @@ import { Student } from "../../../types/student.type";
 import './PointsCounter.css';
 import { NumberInput } from '../../NumberInput/NumberInput';
 import { getGradientColor } from '../../../utils/getGradientColor';
+import { cnsMerge } from '../../../utils/cnsMerge';
 
 interface PointsCounterProps {
   student: Student;
@@ -31,12 +32,12 @@ export const PointsCounter = (props: PointsCounterProps) => {
     updatePoints
   ]);
 
-  const decrement = useCallback(() => {
-    updatePoints(student.points - 1);
-  }, [
-    student.points,
-    updatePoints
-  ]);
+  // const decrement = useCallback(() => {
+  //   updatePoints(student.points - 1);
+  // }, [
+  //   student.points,
+  //   updatePoints
+  // ]);
 
   const dynamicTextColor = useMemo(() => {
     return getDynamicColor(student.points);
@@ -48,14 +49,14 @@ export const PointsCounter = (props: PointsCounterProps) => {
     <div className="PointsCounter">
       {/* <div className="plus-minus" onClick={decrement}><span>-</span></div> */}
       <NumberInput
-        className={cns("points-input", "w-full")} 
+        className={cns("points-input w-full font-bold")} 
         value={student.points}
         onChange={updatePoints}
         inputProps={{
           style: { color: dynamicTextColor }
         }}
       />
-      <div className="plus-minus" onClick={increment}><span>+</span></div>
+      <div className={cnsMerge('plus-minus')} onClick={increment}><span>+</span></div>
     </div>
   );
 }
@@ -65,7 +66,7 @@ const getDynamicColor = (points: number) => {
   return getGradientColor(
     points,
     0,
-    100,
+    50,
     [
       [0, 0, 0],      // Black
       [0, 160, 0],    // Green

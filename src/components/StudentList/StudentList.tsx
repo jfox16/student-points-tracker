@@ -35,7 +35,7 @@ export const StudentList = () => {
             key={student.id}
           />
         })}
-        <AddStudentButton />
+          <AddStudentButton />
       </div>
     </div>
   )

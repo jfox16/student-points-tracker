@@ -23,7 +23,6 @@ interface StudentCardProps {
 export const StudentCard = (props: StudentCardProps) => {
   const { student, index } = props;
   const {
-    students,
     deleteStudent,
     updateStudent,
     moveStudent,

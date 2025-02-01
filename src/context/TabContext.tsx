@@ -144,7 +144,6 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ])
 
   const updateTab: TabContextValue['updateTab'] = useCallback((id, updates) => {
-    console.log('updateTab')
     const newTabs = tabs.map(tab => {
       return tab.id === id ? { ...tab, ...updates } : tab;
     });

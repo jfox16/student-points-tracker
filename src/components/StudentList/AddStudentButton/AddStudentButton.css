@@ -11,6 +11,7 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  margin: 8px;
 }
 
 .AddStudentButton:hover {

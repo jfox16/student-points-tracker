@@ -2,9 +2,9 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import { useCallback, useMemo } from "react";
 
-import { useStudentsContext } from "../../context/StudentsContext"
-import { cnsMerge } from "../../utils/cnsMerge";
 import { Tooltip } from '@mui/material';
+import { useStudentsContext } from '../../../../context/StudentsContext';
+import { cnsMerge } from '../../../../utils/cnsMerge';
 
 export const GroupSelectWidget = () => {
 
