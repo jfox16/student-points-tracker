@@ -7,6 +7,7 @@ import { cnsMerge } from "../../utils/cnsMerge";
 import { NumberInput } from "../NumberInput/NumberInput";
 import { GroupSelectWidget } from "./Widgets/GroupSelectWidget/GroupSelectWidget";
 import { AllActionsWidget } from "./Widgets/AllActionsWidget";
+import { CopyTabDataButton } from "../CopyTabDataButton/CopyTabDataButton";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -60,6 +61,8 @@ export const TabOptionsRow = () => {
       <GroupSelectWidget />
 
       <AllActionsWidget />
+
+      <CopyTabDataButton />
     </div>
   )
 }
