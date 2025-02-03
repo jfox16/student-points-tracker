@@ -67,7 +67,7 @@ export const CardHeader = (props: CardHeaderProps) => {
           )}
         </div>
         {/* Right Side */}
-        {onClickDelete && <DeleteIcon className="opacity-20 cursor-pointer hover:opacity-80" onClick={onClickDelete} fontSize="small" />}
+        {onClickDelete && <DeleteIcon className="icon" onClick={onClickDelete} fontSize="small" />}
       </div>
     </div>
   )
