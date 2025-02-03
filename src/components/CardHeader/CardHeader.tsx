@@ -44,7 +44,6 @@ export const CardHeader = (props: CardHeaderProps) => {
           className={cnsMerge(!selected && 'opacity-20')}
           checked={selected}
           onChange={handleSelectedChange}
-          size="small"
           style={{ padding: 0 }}
           hidden={isCheckboxHidden}
         />

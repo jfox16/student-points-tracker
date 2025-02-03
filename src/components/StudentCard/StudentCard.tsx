@@ -1,6 +1,6 @@
 
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useStudentsContext } from "../../context/StudentsContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
@@ -81,6 +81,12 @@ export const StudentCard = (props: StudentCardProps) => {
     student.points,
     isDragging,
   ]);
+
+  useEffect(() => {
+    console.log({ student,  });
+  }, [
+    student.state.kbKey,
+  ])
 
   return (
     <div

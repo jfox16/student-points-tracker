@@ -32,12 +32,12 @@ export const PointsCounter = (props: PointsCounterProps) => {
     updatePoints
   ]);
 
-  // const decrement = useCallback(() => {
-  //   updatePoints(student.points - 1);
-  // }, [
-  //   student.points,
-  //   updatePoints
-  // ]);
+  const decrement = useCallback(() => {
+    updatePoints(student.points - 1);
+  }, [
+    student.points,
+    updatePoints
+  ]);
 
   const dynamicTextColor = useMemo(() => {
     return getDynamicColor(student.points);
@@ -47,16 +47,23 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
   return (
     <div className="PointsCounter">
-      {/* <div className="plus-minus" onClick={decrement}><span>-</span></div> */}
+
+      {/* <div className="plus-minus flex-1"  onClick={decrement}><span>-</span></div> */}
+
       <NumberInput
-        className={cns("points-input w-full font-bold")} 
+        className={cnsMerge("points-input w-full font-bold flex-1")} 
         value={student.points}
         onChange={updatePoints}
         inputProps={{
-          style: { color: dynamicTextColor }
+          style: {
+            color: dynamicTextColor,
+            fontSize: '1.5em',
+          }
         }}
       />
-      <div className={cnsMerge('plus-minus')} onClick={increment}><span>+</span></div>
+
+      <div className={cnsMerge('plus-minus flex-1')} onClick={increment}><span>+</span></div>
+
     </div>
   );
 }
