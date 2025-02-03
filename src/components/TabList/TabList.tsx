@@ -1,5 +1,4 @@
 import { useTabContext } from "../../context/TabContext";
-import { CopyTabDataButton } from "../CopyTabDataButton/CopyTabDataButton";
 import { TabCard } from "../TabCard/TabCard";
 import { AddTabButton } from "./AddTabButton/AddTabButton";
 
