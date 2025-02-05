@@ -52,9 +52,15 @@ export const TabOptionsRow = () => {
         />
       </div>
 
+<<<<<<< HEAD
       <GroupSelectWidget
         className={showOnHover}
       />
+=======
+      <div className={showOnHover}>
+        <GroupSelectWidget />
+      </div>
+>>>>>>> 935fc85f2a602586a918bca0520618281b811653
 
       <div className={showOnHover}>
         <SelectAllWidget />
