@@ -105,7 +105,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
       >
         <div
           className={cnsMerge(
-            'absolute inset-0 top-[-8px]',
+            'absolute inset-0 top-[-0.5em]',
             'flex justify-center',
             'pointer-events-none',
             'font-xs text-gray-400'

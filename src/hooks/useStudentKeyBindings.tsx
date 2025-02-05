@@ -38,8 +38,8 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
     students.forEach((student, index) => {
       const row = Math.floor(index / columns);
       const col = index % columns;
-      const noSelectionOrInSelection = numSelectedStudents === 0 || student.selected;
-      if (keyRows[row] && keyRows[row][col] && noSelectionOrInSelection) {
+      const studentKbEnabled = numSelectedStudents === 0 || student.selected;
+      if (keyRows[row] && keyRows[row][col] && studentKbEnabled) {
         const key = keyRows[row][col].toLowerCase(); // Ensure lowercase
         keyToId[key] = student.id;
         idToKey[student.id] = key.toUpperCase(); // Store uppercase for display

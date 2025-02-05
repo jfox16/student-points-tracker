@@ -12,7 +12,13 @@ export const GroupSelectWidget = ({
   className?: string;
 }) => {
 
-  const { students, setStudents, numSelectedStudents } = useStudentsContext();
+  const { students, setStudents } = useStudentsContext();
+
+  const numSelectedStudents = useMemo(() => {
+    return students.filter(student => student.selected).length;
+  }, [
+    students,
+  ])
 
   const deselectAll = useCallback(() => {
     setStudents(students.map(student => {

@@ -34,7 +34,6 @@ export const StudentCard = (props: StudentCardProps) => {
     setDragHoverIndex,
     dragHoverIndex,
     keyBindingsMap,
-    numSelectedStudents,
   } = useStudentsContext();
   
   const { showModal } = useModal();
@@ -112,7 +111,7 @@ export const StudentCard = (props: StudentCardProps) => {
       ref={dragObjectRef}
     >
       <div
-        className={cnsMerge("StudentCard h-28 px-1 py-2 pt-3", isTransparent && 'opacity-50')}
+        className={cnsMerge("StudentCard h-[7em] px-1 py-2 pt-4", isTransparent && 'opacity-50')}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -141,7 +140,7 @@ export const StudentCard = (props: StudentCardProps) => {
 
           
           <PointsCounter
-            className="flex-1 w-full max-h-10 min-h-10"
+            className="flex-1 w-full max-h-[3em] min-h-[2.6em]"
             student={student}
           />
         </div>
