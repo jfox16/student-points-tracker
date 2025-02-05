@@ -48,7 +48,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
   ]);
 
   const increment = useCallback(() => {
-    console.log('increment', { points });
+    // console.log('increment', { points });
     updatePoints(points + 1);
   }, [
     points,
