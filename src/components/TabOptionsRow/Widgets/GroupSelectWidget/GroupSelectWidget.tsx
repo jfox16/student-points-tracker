@@ -14,10 +14,10 @@ export const GroupSelectWidget = ({
 
   const { students, setStudents } = useStudentsContext();
 
-  const selectedStudents = useMemo(() => {
-    return students.filter(student => student.selected);
+  const numSelectedStudents = useMemo(() => {
+    return students.filter(student => student.selected).length;
   }, [
-    students
+    students,
   ])
 
   const deselectAll = useCallback(() => {
@@ -52,7 +52,7 @@ export const GroupSelectWidget = ({
       className={cnsMerge(
         "GroupSelectWidget",
         "flex bg-blue-600 border-blue-800 text-white rounded-lg overflow-hidden",
-        selectedStudents.length <= 0 && 'hidden',
+        numSelectedStudents === 0 && 'hidden',
         className,
       )}
     >
@@ -64,7 +64,7 @@ export const GroupSelectWidget = ({
       </Tooltip>
 
       <div className="px-2 border-r border-blue-900">
-        {`${selectedStudents.length} students selected`}
+        {`${numSelectedStudents} students selected`}
       </div>
 
       <Tooltip title="Subtract 1 point" enterDelay={500}>

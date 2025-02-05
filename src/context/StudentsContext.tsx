@@ -90,7 +90,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   }, [
     students,
     setStudents,
-  ])
+  ]);
 
   const value: StudentsContextValue = useMemo(() => {
     return {

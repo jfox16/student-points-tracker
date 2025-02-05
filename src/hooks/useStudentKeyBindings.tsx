@@ -21,6 +21,12 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
 
   const enableKeybinds = activeTab.tabOptions?.enableKeybinds;
 
+  const numSelectedStudents = useMemo(() => {
+    return students.filter(student => student.selected).length;
+  }, [
+    students
+  ]);
+
   // Define key rows dynamically
   const keyRows = ["1234567890", "QWERTYUIOP", "ASDFGHJKL;", "ZXCVBNM,./"];
 
@@ -29,13 +35,14 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
     const keyToId: Record<string, string> = {};
     const idToKey: Record<string, string> = {};
 
-    students.forEach(({ id }, index) => {
+    students.forEach((student, index) => {
       const row = Math.floor(index / columns);
       const col = index % columns;
-      if (keyRows[row] && keyRows[row][col]) {
+      const studentKbEnabled = numSelectedStudents === 0 || student.selected;
+      if (keyRows[row] && keyRows[row][col] && studentKbEnabled) {
         const key = keyRows[row][col].toLowerCase(); // Ensure lowercase
-        keyToId[key] = id;
-        idToKey[id] = key.toUpperCase(); // Store uppercase for display
+        keyToId[key] = student.id;
+        idToKey[student.id] = key.toUpperCase(); // Store uppercase for display
       }
     });
 
