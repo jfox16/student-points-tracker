@@ -22,8 +22,6 @@ interface StudentsContextValue {
 
 const StudentsContext = createContext<StudentsContextValue|undefined>(undefined);
 
-export const DEFAULT_NUM_COLUMNS = 8;
-
 export const StudentsContextProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
   const { activeTab, updateTab } = useTabContext();
@@ -38,7 +36,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   ]);
 
   const { idToKeyMap: keyBindingsMap } = useStudentKeyBindings({
-    columns: activeTab.tabOptions?.columns ?? DEFAULT_NUM_COLUMNS,
+    columns: activeTab.tabOptions?.columns ?? 1,
     students,
     setStudents,
   });

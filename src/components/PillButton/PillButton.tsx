@@ -18,8 +18,7 @@ export const PillButton = (props: PillButtonProps) => {
     <button
       className={cnsMerge(
         className,
-        'bg-gray-300 opacity-50 px-3 rounded-xl cursor-pointer',
-        'hover:opacity-100'
+        'bg-gray-300 px-3 rounded-xl cursor-pointer',
       )}
       onClick={onClick}
     >

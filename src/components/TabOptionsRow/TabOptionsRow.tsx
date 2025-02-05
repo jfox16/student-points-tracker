@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { useTabContext } from "../../context/TabContext"
 import { TabOptions } from "../../types/tabOptions.type";
@@ -6,8 +6,9 @@ import { cnsMerge } from "../../utils/cnsMerge";
 
 import { NumberInput } from "../NumberInput/NumberInput";
 import { GroupSelectWidget } from "./Widgets/GroupSelectWidget/GroupSelectWidget";
-import { AllActionsWidget } from "./Widgets/AllActionsWidget";
-import { DEFAULT_NUM_COLUMNS } from "../../context/StudentsContext";
+import { EnableKeybindsToggle } from "./Widgets/EnableKeybindsToggle";
+import { SelectAllWidget } from "./Widgets/SelectAllWidget";
+import { ResetAllWidget } from "./Widgets/ResetAllWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -30,37 +31,48 @@ export const TabOptionsRow = () => {
     updateTabOptions,
   ]);
 
+  const showOnHover = cnsMerge('opacity-60', 'hover:opacity-100')
+
   return (
     <div
       className={cnsMerge(
         "TabOptionsRow",
-        "flex p-4 gap-4",
-        "bg-gray-200",
+        "flex items-center h-12 px-4 gap-4",
+        "bg-gray-200 opacity-40",
+        showOnHover,
       )}
     >
       {/* Columns Input */}
-      <div className="flex flex-row">
+      <div className={cnsMerge('flex items-center', showOnHover)}>
         <div className="flex-none">Columns:</div>
         <NumberInput
-          className="w-6 pb-1"
-          value={activeTab.tabOptions?.columns ?? DEFAULT_NUM_COLUMNS}
+          className="w-6"
+          value={activeTab.tabOptions?.columns ?? 1}
           onChange={onColumnsChange}
         />
       </div>
 
-      {/* Font Input */}
-      {/* <div className="flex flex-row">
-        <div className="flex-none">Font Size:</div>
-        <NumberInput
-          className="w-6 pb-1"
-          value={activeTab.tabOptions?.fontSize ?? 16}
-          onChange={onFontSizeChange}
-        />
-      </div> */}
-      
-      <GroupSelectWidget />
+<<<<<<< HEAD
+      <GroupSelectWidget
+        className={showOnHover}
+      />
+=======
+      <div className={showOnHover}>
+        <GroupSelectWidget />
+      </div>
+>>>>>>> 935fc85f2a602586a918bca0520618281b811653
 
-      <AllActionsWidget />
+      <div className={showOnHover}>
+        <SelectAllWidget />
+      </div>
+
+      <div className={showOnHover}>
+        <ResetAllWidget />
+      </div>
+
+      <div className={showOnHover}>
+        <EnableKeybindsToggle />
+      </div>
     </div>
   )
 }

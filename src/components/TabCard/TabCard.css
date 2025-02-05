@@ -5,6 +5,7 @@
   padding: 32px 16px;
   cursor: pointer;
   border: 3px solid transparent;
+  border-left: 0;
 }
 
 .TabCard:hover {
