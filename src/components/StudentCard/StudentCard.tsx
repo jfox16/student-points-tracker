@@ -91,7 +91,6 @@ export const StudentCard = (props: StudentCardProps) => {
   const kbKey = useMemo(() => {
     const kbKey = keyBindingsMap[student.id];
     const kbEnabled = activeTab.tabOptions?.enableKeybinds;
-    console.info({ kbEnabled })
     if (kbEnabled) {
       return kbKey ?? ' ';
     }

@@ -48,6 +48,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
   ]);
 
   const increment = useCallback(() => {
+    console.log('increment', { points });
     updatePoints(points + 1);
   }, [
     points,
@@ -73,7 +74,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
     return `${sign}${recentChange}`;
   }, [
     recentChange,
-  ])
+  ]);
 
   return (
     <div className={cnsMerge('PointsCounter px-[4%]', className)}>
@@ -86,7 +87,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
       >
         <div
           className={cnsMerge(
-            'absolute inset-0 top-[-6px]',
+            'absolute inset-0 top-[-8px]',
             'flex justify-center',
             'pointer-events-none',
             'font-xs text-gray-400'
