@@ -71,7 +71,7 @@ export const GroupSelectWidget = () => {
 
         <Tooltip title="Add 1 point" enterDelay={500}>
           <button
-            className="px-3 pb-1 border-blue-800 hover:bg-blue-700 active:bg-blue-900 cursor-pointer"
+            className="px-3 pb-1 border-r border-blue-800 hover:bg-blue-700 active:bg-blue-900 cursor-pointer"
             onClick={incrementSelected}
           >+</button>
         </Tooltip>
