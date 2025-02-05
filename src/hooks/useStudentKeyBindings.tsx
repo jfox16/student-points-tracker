@@ -39,9 +39,13 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   // Handle key presses
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      const studentId = keyToIdMap[event.key.toLowerCase()];
-      if (studentId !== undefined) {
-        setStudents(students.map(student => student.id === studentId ? { ...student, points: student.points + 1 } : student));
+      const notTyping = !["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
+
+      if (notTyping) {
+        const studentId = keyToIdMap[event.key.toLowerCase()];
+        if (studentId !== undefined) {
+          setStudents(students.map(student => student.id === studentId ? { ...student, points: student.points + 1 } : student));
+        }
       }
     },
     [keyToIdMap, setStudents]

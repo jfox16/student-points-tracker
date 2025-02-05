@@ -28,6 +28,7 @@ export const StudentCard = (props: StudentCardProps) => {
     moveStudent,
     setDragHoverIndex,
     dragHoverIndex,
+    keyBindingsMap,
   } = useStudentsContext();
   
   const { showModal } = useModal();
@@ -82,11 +83,12 @@ export const StudentCard = (props: StudentCardProps) => {
     isDragging,
   ]);
 
-  useEffect(() => {
-    console.log({ student,  });
+  const kbKey = useMemo(() => {
+    return keyBindingsMap[student.id];
   }, [
-    student.state.kbKey,
-  ])
+    keyBindingsMap,
+    student.id,
+  ]);
 
   return (
     <div
@@ -108,7 +110,15 @@ export const StudentCard = (props: StudentCardProps) => {
           onSelectChange={handleSelectChange}
           selected={student.selected}
           dragHandleRef={dragHandleRef}
+          kbKey={kbKey}
         />
+
+        {kbKey && (
+          <div className={cnsMerge('text-gray-400')}>
+            {kbKey}
+          </div>
+        )}
+
         <div>
           <HoverInput
             className="w-full"

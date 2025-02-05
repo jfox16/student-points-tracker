@@ -13,6 +13,7 @@ interface CardHeaderProps {
   onSelectChange?: (selected: boolean) => void;
   selected?: boolean;
   dragHandleRef?: React.Ref<HTMLDivElement>;
+  kbKey?: string;
 }
 
 export const CardHeader = (props: CardHeaderProps) => {
@@ -22,6 +23,7 @@ export const CardHeader = (props: CardHeaderProps) => {
     onClickDelete,
     onSelectChange,
     dragHandleRef,
+    kbKey,
   } = props;
 
   // const autoHide = false;
@@ -40,13 +42,15 @@ export const CardHeader = (props: CardHeaderProps) => {
   return (
     <div className={cnsMerge('CardHeader', 'background-gray-200')}>
       {(onSelectChange || selected) && (
-        <Checkbox
-          className={cnsMerge(!selected && 'opacity-20')}
-          checked={selected}
-          onChange={handleSelectedChange}
-          style={{ padding: 0 }}
-          hidden={isCheckboxHidden}
-        />
+        <div className={cnsMerge(isCheckboxHidden && 'hidden')}>
+          <Checkbox
+            className={cnsMerge(!selected && 'opacity-20')}
+            checked={selected}
+            onChange={handleSelectedChange}
+            style={{ padding: 0 }}
+            size='medium'
+          />
+        </div>
       )}
       <div className={cnsMerge('flex w-full', autoHide && 'hidden')}>
         {/* Left Side */}
@@ -58,6 +62,10 @@ export const CardHeader = (props: CardHeaderProps) => {
               className="w-full h-[18px] cursor-grab active:cursor-grabbing"
               ref={dragHandleRef}
             >
+              <div
+                className="text-xl text-gray-400"
+              >
+              </div>
               {/* <div className="w-full h-[9px] border-b-3 border-gray-200" />
               <div className="w-full h-[5px] border-b-3 border-gray-200" /> */}
               {/* <div className="h-[7px]" />
@@ -66,7 +74,11 @@ export const CardHeader = (props: CardHeaderProps) => {
           )}
         </div>
         {/* Right Side */}
-        {onClickDelete && <DeleteIcon className="opacity-20 cursor-pointer hover:opacity-80" onClick={onClickDelete} fontSize="small" />}
+        {onClickDelete && <DeleteIcon
+          className={cnsMerge('opacity-20 cursor-pointer hover:opacity-80')}
+          onClick={onClickDelete}
+          fontSize="small"
+        />}
       </div>
     </div>
   )
