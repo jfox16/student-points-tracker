@@ -1,7 +1,7 @@
 
 import { useMemo } from "react";
 
-import { useStudentsContext } from "../../context/StudentsContext";
+import { DEFAULT_NUM_COLUMNS, useStudentsContext } from "../../context/StudentsContext";
 import { useTabContext } from "../../context/TabContext";
 
 import { StudentCard } from "../StudentCard/StudentCard";
@@ -25,7 +25,7 @@ export const StudentList = () => {
       <div
         className="students"
         style={{
-          gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (tabOptions?.columns ?? 8)))}, minmax(50px, 1fr))`
+          gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (tabOptions?.columns ?? DEFAULT_NUM_COLUMNS)))}, minmax(50px, 1fr))`
         }}
       >
         {students.map((student, i) => {

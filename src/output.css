@@ -683,6 +683,9 @@
   .table-row-group {
     display: table-row-group;
   }
+  .h-1 {
+    height: calc(var(--spacing) * 1);
+  }
   .h-\[5px\] {
     height: 5px;
   }

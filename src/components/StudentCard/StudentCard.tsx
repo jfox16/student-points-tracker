@@ -113,11 +113,9 @@ export const StudentCard = (props: StudentCardProps) => {
           kbKey={kbKey}
         />
 
-        {kbKey && (
-          <div className={cnsMerge('text-gray-400')}>
-            {kbKey}
-          </div>
-        )}
+        <div className={cnsMerge('text-gray-400')}>
+          {kbKey ?? ' '}
+        </div>
 
         <div>
           <HoverInput

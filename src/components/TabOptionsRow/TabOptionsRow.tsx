@@ -7,6 +7,7 @@ import { cnsMerge } from "../../utils/cnsMerge";
 import { NumberInput } from "../NumberInput/NumberInput";
 import { GroupSelectWidget } from "./Widgets/GroupSelectWidget/GroupSelectWidget";
 import { AllActionsWidget } from "./Widgets/AllActionsWidget";
+import { DEFAULT_NUM_COLUMNS } from "../../context/StudentsContext";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -42,7 +43,7 @@ export const TabOptionsRow = () => {
         <div className="flex-none">Columns:</div>
         <NumberInput
           className="w-6 pb-1"
-          value={activeTab.tabOptions?.columns ?? 8}
+          value={activeTab.tabOptions?.columns ?? DEFAULT_NUM_COLUMNS}
           onChange={onColumnsChange}
         />
       </div>
