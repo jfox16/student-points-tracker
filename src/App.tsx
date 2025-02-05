@@ -13,6 +13,7 @@ import { TabContextProvider } from "./context/TabContext";
 
 import './App.css';
 import './output.css'; // import generated tailwind styles
+import { SiteHeader } from "./components/SiteHeader/SiteHeader";
 
 const App: React.FC = () => {
 
@@ -20,8 +21,11 @@ const App: React.FC = () => {
     <ModalProvider>
       <TabContextProvider>
           <DndProvider backend={HTML5Backend}>
-            <div className="App h-screen">
-              <div className="App-row">
+            <div className="App h-screen flex flex-col">
+
+              <SiteHeader />
+
+              <div className="App-row h-full">
 
                 <TabList />
 

@@ -36,7 +36,7 @@ export const TabList = () => {
       </div>
 
       <div
-        className={cnsMerge('flex text-gray-400 items-center bg-gray-200 hover:bg-gray-300 cursor-pointer w-6', open && 'w-4')}
+        className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
         onClick={toggleOpen}
       >
         {open
