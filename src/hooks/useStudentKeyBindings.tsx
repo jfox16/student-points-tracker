@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useCallback } from "react";
 
 import { Student } from "../types/student.type";
+import { useTabContext } from "../context/TabContext";
 
 interface UseStudentKeyBindingsProps {
   columns: number;
@@ -10,10 +11,15 @@ interface UseStudentKeyBindingsProps {
 
 const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   const {
+    activeTab
+  } = useTabContext();
+  const {
     columns,
     students,
     setStudents,
   } = props;
+
+  const enableKeybinds = activeTab.tabOptions?.enableKeybinds;
 
   // Define key rows dynamically
   const keyRows = ["1234567890", "QWERTYUIOP", "ASDFGHJKL;", "ZXCVBNM,./"];
@@ -39,6 +45,8 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   // Handle key presses
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
+      if (!enableKeybinds) return;
+
       const notTyping = !["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
 
       if (notTyping) {

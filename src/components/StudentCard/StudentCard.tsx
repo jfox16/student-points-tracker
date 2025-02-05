@@ -14,6 +14,7 @@ import { CardHeader } from '../CardHeader/CardHeader';
 import { PointsCounter } from "./PointsCounter/PointsCounter";
 
 import './StudentCard.css';
+import { useTabContext } from "../../context/TabContext";
 
 interface StudentCardProps {
   student: Student;
@@ -22,6 +23,10 @@ interface StudentCardProps {
 
 export const StudentCard = (props: StudentCardProps) => {
   const { student, index } = props;
+  const {
+    activeTab
+  } = useTabContext();
+
   const {
     deleteStudent,
     updateStudent,
@@ -84,8 +89,15 @@ export const StudentCard = (props: StudentCardProps) => {
   ]);
 
   const kbKey = useMemo(() => {
-    return keyBindingsMap[student.id];
+    const kbKey = keyBindingsMap[student.id];
+    const kbEnabled = activeTab.tabOptions?.enableKeybinds;
+    console.info({ kbEnabled })
+    if (kbEnabled) {
+      return kbKey ?? ' ';
+    }
+    return '';
   }, [
+    activeTab.tabOptions?.enableKeybinds,
     keyBindingsMap,
     student.id,
   ]);
@@ -93,14 +105,14 @@ export const StudentCard = (props: StudentCardProps) => {
   return (
     <div
       className={cnsMerge(
-        'border-2 border-transparent p-2',
+        'border-2 border-transparent p-1 rounded-lg',
         dragHoverIndex === index && 'border-l-blue-500',
         dragHoverIndex === index + 1 && 'border-r-blue-500',
       )}
       ref={dragObjectRef}
     >
       <div
-        className={cnsMerge("StudentCard", isTransparent && 'opacity-50')}
+        className={cnsMerge("StudentCard h-28 px-1 py-2 pt-3", isTransparent && 'opacity-50')}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -113,19 +125,26 @@ export const StudentCard = (props: StudentCardProps) => {
           kbKey={kbKey}
         />
 
-        <div className={cnsMerge('text-gray-400')}>
-          {kbKey ?? ' '}
-        </div>
+        <div
+          className="flex flex-col h-full justify-center"
+        >
+          {kbKey && <div className={cnsMerge('flex-1 max-h-6 text-gray-400')}>
+            {kbKey}
+          </div>}
 
-        <div>
           <HoverInput
-            className="w-full"
+            className="flex-1 max-h-10 w-full"
             onChange={onNameInputChange}
             placeholder="Type name here..."
             value={student.name}
           />
+
+          
+          <PointsCounter
+            className="flex-1 w-full max-h-10 min-h-10"
+            student={student}
+          />
         </div>
-        <PointsCounter student={student} />
       </div>
     </div>
   );

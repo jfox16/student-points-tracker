@@ -6,7 +6,11 @@ import { Tooltip } from '@mui/material';
 import { useStudentsContext } from '../../../../context/StudentsContext';
 import { cnsMerge } from '../../../../utils/cnsMerge';
 
-export const GroupSelectWidget = () => {
+export const GroupSelectWidget = ({
+  className,
+}: {
+  className?: string;
+}) => {
 
   const { students, setStudents } = useStudentsContext();
 
@@ -49,6 +53,7 @@ export const GroupSelectWidget = () => {
         "GroupSelectWidget",
         "flex bg-blue-600 border-blue-800 text-white rounded-lg overflow-hidden",
         selectedStudents.length <= 0 && 'hidden',
+        className,
       )}
     >
       <Tooltip title="Deselect" enterDelay={500}>

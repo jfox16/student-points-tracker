@@ -1,10 +1,8 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Student } from '../types/student.type';
 import { Tab, TabId } from '../types/tab.type';
 import { TabOptions } from '../types/tabOptions.type';
-
 import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
@@ -16,6 +14,7 @@ interface TabContextValue {
   updateTab: (id: TabId|undefined, updates: Partial<Tab>) => void;
   deleteTab: (id: TabId|undefined) => void;
   activeTab: Tab;
+  updateActiveTab: (updates: Partial<Tab>) => void;
   setActiveTabId: (id: TabId) => void;
 }
 
@@ -25,8 +24,9 @@ export const DEFAULT_TAB: Tab = {
   name: '',
 }
 
-export const DEFAULT_TAB_OPTIONS: TabOptions = {
+export const DEFAULT_TAB_OPTIONS: Required<TabOptions> = {
   columns: 8,
+  enableKeybinds: true,
 }
 
 export const generateStudents = (n: number = 30) => {
@@ -87,8 +87,8 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ])
 
   useEffect(() => {
-    const isValid = tabs.some(tab => tab.id === activeTabId);
-    if (!isValid) {
+    const isActiveTabIdValid = tabs.some(tab => tab.id === activeTabId);
+    if (!isActiveTabIdValid) {
       setActiveTabId(tabs[0]?.id);
     }
   }, [
@@ -97,11 +97,11 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ]);
 
   const saveTabData = useCallback(() => {
-    const tabData = formatForLocalStorage({
+    const tabData: LocalStorageTabData = {
       activeTabId,
       tabs
-    });
-    setSavedTabData(tabData);
+    };
+    setSavedTabData(tabData)
   }, [
     activeTabId,
     tabs,
@@ -123,7 +123,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   }, [
     activeTabId,
     tabs,
-  ])
+  ]);
 
   const addTab = useCallback(() => {
     const id = generateUuid();
@@ -165,6 +165,13 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
   ]);
 
+  const updateActiveTab = useCallback((updates: Partial<Tab>) => {
+    updateTab(activeTab.id, updates);
+  }, [
+    activeTab.id,
+    updateTab,
+  ]);
+
   // Update document title with tab.name
   useEffect(() => {
     let title = 'Student Points Tracker';
@@ -178,6 +185,26 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     activeTab.name,
     documentTitle,
     setDocumentTitle,
+  ]);
+
+  useEffect(() => {
+    const tabOptions = activeTab.tabOptions ?? {};
+
+    const isActiveTabOptionsValid = Object.keys(DEFAULT_TAB_OPTIONS).every(
+      key => key in tabOptions
+    );
+
+    if (!isActiveTabOptionsValid) {
+      updateActiveTab({
+        tabOptions: {
+          ...DEFAULT_TAB_OPTIONS,
+          ...tabOptions,
+        }
+      })
+    }
+  }, [
+    activeTab.tabOptions,
+    updateActiveTab,
   ])
 
   const value: TabContextValue = useMemo(() => {
@@ -187,6 +214,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
       deleteTab,
       updateTab,
       activeTab,
+      updateActiveTab,
       setActiveTabId,
     };
     return value;
@@ -196,6 +224,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     deleteTab,
     updateTab,
     activeTab,
+    updateActiveTab,
     setActiveTabId,
   ])
 
@@ -213,37 +242,3 @@ export const useTabContext = (): TabContextValue => {
   }
   return context;
 };
-
-const formatForLocalStorage = ({
-  activeTabId,
-  tabs,
-}: {
-  activeTabId?: TabId,
-  tabs: Tab[],
-}): LocalStorageTabData => {
-  const formattedTabs = tabs.map((tab: Tab) => {
-
-    const students: Student[] = tab.students.map(student => {
-      const {
-        state,
-        ...rest
-      } = student;
-
-      return {
-        ...rest
-      };
-    });
-
-    return {
-      ...tab,
-      students,
-    }
-  });
-
-  const tabData: LocalStorageTabData = {
-    activeTabId,
-    tabs: formattedTabs,
-  }
-
-  return tabData;
-}
