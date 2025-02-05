@@ -10,5 +10,5 @@ export interface Student {
 }
 
 export interface StudentState {
-  kbKey?: string;
+  // relic of a time once forgotten
 }
