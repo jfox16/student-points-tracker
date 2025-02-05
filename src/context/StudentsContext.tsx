@@ -1,10 +1,12 @@
 
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
+import useStudentKeyBindings from '../hooks/useStudentKeyBindings';
 import { Student, StudentId } from '../types/student.type';
-import { useTabContext } from './TabContext';
 import { generateUuid } from '../utils/generateUuid';
 import { moveItem } from '../utils/moveItem';
+
+import { useTabContext } from './TabContext';
 
 interface StudentsContextValue {
   addStudent: () => void;
@@ -15,6 +17,7 @@ interface StudentsContextValue {
   setStudents: (students: Student[]) => void;
   dragHoverIndex: number;
   setDragHoverIndex: (dragHoverIndex: number) => void;
+  keyBindingsMap: Record<StudentId, string>; // Map of student ids to key bindings
 }
 
 const StudentsContext = createContext<StudentsContextValue|undefined>(undefined);
@@ -30,7 +33,13 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   }, [
     activeTab.id,
     updateTab
-  ])
+  ]);
+
+  const { idToKeyMap: keyBindingsMap } = useStudentKeyBindings({
+    columns: activeTab.tabOptions?.columns ?? 1,
+    students,
+    setStudents,
+  });
 
   const addStudent = useCallback(() => {
     const id = generateUuid();
@@ -75,7 +84,6 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
 
   const moveStudent = useCallback((fromIndex: number, toIndex: number) => {
     if (fromIndex !== toIndex) {
-      console.info({ students, fromIndex, toIndex });
       const newStudents = moveItem(students, fromIndex, toIndex);
       setStudents(newStudents);
     }
@@ -94,6 +102,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
       moveStudent,
       dragHoverIndex,
       setDragHoverIndex,
+      keyBindingsMap,
     };
   }, [
     students,
@@ -104,6 +113,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     moveStudent,
     dragHoverIndex,
     setDragHoverIndex,
+    keyBindingsMap,
   ])
 
   return (

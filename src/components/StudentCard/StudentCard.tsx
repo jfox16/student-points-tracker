@@ -1,6 +1,6 @@
 
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useStudentsContext } from "../../context/StudentsContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
@@ -28,6 +28,7 @@ export const StudentCard = (props: StudentCardProps) => {
     moveStudent,
     setDragHoverIndex,
     dragHoverIndex,
+    keyBindingsMap,
   } = useStudentsContext();
   
   const { showModal } = useModal();
@@ -82,6 +83,13 @@ export const StudentCard = (props: StudentCardProps) => {
     isDragging,
   ]);
 
+  const kbKey = useMemo(() => {
+    return keyBindingsMap[student.id];
+  }, [
+    keyBindingsMap,
+    student.id,
+  ]);
+
   return (
     <div
       className={cnsMerge(
@@ -102,7 +110,15 @@ export const StudentCard = (props: StudentCardProps) => {
           onSelectChange={handleSelectChange}
           selected={student.selected}
           dragHandleRef={dragHandleRef}
+          kbKey={kbKey}
         />
+
+        {kbKey && (
+          <div className={cnsMerge('text-gray-400')}>
+            {kbKey}
+          </div>
+        )}
+
         <div>
           <HoverInput
             className="w-full"

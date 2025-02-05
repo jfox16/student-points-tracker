@@ -6,4 +6,9 @@ export interface Student {
   name: string;
   points: number;
   selected?: boolean;
+  state?: StudentState;
+}
+
+export interface StudentState {
+  // relic of a time once forgotten
 }

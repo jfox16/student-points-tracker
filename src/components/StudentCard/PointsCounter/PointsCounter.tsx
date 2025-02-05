@@ -1,6 +1,4 @@
-import cns from 'classnames';
 import { useCallback, useMemo } from "react";
-
 import { useStudentsContext } from "../../../context/StudentsContext";
 import { Student } from "../../../types/student.type";
 
@@ -14,49 +12,61 @@ interface PointsCounterProps {
 }
 
 export const PointsCounter = (props: PointsCounterProps) => {
-  const { student } = props;
+  const { student: { id, points } } = props;
 
   const { updateStudent } = useStudentsContext();
 
   const updatePoints = useCallback((points: number) => {
-    updateStudent(student.id, { points });
+    updateStudent(id, { points });
   }, [
-    student.id,
+    id,
     updateStudent
   ]);
 
   const increment = useCallback(() => {
-    updatePoints(student.points + 1);
+    updatePoints(points + 1);
   }, [
-    student.points,
+    points,
     updatePoints
   ]);
 
   // const decrement = useCallback(() => {
-  //   updatePoints(student.points - 1);
+  //   updatePoints(points - 1);
   // }, [
-  //   student.points,
+  //   points,
   //   updatePoints
   // ]);
 
   const dynamicTextColor = useMemo(() => {
-    return getDynamicColor(student.points);
+    return getDynamicColor(points);
   }, [
-    student.points,
-  ])
+    points,
+  ]);
 
   return (
-    <div className="PointsCounter">
-      {/* <div className="plus-minus" onClick={decrement}><span>-</span></div> */}
-      <NumberInput
-        className={cns("points-input w-full font-bold")} 
-        value={student.points}
-        onChange={updatePoints}
-        inputProps={{
-          style: { color: dynamicTextColor }
-        }}
-      />
-      <div className={cnsMerge('plus-minus')} onClick={increment}><span>+</span></div>
+    <div className={cnsMerge('PointsCounter px-[8%]')}>
+
+      {/* <div className="plus-minus flex-1"  onClick={decrement}><span>-</span></div> */}
+
+      <div
+        className={cnsMerge('flex-1 bounce')}
+        key={points}
+      >
+        <NumberInput
+          className={cnsMerge("points-input h-full w-full")} 
+          value={points}
+          onChange={updatePoints}
+          inputProps={{
+            style: {
+              color: dynamicTextColor,
+              fontSize: '1.2em',
+            }
+          }}
+        />
+      </div>
+
+      <div className={cnsMerge('plus-minus flex-1')} onClick={increment}><span>+</span></div>
+
     </div>
   );
 }

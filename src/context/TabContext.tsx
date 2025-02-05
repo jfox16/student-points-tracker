@@ -1,8 +1,10 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { Student } from '../types/student.type';
 import { Tab, TabId } from '../types/tab.type';
 import { TabOptions } from '../types/tabOptions.type';
+
 import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
@@ -95,11 +97,11 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   ]);
 
   const saveTabData = useCallback(() => {
-    const tabData: LocalStorageTabData = {
+    const tabData = formatForLocalStorage({
       activeTabId,
       tabs
-    };
-    setSavedTabData(tabData)
+    });
+    setSavedTabData(tabData);
   }, [
     activeTabId,
     tabs,
@@ -211,3 +213,37 @@ export const useTabContext = (): TabContextValue => {
   }
   return context;
 };
+
+const formatForLocalStorage = ({
+  activeTabId,
+  tabs,
+}: {
+  activeTabId?: TabId,
+  tabs: Tab[],
+}): LocalStorageTabData => {
+  const formattedTabs = tabs.map((tab: Tab) => {
+
+    const students: Student[] = tab.students.map(student => {
+      const {
+        state,
+        ...rest
+      } = student;
+
+      return {
+        ...rest
+      };
+    });
+
+    return {
+      ...tab,
+      students,
+    }
+  });
+
+  const tabData: LocalStorageTabData = {
+    activeTabId,
+    tabs: formattedTabs,
+  }
+
+  return tabData;
+}

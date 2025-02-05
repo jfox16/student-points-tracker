@@ -683,9 +683,6 @@
   .table-row-group {
     display: table-row-group;
   }
-  .h-1 {
-    height: calc(var(--spacing) * 1);
-  }
   .h-\[5px\] {
     height: 5px;
   }
@@ -697,6 +694,9 @@
   }
   .h-\[18px\] {
     height: 18px;
+  }
+  .h-full {
+    height: 100%;
   }
   .h-screen {
     height: 100vh;
@@ -954,11 +954,17 @@
   .px-3 {
     padding-inline: calc(var(--spacing) * 3);
   }
-  .py-1 {
-    padding-block: calc(var(--spacing) * 1);
+  .px-\[5\%\] {
+    padding-inline: 5%;
   }
-  .py-2 {
-    padding-block: calc(var(--spacing) * 2);
+  .px-\[8\%\] {
+    padding-inline: 8%;
+  }
+  .px-\[10\%\] {
+    padding-inline: 10%;
+  }
+  .px-\[50\%\] {
+    padding-inline: 50%;
   }
   .py-\[2px\] {
     padding-block: 2px;
@@ -990,6 +996,9 @@
   }
   .text-ellipsis {
     text-overflow: ellipsis;
+  }
+  .text-gray-400 {
+    color: var(--color-gray-400);
   }
   .text-white {
     color: var(--color-white);
@@ -1148,6 +1157,10 @@
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
+  }
+  .ease-out {
+    --tw-ease: var(--ease-out);
+    transition-timing-function: var(--ease-out);
   }
   .divide-x-reverse {
     :where(& > :not(:last-child)) {
