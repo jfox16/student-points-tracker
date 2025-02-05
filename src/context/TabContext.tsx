@@ -1,13 +1,14 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { Student } from '../types/student.type';
 import { Tab, TabId } from '../types/tab.type';
 import { TabOptions } from '../types/tabOptions.type';
+
 import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 import useDocumentTitle from '../utils/useDocumentTitle';
-import { Student } from '../types/student.type';
 
 interface TabContextValue {
   tabs: Tab[];

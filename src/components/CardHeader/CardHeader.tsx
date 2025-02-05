@@ -62,10 +62,6 @@ export const CardHeader = (props: CardHeaderProps) => {
               className="w-full h-[18px] cursor-grab active:cursor-grabbing"
               ref={dragHandleRef}
             >
-              <div
-                className="text-xl text-gray-400"
-              >
-              </div>
               {/* <div className="w-full h-[9px] border-b-3 border-gray-200" />
               <div className="w-full h-[5px] border-b-3 border-gray-200" /> */}
               {/* <div className="h-[7px]" />

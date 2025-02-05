@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSpring, animated } from "@react-spring/web";
-
+import { useCallback, useMemo } from "react";
 import { useStudentsContext } from "../../../context/StudentsContext";
 import { Student } from "../../../types/student.type";
 
@@ -8,7 +6,6 @@ import './PointsCounter.css';
 import { NumberInput } from '../../NumberInput/NumberInput';
 import { getGradientColor } from '../../../utils/getGradientColor';
 import { cnsMerge } from '../../../utils/cnsMerge';
-import usePrevious from "../../../hooks/usePrevious";
 
 interface PointsCounterProps {
   student: Student;
