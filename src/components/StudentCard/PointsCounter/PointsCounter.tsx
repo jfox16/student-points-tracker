@@ -17,23 +17,23 @@ interface PointsCounterProps {
 export const PointsCounter = (props: PointsCounterProps) => {
   const {
     className,
-    student: { id, points }
+    student,
   } = props;
 
   const { updateStudent } = useStudentsContext();
   const [ recentChange, setRecentChange ] = useState<number|undefined>(undefined);
-  const prevPoints = usePrevious(points);
+  const prevPoints = usePrevious(student.points);
 
   useEffect(() => {
     if (typeof prevPoints !== 'number') {
       return;
     }
-    const diff = points - prevPoints;
+    const diff = student.points - prevPoints;
     setRecentChange((recentChange ?? 0) + diff);
     resetRecentChangeAfterDelay();
   }, [
     prevPoints,
-    points
+    student.points
   ])
 
   const resetRecentChangeAfterDelay = useDebounce(() => {
@@ -41,17 +41,16 @@ export const PointsCounter = (props: PointsCounterProps) => {
   }, 2000);
 
   const updatePoints = useCallback((newPoints: number) => {
-    updateStudent(id, { points: newPoints });
+    updateStudent(student.id, { points: newPoints });
   }, [
-    id,
+    student.id,
     updateStudent
   ]);
 
   const increment = useCallback(() => {
-    // console.log('increment', { points });
-    updatePoints(points + 1);
+    updatePoints(student.points + 1);
   }, [
-    points,
+    student.points,
     updatePoints
   ]);
 
@@ -62,10 +61,29 @@ export const PointsCounter = (props: PointsCounterProps) => {
   //   updatePoints
   // ]);
 
-  const dynamicTextColor = useMemo(() => {
-    return getDynamicColor(points);
+  const [clickEnabled, setClickEnabled] = useState(true);
+  const enableClickAfterDelay = useDebounce(() => {
+    setClickEnabled(true);
+  }, 100)
+
+  const handleIncrementClick = useCallback(() => {
+    // Avoid accidental double click bug
+    if (clickEnabled) {
+      increment();
+      setClickEnabled(false);
+      enableClickAfterDelay();
+    }
   }, [
-    points,
+    clickEnabled,
+    setClickEnabled,
+    increment,
+    enableClickAfterDelay,
+  ]);
+
+  const dynamicTextColor = useMemo(() => {
+    return getDynamicColor(student.points);
+  }, [
+    student.points,
   ]);
 
   const recentChangeString = useMemo(() => {
@@ -83,7 +101,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
       <div
         className={cnsMerge('relative flex-1 bounce h-full')}
-        key={points}
+        key={student.points}
       >
         <div
           className={cnsMerge(
@@ -97,7 +115,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
         </div>
         <NumberInput
           className={cnsMerge("points-input h-full w-full")} 
-          value={points}
+          value={student.points}
           onChange={updatePoints}
           inputProps={{
             style: {
@@ -108,7 +126,12 @@ export const PointsCounter = (props: PointsCounterProps) => {
         />
       </div>
 
-      <div className={cnsMerge('plus-minus flex-1 text-gray-400 hover:text-gray-600')} onClick={increment}><span>+</span></div>
+      <div
+        className={cnsMerge('plus-minus flex-1 text-gray-400 hover:text-gray-600')}
+        onClick={handleIncrementClick}
+      >
+        <span>+</span>
+      </div>
 
     </div>
   );

@@ -34,6 +34,7 @@ export const StudentCard = (props: StudentCardProps) => {
     setDragHoverIndex,
     dragHoverIndex,
     keyBindingsMap,
+    numSelectedStudents,
   } = useStudentsContext();
   
   const { showModal } = useModal();
@@ -89,9 +90,9 @@ export const StudentCard = (props: StudentCardProps) => {
   ]);
 
   const kbKey = useMemo(() => {
-    const kbKey = keyBindingsMap[student.id];
     const kbEnabled = activeTab.tabOptions?.enableKeybinds;
     if (kbEnabled) {
+      const kbKey = keyBindingsMap[student.id];
       return kbKey ?? ' ';
     }
     return '';

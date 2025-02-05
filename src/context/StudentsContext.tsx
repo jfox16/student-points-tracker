@@ -18,6 +18,7 @@ interface StudentsContextValue {
   dragHoverIndex: number;
   setDragHoverIndex: (dragHoverIndex: number) => void;
   keyBindingsMap: Record<StudentId, string>; // Map of student ids to key bindings
+  numSelectedStudents: number;
 }
 
 const StudentsContext = createContext<StudentsContextValue|undefined>(undefined);
@@ -90,6 +91,12 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
   }, [
     students,
     setStudents,
+  ]);
+
+  const numSelectedStudents = useMemo(() => {
+    return students.filter(student => student.selected).length;
+  }, [
+    students,
   ])
 
   const value: StudentsContextValue = useMemo(() => {
@@ -103,6 +110,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
       dragHoverIndex,
       setDragHoverIndex,
       keyBindingsMap,
+      numSelectedStudents,
     };
   }, [
     students,
@@ -114,6 +122,7 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     dragHoverIndex,
     setDragHoverIndex,
     keyBindingsMap,
+    numSelectedStudents,
   ])
 
   return (
