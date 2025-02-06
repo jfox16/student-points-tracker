@@ -67,14 +67,14 @@ export const GroupSelectWidget = ({
         {`${numSelectedStudents} students selected`}
       </div>
 
-      <Tooltip title="Subtract 1 point" enterDelay={500}>
+      <Tooltip title="Subtract 1 point from selected" enterDelay={500}>
         <button
           className={"px-3 pb-1 border-r border-blue-800 hover:bg-blue-700 active:bg-blue-900 cursor-pointer"}
           onClick={decrementSelected}
         >-</button>
       </Tooltip>
 
-        <Tooltip title="Add 1 point" enterDelay={500}>
+        <Tooltip title="Add 1 point to selected (Space)" enterDelay={500}>
           <button
             className="px-3 pb-1 border-r border-blue-800 hover:bg-blue-700 active:bg-blue-900 cursor-pointer"
             onClick={incrementSelected}

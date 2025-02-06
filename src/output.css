@@ -590,8 +590,26 @@
   .top-\[-0\.5em\] {
     top: -0.5em;
   }
+  .top-\[-4px\] {
+    top: -4px;
+  }
+  .top-\[-9px\] {
+    top: -9px;
+  }
+  .top-\[-10px\] {
+    top: -10px;
+  }
+  .top-\[-1em\] {
+    top: -1em;
+  }
   .top-\[-6px\] {
     top: -6px;
+  }
+  .top-\[-8px\] {
+    top: -8px;
+  }
+  .top-\[1em\] {
+    top: 1em;
   }
   .right-0 {
     right: calc(var(--spacing) * 0);
@@ -743,17 +761,11 @@
   .h-\[5px\] {
     height: 5px;
   }
-  .h-\[7\.5em\] {
-    height: 7.5em;
-  }
   .h-\[7em\] {
     height: 7em;
   }
   .h-\[7px\] {
     height: 7px;
-  }
-  .h-\[8em\] {
-    height: 8em;
   }
   .h-\[9px\] {
     height: 9px;
@@ -800,9 +812,6 @@
   .max-h-14 {
     max-height: calc(var(--spacing) * 14);
   }
-  .max-h-\[3\.5em\] {
-    max-height: 3.5em;
-  }
   .max-h-\[3em\] {
     max-height: 3em;
   }
@@ -826,9 +835,6 @@
   }
   .min-h-\[2\.6em\] {
     min-height: 2.6em;
-  }
-  .min-h-\[2em\] {
-    min-height: 2em;
   }
   .min-h-\[3em\] {
     min-height: 3em;
@@ -973,8 +979,17 @@
   .rounded-lg {
     border-radius: var(--radius-lg);
   }
+  .rounded-md {
+    border-radius: var(--radius-md);
+  }
+  .rounded-sm {
+    border-radius: var(--radius-sm);
+  }
   .rounded-xl {
     border-radius: var(--radius-xl);
+  }
+  .rounded-xs {
+    border-radius: var(--radius-xs);
   }
   .rounded-s {
     border-start-start-radius: 0.25rem;
@@ -1028,9 +1043,17 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .border-1 {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
+  }
+  .border-4 {
+    border-style: var(--tw-border-style);
+    border-width: 4px;
   }
   .border-x {
     border-inline-style: var(--tw-border-style);
@@ -1067,6 +1090,9 @@
   .border-l {
     border-left-style: var(--tw-border-style);
     border-left-width: 1px;
+  }
+  .border-blue-500 {
+    border-color: var(--color-blue-500);
   }
   .border-blue-800 {
     border-color: var(--color-blue-800);
@@ -1136,6 +1162,9 @@
   }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
+  }
+  .px-\[2\%\] {
+    padding-inline: 2%;
   }
   .px-\[4\%\] {
     padding-inline: 4%;
@@ -1405,13 +1434,6 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-gray-200);
-      }
-    }
-  }
-  .hover\:bg-gray-300 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-gray-300);
       }
     }
   }

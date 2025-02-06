@@ -110,39 +110,40 @@ export const StudentCard = (props: StudentCardProps) => {
       )}
       ref={dragObjectRef}
     >
-      <div
-        className={cnsMerge("StudentCard h-[7em] px-1 py-2 pt-4", isTransparent && 'opacity-50')}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <CardHeader
-          autoHide={!isHovered}
-          onClickDelete={openDeleteStudentModal}
-          onSelectChange={handleSelectChange}
-          selected={student.selected}
-          dragHandleRef={dragHandleRef}
-          kbKey={kbKey}
-        />
-
+      <div className={cnsMerge('border-2 border-transparent rounded-sm', student.selected && 'border-blue-500')}>
         <div
-          className="flex flex-col h-full justify-center"
+          className={cnsMerge("StudentCard h-[7em] px-1 py-2 pt-4 rounded-xs", isTransparent && 'opacity-50')}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          {kbKey && <div className={cnsMerge('flex-1 max-h-6 text-gray-400')}>
-            {kbKey}
-          </div>}
-
-          <HoverInput
-            className="flex-1 max-h-10 w-full"
-            onChange={onNameInputChange}
-            placeholder="Type name here..."
-            value={student.name}
+          <CardHeader
+            autoHide={!isHovered}
+            onClickDelete={openDeleteStudentModal}
+            onSelectChange={handleSelectChange}
+            selected={student.selected}
+            dragHandleRef={dragHandleRef}
           />
 
-          
-          <PointsCounter
-            className="flex-1 w-full max-h-[3em] min-h-[2.6em]"
-            student={student}
-          />
+          <div
+            className="flex flex-col h-full justify-center"
+          >
+            {kbKey && <div className={cnsMerge('flex-1 max-h-6 text-gray-400')}>
+              {kbKey}
+            </div>}
+
+            <HoverInput
+              className="flex-1 max-h-10 w-full"
+              onChange={onNameInputChange}
+              placeholder="Type name here..."
+              value={student.name}
+            />
+
+            
+            <PointsCounter
+              className="flex-1 w-full max-h-[3em] min-h-[2.6em]"
+              student={student}
+            />
+          </div>
         </div>
       </div>
     </div>

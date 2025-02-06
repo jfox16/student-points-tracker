@@ -31,7 +31,7 @@ export const TabOptionsRow = () => {
     updateTabOptions,
   ]);
 
-  const showOnHover = cnsMerge('opacity-60', 'hover:opacity-100')
+  const showOnHover = cnsMerge('opacity-70', 'hover:opacity-100')
 
   return (
     <div
