@@ -1,29 +1,68 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+
 import { useStudentsContext } from "../../../context/StudentsContext"
+
 import { PillButton } from "../../PillButton/PillButton";
-import { useModal } from "../../../context/ModalContext";
+import { Tooltip } from "@mui/material";
 
 export const SelectAllWidget = () => {
   const {
     students,
-    setStudents
+    setStudents,
   } = useStudentsContext();
 
-  const selectAll = useCallback(() => {
-    setStudents(students.map(student => ({
-      ...student,
-      selected: true,
-    })));
+  const allSelected = useMemo(() => {
+    return students.every(student => student.selected);
+  }, [
+    students,
+  ])
+
+  const setSelectedAll = useCallback((selected: boolean) => {
+    setStudents(
+      students.map(student => ({ ...student, selected }))
+    );
   }, [
     students,
     setStudents,
   ]);
 
+  const selectAll = useCallback(() => {
+    setSelectedAll(true);
+  }, [
+    setSelectedAll,
+  ]);
+
+  const deselectAll = useCallback(() => {
+    setSelectedAll(false);
+  }, [
+    setSelectedAll,
+  ]);
+
+  const [onClick, label, tooltip] = useMemo(() => {
+    const onClick = allSelected ? deselectAll : selectAll;
+    const label = allSelected ? 'Deselect All' : 'Select All';
+    const tooltip = allSelected ? 'Deselect all students' : 'Select all students';
+
+    return [
+      onClick,
+      label,
+      tooltip,
+    ]
+  }, [
+    allSelected,
+    selectAll,
+    deselectAll,
+  ])
+
   return (
-    <PillButton
-      onClick={selectAll}
+    <Tooltip
+      title={tooltip}
     >
-      Select All
-    </PillButton>
+      <PillButton
+        onClick={onClick}
+      >
+        {label}
+      </PillButton>
+    </Tooltip>
   )
 }

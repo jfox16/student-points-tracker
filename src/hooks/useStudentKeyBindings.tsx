@@ -54,12 +54,33 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
     (event: KeyboardEvent) => {
       if (!enableKeybinds) return;
 
-      const notTyping = !["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
+      const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
 
-      if (notTyping) {
-        const studentId = keyToIdMap[event.key.toLowerCase()];
+      if (isTyping) return;
+
+      event.preventDefault();
+
+      const kbKey = event.key.toLowerCase();
+
+      if (kbKey === ' ') {
+        // Space -> Increment selected students by 1
+        setStudents(
+          students.map(student => {
+            return student.selected
+              ? { ...student, points: student.points + 1}
+              : student
+          })
+        );
+      }
+      else {
+        const studentId = keyToIdMap[kbKey];
         if (studentId !== undefined) {
-          setStudents(students.map(student => student.id === studentId ? { ...student, points: student.points + 1 } : student));
+          setStudents(
+            students.map(student => {
+              return student.id === studentId
+                ? { ...student, points: student.points + 1 }
+                : student
+            }));
         }
       }
     },

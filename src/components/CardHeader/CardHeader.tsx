@@ -13,7 +13,6 @@ interface CardHeaderProps {
   onSelectChange?: (selected: boolean) => void;
   selected?: boolean;
   dragHandleRef?: React.Ref<HTMLDivElement>;
-  kbKey?: string;
 }
 
 export const CardHeader = (props: CardHeaderProps) => {
@@ -23,7 +22,6 @@ export const CardHeader = (props: CardHeaderProps) => {
     onClickDelete,
     onSelectChange,
     dragHandleRef,
-    kbKey,
   } = props;
 
   // const autoHide = false;
@@ -32,17 +30,10 @@ export const CardHeader = (props: CardHeaderProps) => {
     onSelectChange?.(e.target.checked);
   }
 
-  const isCheckboxHidden: boolean = useMemo(() => {
-    return autoHide && !selected;
-  }, [
-    autoHide,
-    selected,
-  ])
-
   return (
     <div className={cnsMerge('CardHeader', 'background-gray-200')}>
       {(onSelectChange || selected) && (
-        <div className={cnsMerge(isCheckboxHidden && 'hidden')}>
+        <div className={cnsMerge(autoHide && 'hidden')}>
           <Checkbox
             className={cnsMerge(!selected && 'opacity-20')}
             checked={selected}
