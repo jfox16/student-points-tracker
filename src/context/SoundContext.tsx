@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import pointSound from "../assets/audio/del-ding.wav"; // Add more sounds later
+import pointSound from "../assets/audio/ding.wav"; // Add more sounds later
 import { clamp } from "../utils/clamp";
 import { useDebounce } from "../utils/useDebounce";
 import { useAppContext } from "./AppContext";
