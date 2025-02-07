@@ -1,9 +1,9 @@
 
+import { Tooltip } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useCallback, useMemo } from "react";
 
-import { Tooltip } from '@mui/material';
-import { useStudentsContext } from '../../../../context/StudentsContext';
+import { useStudentContext } from '../../../../context/StudentContext';
 import { cnsMerge } from '../../../../utils/cnsMerge';
 
 export const GroupSelectWidget = ({
@@ -12,7 +12,7 @@ export const GroupSelectWidget = ({
   className?: string;
 }) => {
 
-  const { students, setStudents } = useStudentsContext();
+  const { students, updateAllStudents, addPointsToSelectedStudents } = useStudentContext();
 
   const numSelectedStudents = useMemo(() => {
     return students.filter(student => student.selected).length;
@@ -21,30 +21,24 @@ export const GroupSelectWidget = ({
   ])
 
   const deselectAll = useCallback(() => {
-    setStudents(students.map(student => {
-      return student.selected ? { ...student, selected: false } : student;
-    }));
+    updateAllStudents({ selected: false })
   }, [
     students,
-    setStudents
+    updateAllStudents,
   ])
 
   const incrementSelected = useCallback(() => {
-    setStudents(students.map(student => {
-      return student.selected ? { ...student, points: student.points + 1 } : student;
-    }))
+    addPointsToSelectedStudents(1);
   }, [
     students,
-    setStudents,
+    addPointsToSelectedStudents,
   ]);
 
   const decrementSelected = useCallback(() => {
-    setStudents(students.map(student => {
-      return student.selected ? { ...student, points: student.points - 1 } : student;
-    }))
+    addPointsToSelectedStudents(-1);
   }, [
     students,
-    setStudents,
+    addPointsToSelectedStudents,
   ])
 
   return (

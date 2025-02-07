@@ -39,7 +39,7 @@ export const CardHeader = (props: CardHeaderProps) => {
             checked={selected}
             onChange={handleSelectedChange}
             style={{ padding: 0 }}
-            size='medium'
+            size={"large"}
           />
         </div>
       )}

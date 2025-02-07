@@ -1,7 +1,7 @@
 
 import { useMemo } from "react";
 
-import { useStudentsContext } from "../../context/StudentsContext";
+import { useStudentContext } from "../../context/StudentContext";
 import { useTabContext } from "../../context/TabContext";
 
 import { StudentCard } from "../StudentCard/StudentCard";
@@ -12,7 +12,7 @@ import './StudentList.css';
 export const StudentList = () => {
 
   const { activeTab: { tabOptions } } = useTabContext();
-  const { students, } = useStudentsContext();
+  const { students, } = useStudentContext();
 
   const fontSize = useMemo(() => getDynamicFontSize(tabOptions?.columns), [
     tabOptions?.columns,

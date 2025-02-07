@@ -1,8 +1,9 @@
 
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { useStudentsContext } from "../../context/StudentsContext";
+import { useAppContext } from "../../context/AppContext";
+import { useStudentContext } from "../../context/StudentContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
 import { Student } from "../../types/student.type";
 
@@ -14,7 +15,6 @@ import { CardHeader } from '../CardHeader/CardHeader';
 import { PointsCounter } from "./PointsCounter/PointsCounter";
 
 import './StudentCard.css';
-import { useTabContext } from "../../context/TabContext";
 
 interface StudentCardProps {
   student: Student;
@@ -23,10 +23,10 @@ interface StudentCardProps {
 
 export const StudentCard = (props: StudentCardProps) => {
   const { student, index } = props;
-  const {
-    activeTab
-  } = useTabContext();
 
+  const {
+    appOptions,
+  } = useAppContext();
   const {
     deleteStudent,
     updateStudent,
@@ -34,7 +34,7 @@ export const StudentCard = (props: StudentCardProps) => {
     setDragHoverIndex,
     dragHoverIndex,
     keyBindingsMap,
-  } = useStudentsContext();
+  } = useStudentContext();
   
   const { showModal } = useModal();
 
@@ -89,14 +89,13 @@ export const StudentCard = (props: StudentCardProps) => {
   ]);
 
   const kbKey = useMemo(() => {
-    const kbEnabled = activeTab.tabOptions?.enableKeybinds;
-    if (kbEnabled) {
+    if (appOptions.enableKeybinds) {
       const kbKey = keyBindingsMap[student.id];
-      return kbKey ?? ' ';
+      return kbKey ?? ' '; // Empty character to take the same space
     }
     return '';
   }, [
-    activeTab.tabOptions?.enableKeybinds,
+    appOptions.enableKeybinds,
     keyBindingsMap,
     student.id,
   ]);

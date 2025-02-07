@@ -7,6 +7,7 @@ import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 import useDocumentTitle from '../utils/useDocumentTitle';
+import { AppOptions } from '../types/appOptions.type';
 
 interface TabContextValue {
   tabs: Tab[];
@@ -26,6 +27,10 @@ export const DEFAULT_TAB: Tab = {
 
 export const DEFAULT_TAB_OPTIONS: Required<TabOptions> = {
   columns: 8,
+}
+
+export const DEFAULT_APP_OPTIONS: Required<AppOptions> = {
+  enableDingSound: true,
   enableKeybinds: true,
 }
 
