@@ -1,24 +1,21 @@
 import { useCallback } from "react";
-import { useStudentsContext } from "../../../context/StudentsContext"
+import { useStudentContext } from "../../../context/StudentContext"
 import { PillButton } from "../../PillButton/PillButton";
 import { useModal } from "../../../context/ModalContext";
 
 export const ResetAllWidget = () => {
   const {
     students,
-    setStudents
-  } = useStudentsContext();
+    updateAllStudents,
+  } = useStudentContext();
 
   const { showModal } = useModal();
 
   const resetPoints = useCallback(() => {
-    setStudents(students.map(student => ({
-      ...student,
-      points: 0,
-    })));
+    updateAllStudents({ points: 0 });
   }, [
     students,
-    setStudents
+    updateAllStudents
   ]);
 
   const openResetPointsModal = useCallback(() => {

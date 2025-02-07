@@ -8,21 +8,26 @@ import { moveItem } from '../utils/moveItem';
 
 import { useTabContext } from './TabContext';
 
-interface StudentsContextValue {
+interface StudentContextValue {
+  students: Student[];
   addStudent: () => void;
   deleteStudent: (id: StudentId) => void;
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
+  updateAllStudents: (changes: Partial<Student>) => void;
   moveStudent: (fromIndex: number, toIndex: number) => void;
-  students: Student[];
-  setStudents: (students: Student[]) => void;
+  addPointsToStudent: (id: StudentId, points?: number) => void;
+  addPointsToAllStudents: (points?: number) => void;
+  addPointsToSelectedStudents: (points?: number) => void;
+  numSelectedStudents: number;
+
+  keyBindingsMap: Record<StudentId, string>; // Map of student ids to key bindings
   dragHoverIndex: number;
   setDragHoverIndex: (dragHoverIndex: number) => void;
-  keyBindingsMap: Record<StudentId, string>; // Map of student ids to key bindings
 }
 
-const StudentsContext = createContext<StudentsContextValue|undefined>(undefined);
+const StudentContext = createContext<StudentContextValue|undefined>(undefined);
 
-export const StudentsContextProvider = (props: { children: React.ReactNode }) => {
+export const StudentContextProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
   const { activeTab, updateTab } = useTabContext();
   const [ dragHoverIndex, setDragHoverIndex ] = useState(-1);
@@ -35,10 +40,55 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     updateTab
   ]);
 
+  const numSelectedStudents = useMemo(() => {
+    return students.filter(student => student.selected).length;
+  }, [
+    students,
+  ])
+
+  const addPointsToStudent = useCallback((id: StudentId, points: number = 1) => {
+    setStudents(students.map(student => student.id === id
+      ? { ...student, points: student.points + points }
+      : student
+    ));
+  }, [
+    students,
+    setStudents
+  ]);
+
+  const addPointsToAllStudents = useCallback((points: number = 1) => {
+    // If any students are selected, only add points to them.
+    if (numSelectedStudents > 0) {
+      setStudents(students.map(student => student.selected ? ({
+        ...student,
+        points: student.points + points
+      }) : student));
+      return;
+    }
+    setStudents(students.map(student => ({
+      ...student,
+      points: student.points + points
+    })));
+  }, [
+    students,
+    setStudents
+  ]);
+
+  const addPointsToSelectedStudents = useCallback((points: number = 1) => {
+    setStudents(students.map(student => student.selected ? ({
+      ...student,
+      points: student.points + points
+    }) : student));
+  }, [
+    students,
+    setStudents,
+  ])
+
   const { idToKeyMap: keyBindingsMap } = useStudentKeyBindings({
     columns: activeTab.tabOptions?.columns ?? 1,
     students,
-    setStudents,
+    addPointsToStudent,
+    addPointsToAllStudents,
   });
 
   const addStudent = useCallback(() => {
@@ -82,6 +132,13 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     setStudents,
   ]);
 
+  const updateAllStudents = useCallback((changes: Partial<Student>) => {
+    setStudents(students.map(student => ({ ...student, ...changes })));
+  }, [
+    students,
+    setStudents,
+  ])
+
   const moveStudent = useCallback((fromIndex: number, toIndex: number) => {
     if (fromIndex !== toIndex) {
       const newStudents = moveItem(students, fromIndex, toIndex);
@@ -92,41 +149,33 @@ export const StudentsContextProvider = (props: { children: React.ReactNode }) =>
     setStudents,
   ]);
 
-  const value: StudentsContextValue = useMemo(() => {
-    return {
-      students,
-      setStudents,
-      addStudent,
-      deleteStudent,
-      updateStudent,
-      moveStudent,
-      dragHoverIndex,
-      setDragHoverIndex,
-      keyBindingsMap,
-    };
-  }, [
+  const value = {
     students,
-    setStudents,
     addStudent,
     deleteStudent,
     updateStudent,
+    updateAllStudents,
     moveStudent,
+    addPointsToStudent,
+    addPointsToAllStudents,
+    addPointsToSelectedStudents,
+    numSelectedStudents,
     dragHoverIndex,
     setDragHoverIndex,
     keyBindingsMap,
-  ])
+  };
 
   return (
-    <StudentsContext.Provider value={value}>
+    <StudentContext.Provider value={value}>
       {children}
-    </StudentsContext.Provider>
+    </StudentContext.Provider>
   );
 }
 
-export const useStudentsContext = (): StudentsContextValue => {
-  const context = useContext(StudentsContext);
+export const useStudentContext = (): StudentContextValue => {
+  const context = useContext(StudentContext);
   if (context === undefined) {
-    throw new Error('useStudentsContext must be used within an StudentsContextProvider');
+    throw new Error('useStudentContext must be used within an StudentContextProvider');
   }
   return context;
 };

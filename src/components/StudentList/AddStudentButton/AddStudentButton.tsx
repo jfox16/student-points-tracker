@@ -1,9 +1,9 @@
-import { useStudentsContext } from "../../../context/StudentsContext";
+import { useStudentContext } from "../../../context/StudentContext";
 
 import './AddStudentButton.css';
 
 export const AddStudentButton = () => {
-  const { addStudent } = useStudentsContext();
+  const { addStudent } = useStudentContext();
 
   const onClick = () => {
     addStudent();

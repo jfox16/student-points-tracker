@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { useStudentsContext } from "../../../context/StudentsContext"
+import { useStudentContext } from "../../../context/StudentContext"
 
 import { PillButton } from "../../PillButton/PillButton";
 import { Tooltip } from "@mui/material";
@@ -8,35 +8,23 @@ import { Tooltip } from "@mui/material";
 export const SelectAllWidget = () => {
   const {
     students,
-    setStudents,
-  } = useStudentsContext();
-
-  const allSelected = useMemo(() => {
-    return students.every(student => student.selected);
-  }, [
-    students,
-  ])
-
-  const setSelectedAll = useCallback((selected: boolean) => {
-    setStudents(
-      students.map(student => ({ ...student, selected }))
-    );
-  }, [
-    students,
-    setStudents,
-  ]);
+    updateAllStudents,
+    numSelectedStudents,
+  } = useStudentContext();
 
   const selectAll = useCallback(() => {
-    setSelectedAll(true);
+    updateAllStudents({ selected: true });
   }, [
-    setSelectedAll,
+    updateAllStudents,
   ]);
 
   const deselectAll = useCallback(() => {
-    setSelectedAll(false);
+    updateAllStudents({ selected: false });
   }, [
-    setSelectedAll,
+    updateAllStudents,
   ]);
+
+  const allSelected = numSelectedStudents === students.length;
 
   const [onClick, label, tooltip] = useMemo(() => {
     const onClick = allSelected ? deselectAll : selectAll;

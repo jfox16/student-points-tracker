@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 export enum LocalStorageKey {
+  APP_OPTIONS = 'app_options',
   SAVED_TABS = 'saved_tabs',
 }
 

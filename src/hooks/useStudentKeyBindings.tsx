@@ -1,25 +1,24 @@
 import { useEffect, useMemo, useCallback } from "react";
 
-import { Student } from "../types/student.type";
-import { useTabContext } from "../context/TabContext";
+import { Student, StudentId } from "../types/student.type";
+import { useAppContext } from "../context/AppContext";
 
 interface UseStudentKeyBindingsProps {
   columns: number;
   students: Student[];
-  setStudents: (students: Student[]) => void;
+  addPointsToStudent: (id: StudentId, points: number) => void,
+  addPointsToAllStudents: (points: number) => void,
 }
 
 const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   const {
-    activeTab
-  } = useTabContext();
-  const {
     columns,
     students,
-    setStudents,
+    addPointsToStudent,
+    addPointsToAllStudents,
   } = props;
 
-  const enableKeybinds = activeTab.tabOptions?.enableKeybinds;
+  const { appOptions: { enableKeybinds } } = useAppContext();
 
   const numSelectedStudents = useMemo(() => {
     return students.filter(student => student.selected).length;
@@ -52,39 +51,33 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   // Handle key presses
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      if (!enableKeybinds) return;
-
+      const holdingOtherKeys = event.ctrlKey || event.shiftKey || event.altKey;
       const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
 
-      if (isTyping) return;
-
-      event.preventDefault();
+      if (holdingOtherKeys || isTyping) return;
 
       const kbKey = event.key.toLowerCase();
 
       if (kbKey === ' ') {
-        // Space -> Increment selected students by 1
-        setStudents(
-          students.map(student => {
-            return student.selected
-              ? { ...student, points: student.points + 1}
-              : student
-          })
-        );
+        addPointsToAllStudents(1);
+        event.preventDefault();
+        return;
       }
-      else {
-        const studentId = keyToIdMap[kbKey];
-        if (studentId !== undefined) {
-          setStudents(
-            students.map(student => {
-              return student.id === studentId
-                ? { ...student, points: student.points + 1 }
-                : student
-            }));
-        }
+
+      const studentId = keyToIdMap[kbKey];
+
+      if (enableKeybinds && studentId !== undefined) {
+        addPointsToStudent(studentId, 1);
+        event.preventDefault();
+        return;
       }
     },
-    [keyToIdMap, setStudents]
+    [
+      enableKeybinds,
+      keyToIdMap,
+      addPointsToStudent,
+      addPointsToAllStudents,
+    ]
   );
 
   useEffect(() => {

@@ -4,21 +4,21 @@ import { Checkbox, CheckboxProps, FormControlLabel } from "@mui/material"
 
 import { useAppContext } from "../../../context/AppContext";
 
-export const EnableKeybindsToggle = () => {
+export const DingSoundWidget = () => {
 
   const {
     appOptions,
     updateAppOptions,
   } = useAppContext();
 
-  const enableKeybinds = appOptions?.enableKeybinds;
+  const enableDingSound = appOptions.enableDingSound;
 
   const handleChange: NonNullable<CheckboxProps['onChange']> = useCallback((_, checked) => {
     updateAppOptions({
-      enableKeybinds: checked
+      enableDingSound: checked
     })
   }, [
-    updateAppOptions
+    updateAppOptions,
   ]);
 
   return (
@@ -26,8 +26,8 @@ export const EnableKeybindsToggle = () => {
       className='flex items-center'
     >
       <FormControlLabel
-        control={<Checkbox checked={enableKeybinds ?? false} onChange={handleChange} />}
-        label="Keybinds"
+        control={<Checkbox checked={enableDingSound ?? false} onChange={handleChange} />}
+        label="Ding sound"
       />
     </div>
   )

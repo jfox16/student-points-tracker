@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useStudentsContext } from "../../../context/StudentsContext";
+import { useStudentContext } from "../../../context/StudentContext";
 import { Student } from "../../../types/student.type";
 
 import './PointsCounter.css';
 import { NumberInput } from '../../NumberInput/NumberInput';
+import { useSoundContext } from "../../../context/SoundContext";
+import usePrevious from "../../../hooks/usePrevious";
 import { getGradientColor } from '../../../utils/getGradientColor';
 import { cnsMerge } from '../../../utils/cnsMerge';
-import usePrevious from "../../../hooks/usePrevious";
 import { useDebounce } from "../../../utils/useDebounce";
 
 interface PointsCounterProps {
@@ -15,56 +16,62 @@ interface PointsCounterProps {
 }
 
 export const PointsCounter = (props: PointsCounterProps) => {
-  const {
-    className,
-    student,
-  } = props;
+  const { className, student } = props;
 
-  const { updateStudent } = useStudentsContext();
-  const [ recentChange, setRecentChange ] = useState<number|undefined>(undefined);
+  const { play } = useSoundContext();
+  const { updateStudent } = useStudentContext();
+  const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
 
-  useEffect(() => {
-    if (typeof prevPoints !== 'number') {
-      return;
-    }
-    const diff = student.points - prevPoints;
-    setRecentChange((recentChange ?? 0) + diff);
-    resetRecentChangeAfterDelay();
-  }, [
-    prevPoints,
-    student.points
-  ])
+  // updates a random amount of time after points changes. used for animations and sound
+  const [delayedPoints, setDelayedPoints] = useState(student.points);
+  const [isFirstDelayedPointsChange, setIsFirstDelayedPointsChange] = useState(true);
 
-  const resetRecentChangeAfterDelay = useDebounce(() => {
+  useEffect(() => {
+    if (typeof prevPoints !== "number") return;
+
+    const diff = student.points - prevPoints;
+    if (diff === 0) return;
+
+    setRecentChange((recentChange ?? 0) + diff);
+    debouncedResetRecentChange();
+
+    const delay = Math.random() * 120;
+
+    setTimeout(() => {
+      setDelayedPoints(student.points);
+    }, delay);
+  }, [prevPoints, student.points]);
+
+  const debouncedResetRecentChange = useDebounce(() => {
     setRecentChange(undefined);
   }, 2000);
 
-  const updatePoints = useCallback((newPoints: number) => {
-    updateStudent(student.id, { points: newPoints });
+  useEffect(() => {
+    if (isFirstDelayedPointsChange) {
+      setIsFirstDelayedPointsChange(false);
+      return;
+    }
+    play("point", student.points * 0.01);
   }, [
-    student.id,
-    updateStudent
-  ]);
+    delayedPoints
+  ])
+
+  const updatePoints = useCallback(
+    (newPoints: number) => {
+      updateStudent(student.id, { points: newPoints });
+    },
+    [student.id, updateStudent]
+  );
 
   const increment = useCallback(() => {
     updatePoints(student.points + 1);
-  }, [
-    student.points,
-    updatePoints
-  ]);
-
-  // const decrement = useCallback(() => {
-  //   updatePoints(points - 1);
-  // }, [
-  //   points,
-  //   updatePoints
-  // ]);
+  }, [student.points, updatePoints]);
 
   const [clickEnabled, setClickEnabled] = useState(true);
   const enableClickAfterDelay = useDebounce(() => {
     setClickEnabled(true);
-  }, 100)
+  }, 100);
 
   const handleIncrementClick = useCallback(() => {
     // Avoid accidental double click bug
@@ -73,82 +80,60 @@ export const PointsCounter = (props: PointsCounterProps) => {
       setClickEnabled(false);
       enableClickAfterDelay();
     }
-  }, [
-    clickEnabled,
-    setClickEnabled,
-    increment,
-    enableClickAfterDelay,
-  ]);
+  }, [clickEnabled, setClickEnabled, increment, enableClickAfterDelay]);
 
   const dynamicTextColor = useMemo(() => {
     return getDynamicColor(student.points);
-  }, [
-    student.points,
-  ]);
+  }, [student.points]);
 
   const recentChangeString = useMemo(() => {
-    if (!recentChange) return '';
-    const sign = recentChange < 0 ? '' : '+';
+    if (!recentChange) return "";
+    const sign = recentChange < 0 ? "" : "+";
     return `${sign}${recentChange}`;
-  }, [
-    recentChange,
-  ]);
+  }, [recentChange]);
 
   return (
-    <div className={cnsMerge('PointsCounter px-[4%]', className)}>
-
-      {/* <div className="plus-minus flex-1"  onClick={decrement}><span>-</span></div> */}
-
-      <div
-        className={cnsMerge('relative flex-1 bounce h-full')}
-        key={student.points}
-      >
+    <div className={cnsMerge("PointsCounter px-[4%]", className)}>
+      <div className={cnsMerge("relative flex-1 bounce h-full")} key={delayedPoints}>
         <div
           className={cnsMerge(
-            'absolute inset-0 top-[-0.5em]',
-            'flex justify-center',
-            'pointer-events-none',
-            'font-xs text-gray-400'
+            "absolute inset-0 top-[-0.5em]",
+            "flex justify-center",
+            "pointer-events-none",
+            "font-xs text-gray-400"
           )}
         >
           {recentChangeString}
         </div>
         <NumberInput
-          className={cnsMerge("points-input h-full w-full")} 
+          className={cnsMerge("points-input h-full w-full")}
           value={student.points}
           onChange={updatePoints}
           inputProps={{
             style: {
               color: dynamicTextColor,
-              fontSize: '1.2em',
-            }
+              fontSize: "1.2em",
+            },
           }}
         />
       </div>
 
       <div
-        className={cnsMerge('plus-minus flex-1 text-gray-400 hover:text-gray-600')}
+        className={cnsMerge("plus-minus flex-1 text-gray-400 hover:text-gray-600")}
         onClick={handleIncrementClick}
       >
         <span>+</span>
       </div>
-
     </div>
   );
-}
-
+};
 
 const getDynamicColor = (points: number) => {
-  return getGradientColor(
-    points,
-    0,
-    100,
-    [
-      [0, 0, 0],      // Black
-      [0, 160, 0],    // Green
-      [0, 120, 220],  // Blue
-      [180, 0, 220],  // Purple
-      [200, 160, 0],  // Gold
-    ]
-  );
-}
+  return getGradientColor(points, 0, 100, [
+    [0, 0, 0], // Black
+    [0, 160, 0], // Green
+    [0, 120, 220], // Blue
+    [180, 0, 220], // Purple
+    [200, 160, 0], // Gold
+  ]);
+};
