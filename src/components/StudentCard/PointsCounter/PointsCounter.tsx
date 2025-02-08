@@ -20,10 +20,11 @@ import './PointsCounter.css';
 interface PointsCounterProps {
   className?: string;
   student: Student;
+  index: number;
 }
 
 export const PointsCounter = (props: PointsCounterProps) => {
-  const { className, student } = props;
+  const { className, student, index } = props;
 
   const { playSound } = useSoundContext();
   const { updateStudent, addPointsToStudent } = useStudentContext();
@@ -45,10 +46,11 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
     if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
       studentIdsWithDelayedPointsAnimation.delete(student.id);
-      const randomDelay = Math.random() * 80;
+      // const randomDelay = Math.random() * 80;
+      const delay = 5 * index
       setTimeout(() => {
         setAnimationTrigger(student.points);
-      }, randomDelay);
+      }, delay);
     } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
       studentIdsWithNextPointsAnimation.delete(student.id)
       setAnimationTrigger(student.points);

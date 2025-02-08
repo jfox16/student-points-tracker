@@ -30,7 +30,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
   // Debounce to reset active sounds periodically
   const debouncedResetActiveSounds = useDebounce(() => {
     activeSounds = 0;
-  }, 30);
+  }, 20);
 
   useEffect(() => {
     const ctx = new AudioContext();
