@@ -8,7 +8,7 @@ This tool makes tracking student points easy with intuitive keyboard shortcutsâ€
 
 To ensure progress is saved across sessions, the app automatically stores data in local storage, allowing teachers to track points throughout the week.
 
-It's publicly available for him to use, but it's also useful for any teachers, professors, or anyone who needs it. You can try it here: https://jfox16.github.io/student-points-tracker/
+It's available for teachers, professors, or anyone who needs it. You can try it here: https://jfox16.github.io/student-points-tracker/
 
 Tech Stack:
 
