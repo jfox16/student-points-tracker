@@ -45,7 +45,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
     if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
       studentIdsWithDelayedPointsAnimation.delete(student.id);
-      const randomDelay = Math.random() * 160;
+      const randomDelay = Math.random() * 80;
       setTimeout(() => {
         setAnimationTrigger(student.points);
       }, randomDelay);
