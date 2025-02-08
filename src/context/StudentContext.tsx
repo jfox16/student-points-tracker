@@ -1,11 +1,10 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-import useStudentKeyBindings from "../hooks/useStudentKeyBindings";
 import { Student, StudentId } from "../types/student.type";
 import { generateUuid } from "../utils/generateUuid";
 import { moveItem } from "../utils/moveItem";
-
 import { useTabContext } from "./TabContext";
+import useStudentKeyBindings from "../hooks/useStudentKeyBindings";
 
 interface StudentContextValue {
   students: Student[];
@@ -18,34 +17,41 @@ interface StudentContextValue {
   addPointsToAllStudents: (points?: number) => void;
   addPointsToSelectedStudents: (points?: number) => void;
   numSelectedStudents: number;
-
-  keyBindingsMap: Record<StudentId, string>;
   dragHoverIndex: number;
   setDragHoverIndex: (dragHoverIndex: number) => void;
+  keyBindingsMap: Record<StudentId, string>;
 }
 
+/** ✅ Context Setup */
 const StudentContext = createContext<StudentContextValue | undefined>(undefined);
 
-export const studentIdsWithDelayedPointsAnimation = new Set<StudentId>();
+/** ✅ Animation-related Sets */
+const studentIdsWithDelayedPointsAnimation = new Set<StudentId>();
+const studentIdsWithNextPointsAnimation = new Set<StudentId>();
 
 export const StudentContextProvider = ({ children }: { children: React.ReactNode }) => {
+  /** ✅ State & Context */
   const { activeTab, updateTab } = useTabContext();
   const [dragHoverIndex, setDragHoverIndex] = useState(-1);
 
   const students = activeTab.students;
   const setStudents = useCallback(
-    (students: Student[]) => {
-      updateTab(activeTab.id, { students });
-    },
+    (students: Student[]) => updateTab(activeTab.id, { students }),
     [activeTab.id, updateTab]
   );
 
-const numSelectedStudents = useMemo(() => {
-    return students.filter((student) => student.selected).length;
-  }, [students]);
+  /** ✅ Memoized Value */
+  const numSelectedStudents = useMemo(
+    () => students.filter((student) => student.selected).length,
+    [students]
+  );
 
+  /** ✅ Student Actions */
+
+  /** 🎯 Add Points to a Single Student (Triggers Animation Next Update) */
   const addPointsToStudent = useCallback(
     (id: StudentId, points: number = 1) => {
+      studentIdsWithNextPointsAnimation.add(id);
       setStudents(
         students.map((student) =>
           student.id === id ? { ...student, points: student.points + points } : student
@@ -53,10 +59,13 @@ const numSelectedStudents = useMemo(() => {
       );
     },
     [students, setStudents]
-  );const addPointsToAllStudents = useCallback(
+  );
+
+  /** 🎯 Add Points to All Students (Triggers Delayed Animation) */
+  const addPointsToAllStudents = useCallback(
     (points: number = 1) => {
       const affectedStudents = new Set<StudentId>();
-  
+
       if (numSelectedStudents > 0) {
         students.forEach((student) => {
           if (student.selected) affectedStudents.add(student.id);
@@ -64,9 +73,9 @@ const numSelectedStudents = useMemo(() => {
       } else {
         students.forEach((student) => affectedStudents.add(student.id));
       }
-  
-      affectedStudents.forEach(id => studentIdsWithDelayedPointsAnimation.add(id));
-  
+
+      affectedStudents.forEach((id) => studentIdsWithDelayedPointsAnimation.add(id));
+
       setStudents(
         students.map((student) =>
           affectedStudents.has(student.id)
@@ -77,17 +86,18 @@ const numSelectedStudents = useMemo(() => {
     },
     [students, setStudents, numSelectedStudents]
   );
-  
+
+  /** 🎯 Add Points to Selected Students (Triggers Delayed Animation) */
   const addPointsToSelectedStudents = useCallback(
     (points: number = 1) => {
       const affectedStudents = new Set<StudentId>();
-  
+
       students.forEach((student) => {
         if (student.selected) affectedStudents.add(student.id);
       });
-  
-      affectedStudents.forEach(id => studentIdsWithDelayedPointsAnimation.add(id));
-  
+
+      affectedStudents.forEach((id) => studentIdsWithDelayedPointsAnimation.add(id));
+
       setStudents(
         students.map((student) =>
           affectedStudents.has(student.id)
@@ -99,33 +109,47 @@ const numSelectedStudents = useMemo(() => {
     [students, setStudents]
   );
 
-  const value = {
-    students,
-    addStudent: () => {
-      const id = generateUuid();
-      const newStudent: Student = {
-        id,
-        points: 0,
-        name: "",
-      };
-      setStudents([...students, newStudent]);
-    },
-    deleteStudent: (id: StudentId) => {
-      setStudents(students.filter((student) => student.id !== id));
-    },
-    updateStudent: (id: StudentId, changes: Partial<Student>) => {
+  /** 🎯 Manage Student List */
+  const addStudent = useCallback(() => {
+    const id = generateUuid();
+    const newStudent: Student = { id, points: 0, name: "" };
+    setStudents([...students, newStudent]);
+  }, [students, setStudents]);
+
+  const deleteStudent = useCallback(
+    (id: StudentId) => setStudents(students.filter((student) => student.id !== id)),
+    [students, setStudents]
+  );
+
+  const updateStudent = useCallback(
+    (id: StudentId, changes: Partial<Student>) => {
       setStudents(
         students.map((student) => (student.id === id ? { ...student, ...changes } : student))
       );
     },
-    updateAllStudents: (changes: Partial<Student>) => {
-      setStudents(students.map((student) => ({ ...student, ...changes })));
+    [students, setStudents]
+  );
+
+  const updateAllStudents = useCallback(
+    (changes: Partial<Student>) => setStudents(students.map((student) => ({ ...student, ...changes }))),
+    [students, setStudents]
+  );
+
+  const moveStudent = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      if (fromIndex !== toIndex) setStudents(moveItem(students, fromIndex, toIndex));
     },
-    moveStudent: (fromIndex: number, toIndex: number) => {
-      if (fromIndex !== toIndex) {
-        setStudents(moveItem(students, fromIndex, toIndex));
-      }
-    },
+    [students, setStudents]
+  );
+
+  /** ✅ Context Value */
+  const value = {
+    students,
+    addStudent,
+    deleteStudent,
+    updateStudent,
+    updateAllStudents,
+    moveStudent,
     addPointsToStudent,
     addPointsToAllStudents,
     addPointsToSelectedStudents,
@@ -143,6 +167,7 @@ const numSelectedStudents = useMemo(() => {
   return <StudentContext.Provider value={value}>{children}</StudentContext.Provider>;
 };
 
+/** ✅ Hook for Consuming Context */
 export const useStudentContext = (): StudentContextValue => {
   const context = useContext(StudentContext);
   if (!context) {
@@ -150,3 +175,6 @@ export const useStudentContext = (): StudentContextValue => {
   }
   return context;
 };
+
+/** ✅ Export Animation Sets */
+export { studentIdsWithDelayedPointsAnimation, studentIdsWithNextPointsAnimation };

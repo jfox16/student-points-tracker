@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSoundContext } from "../../../context/SoundContext";
 import {
   studentIdsWithDelayedPointsAnimation,
+  studentIdsWithNextPointsAnimation,
   useStudentContext
 } from "../../../context/StudentContext";
 import usePrevious from "../../../hooks/usePrevious";
@@ -25,7 +26,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
   const { className, student } = props;
 
   const { playSound } = useSoundContext();
-  const { updateStudent } = useStudentContext();
+  const { updateStudent, addPointsToStudent } = useStudentContext();
   const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
 
@@ -48,7 +49,8 @@ export const PointsCounter = (props: PointsCounterProps) => {
       setTimeout(() => {
         setAnimationTrigger(student.points);
       }, randomDelay);
-    } else {
+    } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
+      studentIdsWithNextPointsAnimation.delete(student.id)
       setAnimationTrigger(student.points);
     }
   }, [prevPoints, student.points]);
@@ -65,16 +67,12 @@ export const PointsCounter = (props: PointsCounterProps) => {
     playSound("point", student.points * 0.01);
   }, [animationTrigger]);
 
-  const updatePoints = useCallback(
-    (newPoints: number) => {
-      updateStudent(student.id, { points: newPoints });
-    },
-    [student.id, updateStudent]
-  );
-
-  const increment = useCallback(() => {
-    updatePoints(student.points + 1);
-  }, [student.points, updatePoints]);
+  const handleInputChange = useCallback((points: number) => {
+    updateStudent(student.id, { points });
+  }, [
+    student,
+    updateStudent,
+  ])
 
   const [clickEnabled, setClickEnabled] = useState(true);
   const enableClickAfterDelay = useDebounce(() => {
@@ -84,11 +82,16 @@ export const PointsCounter = (props: PointsCounterProps) => {
   const handleIncrementClick = useCallback(() => {
     // Avoid accidental double click bug
     if (clickEnabled) {
-      increment();
+      addPointsToStudent(student.id, 1);
       setClickEnabled(false);
       enableClickAfterDelay();
     }
-  }, [clickEnabled, setClickEnabled, increment, enableClickAfterDelay]);
+  }, [
+    clickEnabled,
+    setClickEnabled,
+    addPointsToStudent,
+    enableClickAfterDelay,
+  ]);
 
   const dynamicTextColor = useMemo(() => {
     return getDynamicColor(student.points);
@@ -116,11 +119,11 @@ export const PointsCounter = (props: PointsCounterProps) => {
         <NumberInput
           className={cnsMerge("points-input h-full w-full")}
           value={student.points}
-          onChange={updatePoints}
+          onChange={handleInputChange}
           inputProps={{
             style: {
               color: dynamicTextColor,
-              fontSize: "1.2em",
+              fontSize: "1.5em",
             },
           }}
         />
