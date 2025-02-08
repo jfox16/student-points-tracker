@@ -83,7 +83,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     gainNode.gain.value = 1;
 
     // Apply pitch variation
-    source.playbackRate.value = 1.1 + clamp(pitch, 0, 1) * 0.1;
+    source.playbackRate.value = 1.1 + clamp(pitch, 0, 10) * 0.1;
 
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
