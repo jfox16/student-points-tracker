@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import pointSound from "../assets/audio/ding.wav"; // Add more sounds later
+import pointSound from "../assets/audio/ding5.wav"; // Add more sounds later
 import { clamp } from "../utils/clamp";
 import { useDebounce } from "../utils/useDebounce";
+
 import { useAppContext } from "./AppContext";
 
 type SoundName = "point";
@@ -16,6 +17,7 @@ interface SoundContextType {
 }
 
 const MAX_CONCURRENT_SOUNDS = 1; // Dynamically adjusted for performance
+const CONCURRENT_WINDOW_MS = 28;
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType>({
@@ -30,7 +32,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
   // Debounce to reset active sounds periodically
   const debouncedResetActiveSounds = useDebounce(() => {
     activeSounds = 0;
-  }, 20);
+  }, CONCURRENT_WINDOW_MS);
 
   useEffect(() => {
     const ctx = new AudioContext();
@@ -81,7 +83,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     gainNode.gain.value = 1;
 
     // Apply pitch variation
-    source.playbackRate.value = 0.95 + clamp(pitch, 0, 1) * 0.1;
+    source.playbackRate.value = 1.1 + clamp(pitch, 0, 1) * 0.1;
 
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
