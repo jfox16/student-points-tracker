@@ -12,14 +12,14 @@ const sounds: Record<SoundName, string> = {
 } as const;
 
 interface SoundContextType {
-  play: (sound: SoundName, pitch?: number) => void;
+  playSound: (sound: SoundName, pitch?: number) => void;
 }
 
 const MAX_CONCURRENT_SOUNDS = 1; // Dynamically adjusted for performance
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType>({
-  play: () => {},
+  playSound: () => {},
 });
 
 export const SoundContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -55,7 +55,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     };
   }, []);
 
-  const play = async (sound: SoundName, pitch: number = 0.5) => {
+  const playSound = async (sound: SoundName, pitch: number = 0.5) => {
     if (!appOptions.enableDingSound) return;
     if (!audioContext || !buffers[sound]) return;
     if (activeSounds >= MAX_CONCURRENT_SOUNDS) return; // Prevents too many concurrent sounds
@@ -94,7 +94,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     };
   };
 
-  return <SoundContext.Provider value={{ play }}>{children}</SoundContext.Provider>;
+  return <SoundContext.Provider value={{ playSound }}>{children}</SoundContext.Provider>;
 };
 
 export const useSoundContext = () => useContext(SoundContext);
