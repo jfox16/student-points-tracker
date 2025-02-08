@@ -141,6 +141,7 @@ export const StudentCard = (props: StudentCardProps) => {
             <PointsCounter
               className="flex-1 w-full max-h-[3em] min-h-[2.6em]"
               student={student}
+              index={index}
             />
           </div>
         </div>

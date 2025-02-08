@@ -1,31 +1,39 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useStudentContext } from "../../../context/StudentContext";
-import { Student } from "../../../types/student.type";
 
-import './PointsCounter.css';
-import { NumberInput } from '../../NumberInput/NumberInput';
+
 import { useSoundContext } from "../../../context/SoundContext";
+import {
+  studentIdsWithDelayedPointsAnimation,
+  studentIdsWithNextPointsAnimation,
+  useStudentContext
+} from "../../../context/StudentContext";
 import usePrevious from "../../../hooks/usePrevious";
+import { Student } from "../../../types/student.type";
 import { getGradientColor } from '../../../utils/getGradientColor';
 import { cnsMerge } from '../../../utils/cnsMerge';
 import { useDebounce } from "../../../utils/useDebounce";
 
+import { NumberInput } from '../../NumberInput/NumberInput';
+
+import './PointsCounter.css';
+
 interface PointsCounterProps {
   className?: string;
   student: Student;
+  index: number;
 }
 
 export const PointsCounter = (props: PointsCounterProps) => {
-  const { className, student } = props;
+  const { className, student, index } = props;
 
-  const { play } = useSoundContext();
-  const { updateStudent } = useStudentContext();
+  const { playSound } = useSoundContext();
+  const { updateStudent, addPointsToStudent } = useStudentContext();
   const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
 
-  // updates a random amount of time after points changes. used for animations and sound
-  const [delayedPoints, setDelayedPoints] = useState(student.points);
-  const [isFirstDelayedPointsChange, setIsFirstDelayedPointsChange] = useState(true);
+  // ✅ Replaces `delayedPoints` with `animationTrigger`
+  const [animationTrigger, setAnimationTrigger] = useState(student.points);
+  const [isFirstAnimation, setIsFirstAnimation] = useState(true);
 
   useEffect(() => {
     if (typeof prevPoints !== "number") return;
@@ -36,11 +44,17 @@ export const PointsCounter = (props: PointsCounterProps) => {
     setRecentChange((recentChange ?? 0) + diff);
     debouncedResetRecentChange();
 
-    const delay = Math.random() * 120;
-
-    setTimeout(() => {
-      setDelayedPoints(student.points);
-    }, delay);
+    if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
+      studentIdsWithDelayedPointsAnimation.delete(student.id);
+      // const randomDelay = Math.random() * 80;
+      const delay = 8 * index
+      setTimeout(() => {
+        setAnimationTrigger(student.points);
+      }, delay);
+    } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
+      studentIdsWithNextPointsAnimation.delete(student.id)
+      setAnimationTrigger(student.points);
+    }
   }, [prevPoints, student.points]);
 
   const debouncedResetRecentChange = useDebounce(() => {
@@ -48,25 +62,19 @@ export const PointsCounter = (props: PointsCounterProps) => {
   }, 2000);
 
   useEffect(() => {
-    if (isFirstDelayedPointsChange) {
-      setIsFirstDelayedPointsChange(false);
+    if (isFirstAnimation) {
+      setIsFirstAnimation(false);
       return;
     }
-    play("point", student.points * 0.01);
+    playSound("point", student.points * 0.01);
+  }, [animationTrigger]);
+
+  const handleInputChange = useCallback((points: number) => {
+    updateStudent(student.id, { points });
   }, [
-    delayedPoints
+    student,
+    updateStudent,
   ])
-
-  const updatePoints = useCallback(
-    (newPoints: number) => {
-      updateStudent(student.id, { points: newPoints });
-    },
-    [student.id, updateStudent]
-  );
-
-  const increment = useCallback(() => {
-    updatePoints(student.points + 1);
-  }, [student.points, updatePoints]);
 
   const [clickEnabled, setClickEnabled] = useState(true);
   const enableClickAfterDelay = useDebounce(() => {
@@ -76,11 +84,16 @@ export const PointsCounter = (props: PointsCounterProps) => {
   const handleIncrementClick = useCallback(() => {
     // Avoid accidental double click bug
     if (clickEnabled) {
-      increment();
+      addPointsToStudent(student.id, 1);
       setClickEnabled(false);
       enableClickAfterDelay();
     }
-  }, [clickEnabled, setClickEnabled, increment, enableClickAfterDelay]);
+  }, [
+    clickEnabled,
+    setClickEnabled,
+    addPointsToStudent,
+    enableClickAfterDelay,
+  ]);
 
   const dynamicTextColor = useMemo(() => {
     return getDynamicColor(student.points);
@@ -94,7 +107,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
   return (
     <div className={cnsMerge("PointsCounter px-[4%]", className)}>
-      <div className={cnsMerge("relative flex-1 bounce h-full")} key={delayedPoints}>
+      <div className={cnsMerge("relative flex-1 bounce h-full")} key={animationTrigger}>
         <div
           className={cnsMerge(
             "absolute inset-0 top-[-0.5em]",
@@ -108,11 +121,11 @@ export const PointsCounter = (props: PointsCounterProps) => {
         <NumberInput
           className={cnsMerge("points-input h-full w-full")}
           value={student.points}
-          onChange={updatePoints}
+          onChange={handleInputChange}
           inputProps={{
             style: {
               color: dynamicTextColor,
-              fontSize: "1.2em",
+              fontSize: "1.5em",
             },
           }}
         />

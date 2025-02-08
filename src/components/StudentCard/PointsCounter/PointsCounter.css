@@ -39,9 +39,5 @@
 }
 
 .bounce {
-  animation: pop 0.06s ease-out;
-}
-
-.fade {
-
+  animation: pop 0.08s ease-out;
 }

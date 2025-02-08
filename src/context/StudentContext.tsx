@@ -1,12 +1,10 @@
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-
-import useStudentKeyBindings from '../hooks/useStudentKeyBindings';
-import { Student, StudentId } from '../types/student.type';
-import { generateUuid } from '../utils/generateUuid';
-import { moveItem } from '../utils/moveItem';
-
-import { useTabContext } from './TabContext';
+import { Student, StudentId } from "../types/student.type";
+import { generateUuid } from "../utils/generateUuid";
+import { moveItem } from "../utils/moveItem";
+import { useTabContext } from "./TabContext";
+import useStudentKeyBindings from "../hooks/useStudentKeyBindings";
 
 interface StudentContextValue {
   students: Student[];
@@ -19,136 +17,132 @@ interface StudentContextValue {
   addPointsToAllStudents: (points?: number) => void;
   addPointsToSelectedStudents: (points?: number) => void;
   numSelectedStudents: number;
-
-  keyBindingsMap: Record<StudentId, string>; // Map of student ids to key bindings
   dragHoverIndex: number;
   setDragHoverIndex: (dragHoverIndex: number) => void;
+  keyBindingsMap: Record<StudentId, string>;
 }
 
-const StudentContext = createContext<StudentContextValue|undefined>(undefined);
+/** ✅ Context Setup */
+const StudentContext = createContext<StudentContextValue | undefined>(undefined);
 
-export const StudentContextProvider = (props: { children: React.ReactNode }) => {
-  const { children } = props;
+/** ✅ Animation-related Sets */
+const studentIdsWithDelayedPointsAnimation = new Set<StudentId>();
+const studentIdsWithNextPointsAnimation = new Set<StudentId>();
+
+export const StudentContextProvider = ({ children }: { children: React.ReactNode }) => {
+  /** ✅ State & Context */
   const { activeTab, updateTab } = useTabContext();
-  const [ dragHoverIndex, setDragHoverIndex ] = useState(-1);
+  const [dragHoverIndex, setDragHoverIndex] = useState(-1);
 
   const students = activeTab.students;
-  const setStudents = useCallback((students: Student[]) => {
-    updateTab(activeTab.id, { students });
-  }, [
-    activeTab.id,
-    updateTab
-  ]);
+  const setStudents = useCallback(
+    (students: Student[]) => updateTab(activeTab.id, { students }),
+    [activeTab.id, updateTab]
+  );
 
-  const numSelectedStudents = useMemo(() => {
-    return students.filter(student => student.selected).length;
-  }, [
-    students,
-  ])
+  /** ✅ Memoized Value */
+  const numSelectedStudents = useMemo(
+    () => students.filter((student) => student.selected).length,
+    [students]
+  );
 
-  const addPointsToStudent = useCallback((id: StudentId, points: number = 1) => {
-    setStudents(students.map(student => student.id === id
-      ? { ...student, points: student.points + points }
-      : student
-    ));
-  }, [
-    students,
-    setStudents
-  ]);
+  /** ✅ Student Actions */
 
-  const addPointsToAllStudents = useCallback((points: number = 1) => {
-    // If any students are selected, only add points to them.
-    if (numSelectedStudents > 0) {
-      setStudents(students.map(student => student.selected ? ({
-        ...student,
-        points: student.points + points
-      }) : student));
-      return;
-    }
-    setStudents(students.map(student => ({
-      ...student,
-      points: student.points + points
-    })));
-  }, [
-    students,
-    setStudents
-  ]);
+  /** 🎯 Add Points to a Single Student (Triggers Animation Next Update) */
+  const addPointsToStudent = useCallback(
+    (id: StudentId, points: number = 1) => {
+      studentIdsWithNextPointsAnimation.add(id);
+      setStudents(
+        students.map((student) =>
+          student.id === id ? { ...student, points: student.points + points } : student
+        )
+      );
+    },
+    [students, setStudents]
+  );
 
-  const addPointsToSelectedStudents = useCallback((points: number = 1) => {
-    setStudents(students.map(student => student.selected ? ({
-      ...student,
-      points: student.points + points
-    }) : student));
-  }, [
-    students,
-    setStudents,
-  ])
+  /** 🎯 Add Points to All Students (Triggers Delayed Animation) */
+  const addPointsToAllStudents = useCallback(
+    (points: number = 1) => {
+      const affectedStudents = new Set<StudentId>();
 
-  const { idToKeyMap: keyBindingsMap } = useStudentKeyBindings({
-    columns: activeTab.tabOptions?.columns ?? 1,
-    students,
-    addPointsToStudent,
-    addPointsToAllStudents,
-  });
+      if (numSelectedStudents > 0) {
+        students.forEach((student) => {
+          if (student.selected) affectedStudents.add(student.id);
+        });
+      } else {
+        students.forEach((student) => affectedStudents.add(student.id));
+      }
 
+      affectedStudents.forEach((id) => studentIdsWithDelayedPointsAnimation.add(id));
+
+      setStudents(
+        students.map((student) =>
+          affectedStudents.has(student.id)
+            ? { ...student, points: student.points + points }
+            : student
+        )
+      );
+    },
+    [students, setStudents, numSelectedStudents]
+  );
+
+  /** 🎯 Add Points to Selected Students (Triggers Delayed Animation) */
+  const addPointsToSelectedStudents = useCallback(
+    (points: number = 1) => {
+      const affectedStudents = new Set<StudentId>();
+
+      students.forEach((student) => {
+        if (student.selected) affectedStudents.add(student.id);
+      });
+
+      affectedStudents.forEach((id) => studentIdsWithDelayedPointsAnimation.add(id));
+
+      setStudents(
+        students.map((student) =>
+          affectedStudents.has(student.id)
+            ? { ...student, points: student.points + points }
+            : student
+        )
+      );
+    },
+    [students, setStudents]
+  );
+
+  /** 🎯 Manage Student List */
   const addStudent = useCallback(() => {
     const id = generateUuid();
-    const newStudent: Student = {
-      id,
-      points: 0,
-      name: ''
-    };
-    const students = [
-      ...activeTab.students ?? [],
-      newStudent,
-    ];
+    const newStudent: Student = { id, points: 0, name: "" };
+    setStudents([...students, newStudent]);
+  }, [students, setStudents]);
 
-    updateTab(activeTab.id, {
-      students
-    });
-  }, [
-    activeTab.id,
-    activeTab.students,
-    updateTab,
-  ])
+  const deleteStudent = useCallback(
+    (id: StudentId) => setStudents(students.filter((student) => student.id !== id)),
+    [students, setStudents]
+  );
 
-  const deleteStudent = useCallback((id: StudentId) => {
-    const newStudents = activeTab.students.filter(student => {
-      return student.id !== id;
-    });
-    setStudents(newStudents);
-  }, [
-    activeTab.students,
-    setStudents,
-  ])
+  const updateStudent = useCallback(
+    (id: StudentId, changes: Partial<Student>) => {
+      setStudents(
+        students.map((student) => (student.id === id ? { ...student, ...changes } : student))
+      );
+    },
+    [students, setStudents]
+  );
 
-  const updateStudent = useCallback((id: StudentId, changes: Partial<Student>) => {
-    const newStudents = activeTab.students.map(student => {
-      return student.id === id ? { ...student, ...changes } : student
-    });
-    setStudents(newStudents);
-  }, [
-    activeTab.students,
-    setStudents,
-  ]);
+  const updateAllStudents = useCallback(
+    (changes: Partial<Student>) => setStudents(students.map((student) => ({ ...student, ...changes }))),
+    [students, setStudents]
+  );
 
-  const updateAllStudents = useCallback((changes: Partial<Student>) => {
-    setStudents(students.map(student => ({ ...student, ...changes })));
-  }, [
-    students,
-    setStudents,
-  ])
+  const moveStudent = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      if (fromIndex !== toIndex) setStudents(moveItem(students, fromIndex, toIndex));
+    },
+    [students, setStudents]
+  );
 
-  const moveStudent = useCallback((fromIndex: number, toIndex: number) => {
-    if (fromIndex !== toIndex) {
-      const newStudents = moveItem(students, fromIndex, toIndex);
-      setStudents(newStudents);
-    }
-  }, [
-    students,
-    setStudents,
-  ]);
-
+  /** ✅ Context Value */
   const value = {
     students,
     addStudent,
@@ -162,20 +156,25 @@ export const StudentContextProvider = (props: { children: React.ReactNode }) => 
     numSelectedStudents,
     dragHoverIndex,
     setDragHoverIndex,
-    keyBindingsMap,
+    keyBindingsMap: useStudentKeyBindings({
+      columns: activeTab.tabOptions?.columns ?? 1,
+      students,
+      addPointsToStudent,
+      addPointsToAllStudents,
+    }).idToKeyMap,
   };
 
-  return (
-    <StudentContext.Provider value={value}>
-      {children}
-    </StudentContext.Provider>
-  );
-}
+  return <StudentContext.Provider value={value}>{children}</StudentContext.Provider>;
+};
 
+/** ✅ Hook for Consuming Context */
 export const useStudentContext = (): StudentContextValue => {
   const context = useContext(StudentContext);
-  if (context === undefined) {
-    throw new Error('useStudentContext must be used within an StudentContextProvider');
+  if (!context) {
+    throw new Error("useStudentContext must be used within a StudentContextProvider");
   }
   return context;
 };
+
+/** ✅ Export Animation Sets */
+export { studentIdsWithDelayedPointsAnimation, studentIdsWithNextPointsAnimation };

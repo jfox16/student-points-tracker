@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import pointSound from "../assets/audio/ding.wav"; // Add more sounds later
+import pointSound from "../assets/audio/ding5.wav"; // Add more sounds later
 import { clamp } from "../utils/clamp";
 import { useDebounce } from "../utils/useDebounce";
+
 import { useAppContext } from "./AppContext";
 
 type SoundName = "point";
@@ -12,14 +13,15 @@ const sounds: Record<SoundName, string> = {
 } as const;
 
 interface SoundContextType {
-  play: (sound: SoundName, pitch?: number) => void;
+  playSound: (sound: SoundName, pitch?: number) => void;
 }
 
 const MAX_CONCURRENT_SOUNDS = 1; // Dynamically adjusted for performance
+const CONCURRENT_WINDOW_MS = 28;
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType>({
-  play: () => {},
+  playSound: () => {},
 });
 
 export const SoundContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -30,7 +32,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
   // Debounce to reset active sounds periodically
   const debouncedResetActiveSounds = useDebounce(() => {
     activeSounds = 0;
-  }, 30);
+  }, CONCURRENT_WINDOW_MS);
 
   useEffect(() => {
     const ctx = new AudioContext();
@@ -55,7 +57,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     };
   }, []);
 
-  const play = async (sound: SoundName, pitch: number = 0.5) => {
+  const playSound = async (sound: SoundName, pitch: number = 0.5) => {
     if (!appOptions.enableDingSound) return;
     if (!audioContext || !buffers[sound]) return;
     if (activeSounds >= MAX_CONCURRENT_SOUNDS) return; // Prevents too many concurrent sounds
@@ -81,7 +83,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     gainNode.gain.value = 1;
 
     // Apply pitch variation
-    source.playbackRate.value = 0.95 + clamp(pitch, 0, 1) * 0.1;
+    source.playbackRate.value = 1.1 + clamp(pitch, 0, 1) * 0.1;
 
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
@@ -94,7 +96,7 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
     };
   };
 
-  return <SoundContext.Provider value={{ play }}>{children}</SoundContext.Provider>;
+  return <SoundContext.Provider value={{ playSound }}>{children}</SoundContext.Provider>;
 };
 
 export const useSoundContext = () => useContext(SoundContext);
