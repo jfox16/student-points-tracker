@@ -17,7 +17,7 @@ interface SoundContextType {
 }
 
 const MAX_CONCURRENT_SOUNDS = 1; // Dynamically adjusted for performance
-const CONCURRENT_WINDOW_MS = 28;
+const CONCURRENT_WINDOW_MS = 36;
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType>({
