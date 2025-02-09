@@ -23,7 +23,7 @@ interface SoundContextType {
 }
 
 const MAX_CONCURRENT_SOUNDS = 1;
-const CONCURRENT_WINDOW_MS = 36;
+const CONCURRENT_WINDOW_MS = 24;
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
