@@ -22,8 +22,8 @@ interface SoundContextType {
   playPointSound: (points?: number) => void;
 }
 
-const MAX_CONCURRENT_SOUNDS = 1;
-const CONCURRENT_WINDOW_MS = 24;
+const MAX_CONCURRENT_SOUNDS = 2;
+const CONCURRENT_WINDOW_MS = 16;
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
