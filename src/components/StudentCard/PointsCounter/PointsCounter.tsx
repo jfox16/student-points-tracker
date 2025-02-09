@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-
 import { useSoundContext } from "../../../context/SoundContext";
 import {
   studentIdsWithDelayedPointsAnimation,
@@ -26,8 +25,8 @@ interface PointsCounterProps {
 export const PointsCounter = (props: PointsCounterProps) => {
   const { className, student, index } = props;
 
-  const { playSound } = useSoundContext();
   const { updateStudent, addPointsToStudent } = useStudentContext();
+  const { playPointSound } = useSoundContext();
   const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
 
@@ -66,7 +65,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
       setIsFirstAnimation(false);
       return;
     }
-    playSound("point", student.points * 0.01);
+    playPointSound(student.points);
   }, [animationTrigger]);
 
   const handleInputChange = useCallback((points: number) => {

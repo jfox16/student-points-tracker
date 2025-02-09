@@ -7,9 +7,9 @@ import { cnsMerge } from "../../utils/cnsMerge";
 import { NumberInput } from "../NumberInput/NumberInput";
 import { GroupSelectWidget } from "./Widgets/GroupSelectWidget/GroupSelectWidget";
 import { EnableKeybindsToggle } from "./Widgets/EnableKeybindsToggle";
-import { SelectAllWidget } from "./Widgets/SelectAllWidget";
+import { PointSoundWidget } from "./Widgets/PointSoundWidget";
 import { ResetAllWidget } from "./Widgets/ResetAllWidget";
-import { DingSoundWidget } from "./Widgets/DingSoundWidget";
+import { SelectAllWidget } from "./Widgets/SelectAllWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -71,7 +71,7 @@ export const TabOptionsRow = () => {
         </div>
 
         <div className={showOnHover}>
-          <DingSoundWidget />
+          <PointSoundWidget />
         </div>
       </div>
     </div>
