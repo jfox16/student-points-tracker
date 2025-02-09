@@ -1,11 +1,8 @@
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-import { Tab, TabId } from '../types/tab.type';
 import { AppOptions } from '../types/appOptions.type';
-import { TabOptions } from '../types/tabOptions.type';
 
-import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 
@@ -15,8 +12,8 @@ interface AppContextValue {
 }
 
 export const DEFAULT_APP_OPTIONS: Required<AppOptions> = {
-  enableDingSound: true,
   enableKeybinds: true,
+  pointSound: 'pop',
 }
 
 const AppContext = createContext<AppContextValue|undefined>(undefined);

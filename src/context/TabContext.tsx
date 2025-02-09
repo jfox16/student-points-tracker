@@ -29,11 +29,6 @@ export const DEFAULT_TAB_OPTIONS: Required<TabOptions> = {
   columns: 8,
 }
 
-export const DEFAULT_APP_OPTIONS: Required<AppOptions> = {
-  enableDingSound: true,
-  enableKeybinds: true,
-}
-
 export const generateStudents = (n: number = 30) => {
   const students = Array.from({ length: n }, (_, i) => ({
     id: '',
