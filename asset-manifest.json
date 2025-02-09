@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/student-points-tracker/static/css/main.a5660283.css",
-    "main.js": "/student-points-tracker/static/js/main.210db7ba.js",
+    "main.js": "/student-points-tracker/static/js/main.29739fed.js",
     "static/js/453.db7e1ce4.chunk.js": "/student-points-tracker/static/js/453.db7e1ce4.chunk.js",
     "static/media/trophy-icon-no-bg.png": "/student-points-tracker/static/media/trophy-icon-no-bg.34c2a6d5d5ad7d32a5a2.png",
     "static/media/ding.wav": "/student-points-tracker/static/media/ding.2d0429a1f12eca795a71.wav",
     "static/media/bubble.wav": "/student-points-tracker/static/media/bubble.22ca621de0bd8eae6b0d.wav",
     "index.html": "/student-points-tracker/index.html",
     "main.a5660283.css.map": "/student-points-tracker/static/css/main.a5660283.css.map",
-    "main.210db7ba.js.map": "/student-points-tracker/static/js/main.210db7ba.js.map",
+    "main.29739fed.js.map": "/student-points-tracker/static/js/main.29739fed.js.map",
     "453.db7e1ce4.chunk.js.map": "/student-points-tracker/static/js/453.db7e1ce4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a5660283.css",
-    "static/js/main.210db7ba.js"
+    "static/js/main.29739fed.js"
   ]
 }
