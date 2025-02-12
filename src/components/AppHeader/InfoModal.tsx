@@ -16,12 +16,12 @@ export const InfoModal = () => {
         <p className="flex items-center gap-1">
           <GitHubIcon fontSize="small" />
           <a
-            className="text-blue-500"
+            className="text-blue-600"
             href="https://github.com/jfox16/student-points-tracker"
             target="_blank"
             rel="noopener noreferrer"
           >
-            student-points-tracker
+            jfox16/student-points-tracker
           </a>
         </p>
         <p><strong>Version:</strong> 1.0.0</p>
@@ -37,11 +37,15 @@ export const InfoModal = () => {
         </ul>
 
         <hr className="my-2" />
+
+        <p><strong>Autosave:</strong> Your data is automatically saved to local storage on your device.</p>
+
+        <hr className="my-2" />
         
         <p>Always looking for feedback!</p>
         <p>
-          Send feedback to{" "}
-          <a className="text-blue-500" href="mailto:FoxJonathanP@gmail.com">
+          Send to{" "}
+          <a className="text-blue-600" href="mailto:FoxJonathanP@gmail.com">
             FoxJonathanP@gmail.com
           </a>
         </p>
@@ -52,8 +56,8 @@ export const InfoModal = () => {
   }, [showModal]);
 
   return (
-    <div className={cnsMerge('opacity-30', 'hover:opacity-70')}>
+    <button className={cnsMerge('text-gray-400 hover:text-gray-500 active:text-gray-700')}>
       <InfoIcon className="cursor-pointer" onClick={handleInfoClick} />
-    </div>
+    </button>
   );
 }

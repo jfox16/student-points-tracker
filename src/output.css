@@ -1207,8 +1207,17 @@
   .text-ellipsis {
     text-overflow: ellipsis;
   }
+  .text-blue-400 {
+    color: var(--color-blue-400);
+  }
   .text-blue-500 {
     color: var(--color-blue-500);
+  }
+  .text-blue-600 {
+    color: var(--color-blue-600);
+  }
+  .text-gray-300 {
+    color: var(--color-gray-300);
   }
   .text-gray-400 {
     color: var(--color-gray-400);
@@ -1218,6 +1227,9 @@
   }
   .text-gray-600 {
     color: var(--color-gray-600);
+  }
+  .text-gray-700 {
+    color: var(--color-gray-700);
   }
   .text-white {
     color: var(--color-white);
@@ -1422,10 +1434,24 @@
       }
     }
   }
+  .hover\:text-gray-500 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-gray-500);
+      }
+    }
+  }
   .hover\:text-gray-600 {
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-600);
+      }
+    }
+  }
+  .hover\:text-gray-700 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-gray-700);
       }
     }
   }
@@ -1472,6 +1498,16 @@
   .active\:bg-blue-900 {
     &:active {
       background-color: var(--color-blue-900);
+    }
+  }
+  .active\:text-gray-700 {
+    &:active {
+      color: var(--color-gray-700);
+    }
+  }
+  .active\:text-gray-800 {
+    &:active {
+      color: var(--color-gray-800);
     }
   }
 }
