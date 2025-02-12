@@ -13,6 +13,7 @@ interface StudentContextValue {
   updateStudent: (id: StudentId, changes: Partial<Student>) => void;
   updateAllStudents: (changes: Partial<Student>) => void;
   moveStudent: (fromIndex: number, toIndex: number) => void;
+  reverseStudentOrder: () => void;
   addPointsToStudent: (id: StudentId, points?: number) => void;
   addPointsToAllStudents: (points?: number) => void;
   addPointsToSelectedStudents: (points?: number) => void;
@@ -142,6 +143,11 @@ export const StudentContextProvider = ({ children }: { children: React.ReactNode
     [students, setStudents]
   );
 
+  const reverseStudentOrder = useCallback(() => {
+    setStudents([...students].reverse());
+  }, [students, setStudents]);
+  
+
   /** ✅ Context Value */
   const value = {
     students,
@@ -150,6 +156,7 @@ export const StudentContextProvider = ({ children }: { children: React.ReactNode
     updateStudent,
     updateAllStudents,
     moveStudent,
+    reverseStudentOrder,
     addPointsToStudent,
     addPointsToAllStudents,
     addPointsToSelectedStudents,

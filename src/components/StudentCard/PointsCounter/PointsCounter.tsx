@@ -30,7 +30,6 @@ export const PointsCounter = (props: PointsCounterProps) => {
   const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
 
-  // ✅ Replaces `delayedPoints` with `animationTrigger`
   const [animationTrigger, setAnimationTrigger] = useState(student.points);
   const [isFirstAnimation, setIsFirstAnimation] = useState(true);
 
@@ -45,28 +44,21 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
     if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
       studentIdsWithDelayedPointsAnimation.delete(student.id);
-      // const randomDelay = Math.random() * 80;
       const delay = 6 * index
       setTimeout(() => {
         setAnimationTrigger(student.points);
+        playPointSound(student.points, 1);
       }, delay);
     } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
       studentIdsWithNextPointsAnimation.delete(student.id)
       setAnimationTrigger(student.points);
+      playPointSound(student.points);
     }
   }, [prevPoints, student.points]);
 
   const debouncedResetRecentChange = useDebounce(() => {
     setRecentChange(undefined);
   }, 2000);
-
-  useEffect(() => {
-    if (isFirstAnimation) {
-      setIsFirstAnimation(false);
-      return;
-    }
-    playPointSound(student.points);
-  }, [animationTrigger]);
 
   const handleInputChange = useCallback((points: number) => {
     updateStudent(student.id, { points });

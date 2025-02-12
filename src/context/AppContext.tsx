@@ -2,7 +2,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { AppOptions } from '../types/appOptions.type';
-
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 
@@ -14,6 +13,7 @@ interface AppContextValue {
 export const DEFAULT_APP_OPTIONS: Required<AppOptions> = {
   enableKeybinds: true,
   pointSound: 'pop',
+  reverseOrder: false,
 }
 
 const AppContext = createContext<AppContextValue|undefined>(undefined);
@@ -39,7 +39,7 @@ export const AppContextProvider = (props: { children: React.ReactNode }) => {
   }, 1000);
 
   useEffect(() => {
-    setSavedAppOptions(appOptions);
+    debouncedSaveAppOptions();
   }, [
     appOptions
   ])

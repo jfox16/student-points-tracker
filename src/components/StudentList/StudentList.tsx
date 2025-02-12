@@ -8,9 +8,13 @@ import { StudentCard } from "../StudentCard/StudentCard";
 import { AddStudentButton } from "./AddStudentButton/AddStudentButton";
 
 import './StudentList.css';
+import { cnsMerge } from "../../utils/cnsMerge";
+import { useAppContext } from "../../context/AppContext";
+import { reverse } from "dns";
 
 export const StudentList = () => {
 
+  const { appOptions: { reverseOrder }} = useAppContext();
   const { activeTab: { tabOptions } } = useTabContext();
   const { students, } = useStudentContext();
 
@@ -23,13 +27,14 @@ export const StudentList = () => {
       fontSize
     }}>
       <div
-        className="students"
+        className={cnsMerge('students', reverseOrder && 'rotate-180' )}
         style={{
           gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (tabOptions?.columns ?? 1)))}, minmax(50px, 1fr))`
         }}
       >
         {students.map((student, i) => {
           return <StudentCard
+            className={cnsMerge(reverseOrder && 'rotate-180')}
             student={student}
             index={i}
             key={student.id}

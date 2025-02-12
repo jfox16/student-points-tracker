@@ -10,6 +10,7 @@ import { EnableKeybindsToggle } from "./Widgets/EnableKeybindsToggle";
 import { PointSoundWidget } from "./Widgets/PointSoundWidget";
 import { ResetAllWidget } from "./Widgets/ResetAllWidget";
 import { SelectAllWidget } from "./Widgets/SelectAllWidget";
+import { ReverseWidget } from "./Widgets/ReverseWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -68,6 +69,10 @@ export const TabOptionsRow = () => {
 
         <div className={showOnHover}>
           <EnableKeybindsToggle />
+        </div>
+        
+        <div className={showOnHover}>
+          <ReverseWidget />
         </div>
 
         <div className={showOnHover}>

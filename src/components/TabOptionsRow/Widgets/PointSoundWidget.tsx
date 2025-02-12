@@ -1,6 +1,5 @@
 
-import { useCallback } from "react";
-import { Checkbox, CheckboxProps, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent, SelectProps } from "@mui/material"
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
 
 import { useAppContext } from "../../../context/AppContext";
 import { PointSoundName } from "../../../context/SoundContext";
@@ -29,6 +28,9 @@ export const PointSoundWidget = () => {
         <MenuItem value="none">No point sound</MenuItem>
         <MenuItem value="pop">Pop</MenuItem>
         <MenuItem value="ding">Ding</MenuItem>
+        <MenuItem value="bark">Bark</MenuItem>
+        <MenuItem value="meow">Meow</MenuItem>
+        {/* <MenuItem value="random">Random</MenuItem> */}
       </Select>
     </div>
   )

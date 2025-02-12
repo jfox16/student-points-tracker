@@ -1,52 +1,55 @@
 import { useEffect, useMemo, useCallback } from "react";
-
 import { Student, StudentId } from "../types/student.type";
 import { useAppContext } from "../context/AppContext";
 
 interface UseStudentKeyBindingsProps {
   columns: number;
   students: Student[];
-  addPointsToStudent: (id: StudentId, points: number) => void,
-  addPointsToAllStudents: (points: number) => void,
+  addPointsToStudent: (id: StudentId, points: number) => void;
+  addPointsToAllStudents: (points: number) => void;
 }
 
 const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
-  const {
-    columns,
-    students,
-    addPointsToStudent,
-    addPointsToAllStudents,
-  } = props;
-
-  const { appOptions: { enableKeybinds } } = useAppContext();
+  const { columns, students, addPointsToStudent, addPointsToAllStudents } = props;
+  const { appOptions: { reverseOrder, enableKeybinds } } = useAppContext();
 
   const numSelectedStudents = useMemo(() => {
-    return students.filter(student => student.selected).length;
-  }, [
-    students
-  ]);
+    return students.filter((student) => student.selected).length;
+  }, [students]);
 
-  // Define key rows dynamically
   const keyRows = ["1234567890", "QWERTYUIOP", "ASDFGHJKL;", "ZXCVBNM,./"];
 
-  // Generate mappings
+  // Generate key mappings with correct row shifts
   const { keyToIdMap, idToKeyMap } = useMemo(() => {
     const keyToId: Record<string, string> = {};
     const idToKey: Record<string, string> = {};
 
+    const rows = Math.floor(students.length / columns);
+    const offset = reverseOrder ? columns - (students.length % columns) : 0;
+
     students.forEach((student, index) => {
-      const row = Math.floor(index / columns);
-      const col = index % columns;
+      let row = Math.floor(index / columns);
+      let col = index % columns;
+
+      console.log({ row, col })
+
+      if (reverseOrder) {
+        row = rows - row; 
+        col = columns - 1 - col;
+        console.log('reversed', { row, col })
+      }
+
       const studentKbEnabled = numSelectedStudents === 0 || student.selected;
+
       if (keyRows[row] && keyRows[row][col] && studentKbEnabled) {
-        const key = keyRows[row][col].toLowerCase(); // Ensure lowercase
+        const key = keyRows[row][col].toLowerCase();
         keyToId[key] = student.id;
-        idToKey[student.id] = key.toUpperCase(); // Store uppercase for display
+        idToKey[student.id] = key.toUpperCase();
       }
     });
 
     return { keyToIdMap: keyToId, idToKeyMap: idToKey };
-  }, [students, columns]);
+  }, [students, columns, reverseOrder]);
 
   // Handle key presses
   const handleKeyPress = useCallback(
@@ -58,7 +61,7 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
 
       const kbKey = event.key.toLowerCase();
 
-      if (kbKey === ' ') {
+      if (kbKey === " ") {
         addPointsToAllStudents(1);
         event.preventDefault();
         return;
@@ -72,12 +75,7 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
         return;
       }
     },
-    [
-      enableKeybinds,
-      keyToIdMap,
-      addPointsToStudent,
-      addPointsToAllStudents,
-    ]
+    [enableKeybinds, keyToIdMap, addPointsToStudent, addPointsToAllStudents]
   );
 
   useEffect(() => {

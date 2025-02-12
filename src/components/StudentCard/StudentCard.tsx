@@ -17,12 +17,13 @@ import { PointsCounter } from "./PointsCounter/PointsCounter";
 import './StudentCard.css';
 
 interface StudentCardProps {
+  className?: string;
   student: Student;
   index: number; // index of Student in list. Needed for drag and drop
 }
 
 export const StudentCard = (props: StudentCardProps) => {
-  const { student, index } = props;
+  const { className, student, index } = props;
 
   const {
     appOptions,
@@ -106,6 +107,7 @@ export const StudentCard = (props: StudentCardProps) => {
         'border-2 border-transparent p-1 rounded-lg',
         dragHoverIndex === index && 'border-l-blue-500',
         dragHoverIndex === index + 1 && 'border-r-blue-500',
+        className,
       )}
       ref={dragObjectRef}
     >

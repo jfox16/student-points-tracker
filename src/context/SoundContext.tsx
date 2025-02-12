@@ -1,120 +1,69 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext } from "react";
 
-import popSound from "../assets/audio/bubble.wav";
-import dingSound from "../assets/audio/ding.wav";
+import { pointSounds } from "../assets/sounds/sounds";
 import { clamp } from "../utils/clamp";
 import { useDebounce } from "../utils/useDebounce";
-
 import { useAppContext } from "./AppContext";
+import { randomRange } from "../utils/randomRange";
 
-export type PointSoundName = "none" | "pop" | "ding";
-
+export type PointSoundName = "none" | "pop" | "ding" | "bark" | "meow";
 type SoundName = PointSoundName;
 
-const pointSounds: Record<SoundName, string> = {
-  none: "",
-  pop: popSound,
-  ding: dingSound,
-} as const;
-
 interface SoundContextType {
-  playSound: (sound: SoundName, pitch?: number) => void;
-  playPointSound: (points?: number) => void;
+  playSound: (sound: SoundName, pitch?: number, maxConcurrent?: number) => void;
+  playPointSound: (points?: number, maxConcurrent?: number) => void;
 }
 
-const MAX_CONCURRENT_SOUNDS = 2;
-const CONCURRENT_WINDOW_MS = 16;
+const CONCURRENT_WINDOW_MS = 50;
 let activeSounds = 0;
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 export const SoundContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { appOptions } = useAppContext();
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [buffers, setBuffers] = useState<Record<string, AudioBuffer>>({});
-  const [gainNode, setGainNode] = useState<GainNode | null>(null);
-
-  // Debounce to reset active sounds periodically
+  
   const debouncedResetActiveSounds = useDebounce(() => {
     activeSounds = 0;
   }, CONCURRENT_WINDOW_MS);
 
-  useEffect(() => {
-    const ctx = new AudioContext();
-    const gain = ctx.createGain();
-    gain.gain.value = 0.8; // Set default volume to 80%
-    gain.connect(ctx.destination);
-
-    setAudioContext(ctx);
-    setGainNode(gain);
-
-    const loadSounds = async () => {
-      const buffersData: Record<string, AudioBuffer> = {};
-
-      for (const [key, soundUrl] of Object.entries(pointSounds)) {
-        if (soundUrl) {
-          const response = await fetch(soundUrl);
-          const arrayBuffer = await response.arrayBuffer();
-          buffersData[key] = await ctx.decodeAudioData(arrayBuffer);
-        }
-      }
-
-      setBuffers(buffersData);
-    };
-
-    loadSounds();
-
-    return () => {
-      ctx.close();
-    };
-  }, []);
-
   const playSound = useCallback(
-    async (sound: SoundName, pitch: number = 0.5) => {
-      if (!audioContext || !buffers[sound] || !gainNode) return;
-      if (activeSounds >= MAX_CONCURRENT_SOUNDS) return;
+    (sound: SoundName, pitch: number = 0.5, maxConcurrent?: number) => {
+      if (maxConcurrent && activeSounds >= maxConcurrent) return;
+
+      let soundSrc = pointSounds[sound];
+      if (!soundSrc || typeof soundSrc !== "string") return;
+
+      const audio = new Audio(soundSrc);
+
+      // Apply slight randomization to pitch and speed
+      const rate = randomRange(0.5, 1.5);     
+      console.log({rate}) 
+      // audio.playbackRate = rate;
+      audio.playbackRate = 2;
 
       activeSounds += 1;
       debouncedResetActiveSounds();
 
-      if (audioContext.state === "suspended") {
-        await audioContext.resume();
-      }
-
-      const buffer = buffers[sound];
-      if (!buffer) return;
-
-      const source = audioContext.createBufferSource();
-      source.buffer = buffer;
-      source.playbackRate.value = 1.1 + clamp(pitch, 0, 10) * 0.1;
-
-      source.connect(gainNode);
-      source.start();
-
-      source.onended = () => {
+      audio.play();
+      audio.onended = () => {
         activeSounds = Math.max(0, activeSounds - 1);
       };
     },
-    [audioContext, buffers, gainNode, debouncedResetActiveSounds]
+    [debouncedResetActiveSounds]
   );
 
   const playPointSound = useCallback(
-    (points: number = 0) => {
+    (points: number = 0, maxConcurrent?: number) => {
       const pointSound = appOptions.pointSound;
       if (pointSound && pointSound !== "none") {
-        playSound(pointSound, points * 0.01);
+        playSound(pointSound, points * 0.01, maxConcurrent);
       }
     },
     [appOptions.pointSound, playSound]
   );
 
   return (
-    <SoundContext.Provider
-      value={{
-        playSound,
-        playPointSound,
-      }}
-    >
+    <SoundContext.Provider value={{ playSound, playPointSound }}>
       {children}
     </SoundContext.Provider>
   );
