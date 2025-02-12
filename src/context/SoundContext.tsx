@@ -9,47 +9,56 @@ export type PointSoundName = "none" | "pop" | "ding" | "bark" | "meow";
 type SoundName = PointSoundName;
 
 interface SoundContextType {
-  playSound: (sound: SoundName, pitch?: number, maxConcurrent?: number) => void;
-  playPointSound: (points?: number, maxConcurrent?: number) => void;
+  playSound: (sound: SoundName, maxConcurrent?: number) => void;
+  playPointSound: (maxConcurrent?: number) => void;
 }
 
-const CONCURRENT_WINDOW_MS = 50;
-let activeSounds = 0;
+const CONCURRENT_WINDOW_MS = 60;
+const activeSounds: Record<string, number> = {}; // Dynamically managed
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 export const SoundContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { appOptions } = useAppContext();
-  
+
   const debouncedResetActiveSounds = useDebounce(() => {
-    activeSounds = 0;
+    Object.keys(activeSounds).forEach((key) => {
+      activeSounds[key] = 0;
+    });
   }, CONCURRENT_WINDOW_MS);
 
   const playSound = useCallback(
-    (sound: SoundName, pitch: number = 0.5, maxConcurrent?: number) => {
-      if (maxConcurrent && activeSounds >= maxConcurrent) return;
+    (sound: SoundName, maxConcurrent?: number) => {
+      if (!pointSounds[sound] || sound === "none") return;
 
-      let soundSrc = pointSounds[sound];
-      if (!soundSrc || typeof soundSrc !== "string") return;
+      if (!(sound in activeSounds)) {
+        activeSounds[sound] = 0;
+      }
 
-      const audio = new Audio(soundSrc);
+      if (maxConcurrent && activeSounds[sound] >= maxConcurrent) return;
 
-      const rate = randomRange(0.5, 1.5);
-      audio.playbackRate = rate;
-      audio.preservesPitch = true;
+      const audioSrc = pointSounds[sound];
+      if (!audioSrc) return;
+
+      const audio = new Audio(audioSrc);
+      audio.playbackRate = randomRange(0.5, 1.5);
+
+      audio.addEventListener("ended", () => {
+        activeSounds[sound] = Math.max(0, activeSounds[sound] - 1);
+      });
 
       audio.play();
-      activeSounds += 1;
+      activeSounds[sound] += 1;
       debouncedResetActiveSounds();
     },
     [debouncedResetActiveSounds]
   );
 
   const playPointSound = useCallback(
-    (points: number = 0, maxConcurrent?: number) => {
+    (maxConcurrent?: number) => {
       const pointSound = appOptions.pointSound;
       if (pointSound && pointSound !== "none") {
-        playSound(pointSound, points * 0.01, maxConcurrent);
+        playSound(pointSound, maxConcurrent);
       }
     },
     [appOptions.pointSound, playSound]

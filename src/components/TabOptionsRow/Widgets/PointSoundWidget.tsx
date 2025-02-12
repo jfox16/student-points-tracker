@@ -30,7 +30,6 @@ export const PointSoundWidget = () => {
         <MenuItem value="ding">Ding</MenuItem>
         <MenuItem value="bark">Bark</MenuItem>
         <MenuItem value="meow">Meow</MenuItem>
-        {/* <MenuItem value="random">Random</MenuItem> */}
       </Select>
     </div>
   )

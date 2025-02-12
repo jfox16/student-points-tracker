@@ -31,7 +31,6 @@ export const PointsCounter = (props: PointsCounterProps) => {
   const prevPoints = usePrevious(student.points);
 
   const [animationTrigger, setAnimationTrigger] = useState(student.points);
-  const [isFirstAnimation, setIsFirstAnimation] = useState(true);
 
   useEffect(() => {
     if (typeof prevPoints !== "number") return;
@@ -44,15 +43,15 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
     if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
       studentIdsWithDelayedPointsAnimation.delete(student.id);
-      const delay = 6 * index
+      const delay = 8 * index
       setTimeout(() => {
         setAnimationTrigger(student.points);
-        playPointSound(student.points, 1);
+        playPointSound(1);
       }, delay);
     } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
       studentIdsWithNextPointsAnimation.delete(student.id)
       setAnimationTrigger(student.points);
-      playPointSound(student.points);
+      playPointSound(3);
     }
   }, [prevPoints, student.points]);
 
