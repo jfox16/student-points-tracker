@@ -37,7 +37,7 @@ export const TabCard = ({
     const tabName = tab.name ? ` (${tab.name})` : '';
     showModal(
       `Are you sure you want to delete this tab?${tabName}`,
-      () => deleteTab(tab.id)
+      { onAccept: () => deleteTab(tab.id) }
     );
   }, [
     deleteTab,

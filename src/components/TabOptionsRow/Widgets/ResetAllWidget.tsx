@@ -21,7 +21,7 @@ export const ResetAllWidget = () => {
   const openResetPointsModal = useCallback(() => {
     showModal(
       "Reset points of all students in this class?",
-      resetPoints,
+      { onAccept: resetPoints }
     );
   }, [
     resetPoints,

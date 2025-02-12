@@ -65,7 +65,7 @@ export const StudentCard = (props: StudentCardProps) => {
     const studentName = student.name ? ` (${student.name})` : '';
     showModal(
       `Are you sure you want to delete this student?${studentName}`,
-      () => deleteStudent(student.id),
+      { onAccept: () => deleteStudent(student.id) },
     )
   }, [
     deleteStudent,
