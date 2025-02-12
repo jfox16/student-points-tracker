@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext } from "react";
 
 import { pointSounds } from "../assets/sounds/sounds";
-import { clamp } from "../utils/clamp";
 import { useDebounce } from "../utils/useDebounce";
 import { useAppContext } from "./AppContext";
 import { randomRange } from "../utils/randomRange";
@@ -35,19 +34,13 @@ export const SoundContextProvider = ({ children }: { children: React.ReactNode }
 
       const audio = new Audio(soundSrc);
 
-      // Apply slight randomization to pitch and speed
-      const rate = randomRange(0.5, 1.5);     
-      console.log({rate}) 
-      // audio.playbackRate = rate;
-      audio.playbackRate = 2;
-
-      activeSounds += 1;
-      debouncedResetActiveSounds();
+      const rate = randomRange(0.5, 1.5);
+      audio.playbackRate = rate;
+      audio.preservesPitch = true;
 
       audio.play();
-      audio.onended = () => {
-        activeSounds = Math.max(0, activeSounds - 1);
-      };
+      activeSounds += 1;
+      debouncedResetActiveSounds();
     },
     [debouncedResetActiveSounds]
   );
