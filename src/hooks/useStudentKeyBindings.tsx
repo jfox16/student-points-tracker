@@ -26,17 +26,18 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
 
     const rows = Math.floor(students.length / columns);
     const offset = reverseOrder ? columns - (students.length % columns) : 0;
+    console.log({ offset })
 
     students.forEach((student, index) => {
       let row = Math.floor(index / columns);
       let col = index % columns;
 
-      console.log({ row, col })
-
       if (reverseOrder) {
         row = rows - row; 
         col = columns - 1 - col;
-        console.log('reversed', { row, col })
+        if (offset === columns) {
+          row -= 1;
+        }
       }
 
       const studentKbEnabled = numSelectedStudents === 0 || student.selected;
