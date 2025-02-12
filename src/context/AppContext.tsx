@@ -21,7 +21,7 @@ const AppContext = createContext<AppContextValue|undefined>(undefined);
 export const AppContextProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
 
-  const [savedAppOptions, setSavedAppOptions] = useLocalStorage(LocalStorageKey.APP_OPTIONS, {});
+  const [savedAppOptions, setSavedAppOptions] = useLocalStorage<AppOptions>(LocalStorageKey.APP_OPTIONS, {...DEFAULT_APP_OPTIONS});
   const [appOptions, setAppOptions] = useState<AppOptions>(savedAppOptions);
 
   const updateAppOptions = useCallback((updates: Partial<AppOptions>) => {

@@ -7,7 +7,6 @@ import { generateUuid } from '../utils/generateUuid';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 import useDocumentTitle from '../utils/useDocumentTitle';
-import { AppOptions } from '../types/appOptions.type';
 
 interface TabContextValue {
   tabs: Tab[];
@@ -19,14 +18,15 @@ interface TabContextValue {
   setActiveTabId: (id: TabId) => void;
 }
 
+export const DEFAULT_TAB_OPTIONS: Required<TabOptions> = {
+  columns: 8,
+}
+
 export const DEFAULT_TAB: Tab = {
   id: '',
   students: [],
   name: '',
-}
-
-export const DEFAULT_TAB_OPTIONS: Required<TabOptions> = {
-  columns: 8,
+  tabOptions: DEFAULT_TAB_OPTIONS,
 }
 
 export const generateStudents = (n: number = 30) => {
@@ -68,8 +68,12 @@ const TabContext = createContext<TabContextValue|undefined>(undefined);
 export const TabContextProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
 
+  const defaultStudents = useMemo(() => {
+    return generateStudents();
+  }, [])
+
   const [savedTabData, setSavedTabData] = useLocalStorage<LocalStorageTabData>(LocalStorageKey.SAVED_TABS, {});
-  const [tabs, setTabs] = useState<Tab[]>(savedTabData?.tabs ?? []);
+  const [tabs, setTabs] = useState<Tab[]>(savedTabData?.tabs ?? [{ ...DEFAULT_TAB, students: defaultStudents }]);
   const [activeTabId, setActiveTabId] = useState<TabId|undefined>(savedTabData.activeTabId);
 
   const [documentTitle, setDocumentTitle] = useDocumentTitle();
@@ -80,6 +84,7 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
       for (const tab of newTabs) {
         tab.students = generateStudents();
       }
+      console.log({newTabs})
       setTabs(newTabs);
     }
   }, [
