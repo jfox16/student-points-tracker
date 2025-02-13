@@ -51,7 +51,7 @@ export const PointsCounter = (props: PointsCounterProps) => {
     } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
       studentIdsWithNextPointsAnimation.delete(student.id)
       setAnimationTrigger(student.points);
-      playPointSound(3);
+      playPointSound(5);
     }
   }, [prevPoints, student.points]);
 

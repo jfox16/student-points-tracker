@@ -1448,27 +1448,6 @@
       }
     }
   }
-  .hover\:text-gray-700 {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-gray-700);
-      }
-    }
-  }
-  .hover\:opacity-50 {
-    &:hover {
-      @media (hover: hover) {
-        opacity: 50%;
-      }
-    }
-  }
-  .hover\:opacity-60 {
-    &:hover {
-      @media (hover: hover) {
-        opacity: 60%;
-      }
-    }
-  }
   .hover\:opacity-70 {
     &:hover {
       @media (hover: hover) {
