@@ -18,4 +18,4 @@ export const useDebounce = <T extends (...args: any[]) => any>(
     },
     [callback, delay]
   ) as T;
-};
+}; 
