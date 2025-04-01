@@ -1,13 +1,25 @@
-# Student Points Tracker
+# 🎉 Student Points Tracker
 
-**Free for teachers, professors, and non-profits.**  
-👉 [Try it here](https://jfox16.github.io/student-points-tracker/)
+**Totally free for teachers, professors, and non-profits!**  
+👉 [Try it instantly](https://jfox16.github.io/student-points-tracker/)
 
-Originally created for a teacher friend, this tool offers a simple and engaging way to reward students with participation points during class.
+---
 
-It uses intuitive keyboard shortcuts—each student gets a key, and the spacebar gives points to all. Fun animations and sounds make the experience more rewarding for students.
+## Why You'll Love It
 
-Points are saved automatically via local storage, so progress persists across sessions.
+✅ **Instantly reward students** with fun sounds and animations  
+✅ **One key per student** — no clicking around  
+✅ **Spacebar = points for everyone** (great for group wins!)  
+✅ **No logins or setup required** — just open and go  
+✅ **Progress saves automatically** between classes  
+✅ **Organize by class** with tabbed sections  
+
+---
+
+Built by a developer for a teacher friend — simple, fast, and fun in real classrooms.
+
+Try it in seconds, no install needed 👇  
+[https://jfox16.github.io/student-points-tracker/](https://jfox16.github.io/student-points-tracker/)
 
 ---
 
