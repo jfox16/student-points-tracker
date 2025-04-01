@@ -1,7 +1,7 @@
 # 🎉 Student Points Tracker
 
 **Totally free for teachers, professors, and non-profits!**  
-[👉 Try it instantly  👈](https://jfox16.github.io/student-points-tracker/)
+👉 [Try it instantly](https://jfox16.github.io/student-points-tracker/) 👈
 
 ---
 
