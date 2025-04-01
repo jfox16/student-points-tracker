@@ -1,7 +1,7 @@
 # 🎉 Student Points Tracker
 
 🎓 **Totally free for teachers, professors, and non-profits!**  
-👈 👉 **Try it instantly**
+👉 **Try it instantly** 👈 
 
 ---
 
@@ -23,16 +23,6 @@
 
 ---
 
-## Tech Stack
-
-- React (hooks & context)
-- TypeScript
-- Tailwind CSS
-- Material UI
-- React DnD
-
----
-
 ## Features
 
 - Add/remove students  
@@ -40,7 +30,17 @@
 - Track individuals or full class  
 - Organize students by class with tabs  
 - Persistent local storage  
-- Clean, responsive UI  
+- Clean, responsive UI
+
+---
+
+## Tech Stack
+
+- React (hooks & context)
+- TypeScript
+- Tailwind CSS
+- Material UI
+- React DnD
 
 ---
 
