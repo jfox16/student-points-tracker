@@ -23,17 +23,6 @@
 
 ---
 
-## Features
-
-- Add/remove students  
-- Award points with keyboard shortcuts  
-- Track individuals or full class  
-- Organize students by class with tabs  
-- Persistent local storage  
-- Clean, responsive UI
-
----
-
 ## Tech Stack
 
 - React (hooks & context)
