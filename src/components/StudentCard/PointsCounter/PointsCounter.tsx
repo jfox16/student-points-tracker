@@ -40,6 +40,11 @@ export const PointsCounter = ({
     setClickEnabled(true);
   }, 100);
 
+  const debouncedAddPoints = useDebounce((points: number) => {
+    addPointsToStudent(student.id, points);
+    setRecentChange(undefined);
+  }, 100);
+
   useEffect(() => {
     if (typeof prevPoints !== "number") return;
 
@@ -69,19 +74,23 @@ export const PointsCounter = ({
 
   const handleIncrementClick = useCallback(() => {
     if (clickEnabled) {
-      addPointsToStudent(student.id, 1);
+      setAnimationTrigger(prev => prev + 1);
+      setRecentChange(1);
+      debouncedAddPoints(1);
       setClickEnabled(false);
       enableClickAfterDelay();
     }
-  }, [clickEnabled, setClickEnabled, addPointsToStudent, enableClickAfterDelay]);
+  }, [clickEnabled, setClickEnabled, debouncedAddPoints, enableClickAfterDelay]);
 
   const handleDecrementClick = useCallback(() => {
     if (clickEnabled) {
-      addPointsToStudent(student.id, -1);
+      setAnimationTrigger(prev => prev + 1);
+      setRecentChange(-1);
+      debouncedAddPoints(-1);
       setClickEnabled(false);
       enableClickAfterDelay();
     }
-  }, [clickEnabled, setClickEnabled, addPointsToStudent, enableClickAfterDelay]);
+  }, [clickEnabled, setClickEnabled, debouncedAddPoints, enableClickAfterDelay]);
 
   return (
     <>
@@ -107,7 +116,6 @@ export const PointsCounter = ({
         <PointsDisplay
           points={student.points}
           recentChange={recentChange}
-          onChange={handleInputChange}
           animationTrigger={animationTrigger}
         />
 
