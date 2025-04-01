@@ -17,3 +17,37 @@ Tech Stack:
 - Tailwind CSS
 - Material UI
 - React DnD
+
+A React application for tracking student participation points in the classroom.
+
+## Features
+
+- Add/remove students
+- Track points for individual students
+- Keyboard shortcuts for quick point addition
+- Tab-based organization for different classes
+- Persistent storage of student data
+- Modern, responsive UI
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Development
+
+- Built with React + TypeScript
+- Uses Vite for fast development and building
+- Styled with Tailwind CSS
+- State management with React Context
+
+## AI Agents
+
+For AI agents working with this codebase, please refer to the `ai_docs/` directory for comprehensive documentation about the system's architecture, concepts, and design decisions. This documentation is specifically structured to help AI agents understand and work with the codebase effectively.
