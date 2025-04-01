@@ -1,16 +1,17 @@
 # Student Points Tracker
-## 👉 [Try it here!](https://jfox16.github.io/student-points-tracker/)
-![image](https://github.com/user-attachments/assets/7df0ea76-99c7-467d-92da-6dd0de41cc9a)
 
-Originally built for a teacher friend who wanted a simple and engaging way to reward students with points during class.
+Originally created for a teacher friend, this tool offers a simple and engaging way to reward students with participation points during class.
 
-This tool makes tracking student points easy with intuitive keyboard shortcuts—each student has an assigned key, and the spacebar allows awarding points to all students at once. Animations and sounds enhance the experience, making it more fun and rewarding for students.
+It uses intuitive keyboard shortcuts—each student gets a key, and the spacebar gives points to all. Fun animations and sounds make the experience more rewarding for students.
 
-To ensure progress is saved across sessions, the app automatically stores data in local storage, allowing teachers to track points throughout the week.
+Points are saved automatically via local storage, so progress persists across sessions.
 
-It's free to use for teachers, professors, or anything non-profit! You can try it here: https://jfox16.github.io/student-points-tracker/
+**Free for teachers, professors, and non-profits.**  
+👉 [Try it here](https://jfox16.github.io/student-points-tracker/)
 
-Tech Stack:
+---
+
+## Tech Stack
 
 - React (hooks & context)
 - TypeScript
@@ -18,36 +19,29 @@ Tech Stack:
 - Material UI
 - React DnD
 
-A React application for tracking student participation points in the classroom.
+---
 
 ## Features
 
-- Add/remove students
-- Track points for individual students
-- Keyboard shortcuts for quick point addition
-- Tab-based organization for different classes
-- Persistent storage of student data
-- Modern, responsive UI
+- Add/remove students  
+- Award points with keyboard shortcuts  
+- Track individuals or full class  
+- Organize students by class with tabs  
+- Persistent local storage  
+- Clean, responsive UI  
 
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-## Development
-
-- Built with React + TypeScript
-- Uses Vite for fast development and building
-- Styled with Tailwind CSS
-- State management with React Context
+---
 
 ## AI Agents
 
 For AI agents working with this codebase, please refer to the `ai_docs/` directory for comprehensive documentation about the system's architecture, concepts, and design decisions. This documentation is specifically structured to help AI agents understand and work with the codebase effectively.
+
+---
+
+## Getting Started
+
+```bash
+git clone <repo>
+cd <repo>
+npm install
+npm run dev
