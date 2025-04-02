@@ -62,7 +62,7 @@ export const BankSidebar: React.FC = () => {
     <div className="BankSidebar bg-gray-100 border-l border-gray-400 p-4 w-128">
       <div className="flex flex-col gap-4">
         <div className="text-xl font-bold">Points Bank</div>
-        <div className="text-2xl font-bold">
+        <div className="text-2xl">
           Class Total: {totalBankedPoints}
         </div>
         
