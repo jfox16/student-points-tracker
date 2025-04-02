@@ -4,12 +4,14 @@ interface PointsButtonProps {
   onClick: () => void;
   symbol: "+" | "-";
   disabled?: boolean;
+  className?: string;
 }
 
 export const PointsButton = ({ 
   onClick, 
   symbol, 
-  disabled 
+  disabled,
+  className 
 }: PointsButtonProps) => {
   return (
     <div
@@ -18,7 +20,8 @@ export const PointsButton = ({
         "cursor-pointer p-[0.2em] flex-1",
         "text-gray-400 hover:text-gray-600",
         "hover:bg-[#e0e0e0] select-none",
-        disabled && "opacity-50 cursor-not-allowed"
+        disabled && "opacity-50 cursor-not-allowed",
+        className
       )}
       onClick={onClick}
     >
