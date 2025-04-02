@@ -35,17 +35,15 @@ export const TabList = () => {
         <AddTabButton />
       </div>
 
-      <Tooltip text={open ? "Close class list" : "Open class list"}>
-        <div
-          className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
-          onClick={toggleOpen}
-        >
-          {open
-            ? <ArrowBackIosIcon fontSize="small" />
-            : <ArrowForwardIosIcon className="pl-1" fontSize="small" />
-          }
-        </div>
-      </Tooltip>
+      <div
+        className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
+        onClick={toggleOpen}
+      >
+        {open
+          ? <ArrowBackIosIcon fontSize="small" />
+          : <ArrowForwardIosIcon className="pl-1" fontSize="small" />
+        }
+      </div>
     </div>
   );
 }
