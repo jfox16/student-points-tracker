@@ -1,6 +1,7 @@
 import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { BankSidebar } from "./components/BankSidebar/BankSidebar";
@@ -8,6 +9,7 @@ import { StudentList } from "./components/StudentList/StudentList";
 import { TabList } from "./components/TabList/TabList";
 import { TabOptionsRow } from "./components/TabOptionsRow/TabOptionsRow";
 import { TabTitle } from "./components/TabTitle/TabTitle";
+import { ZustandDemo } from "./components/ZustandDemo";
 
 import { AppContextProvider } from "./context/AppContext";
 import { BankContextProvider } from "./context/BankContext";
@@ -30,32 +32,43 @@ const providers = [
   BankContextProvider,
 ];
 
-const App: React.FC = () => {
+const MainApp: React.FC = () => {
   return (
-    <NestProviders providers={providers}>
-      <DndProvider backend={HTML5Backend}>
-        <div className="App h-screen flex flex-col overflow-hidden">
-          <div className="flex-none">
-            <AppHeader />
-          </div>
-          <div className="App-row flex-1 flex min-h-0">
-            <div className="flex-none">
-              <TabList />
-            </div>
-            <div className="flex-1 min-w-0 overflow-y-auto">
-              <div className="flex flex-col gap-4">
-                <TabOptionsRow />
-                <TabTitle />
-                <StudentList />
-              </div>
-            </div>
-            <div className="flex-none">
-              <BankSidebar />
-            </div>
+    <div className="App h-screen flex flex-col overflow-hidden">
+      <div className="flex-none">
+        <AppHeader />
+      </div>
+      <div className="App-row flex-1 flex min-h-0">
+        <div className="flex-none">
+          <TabList />
+        </div>
+        <div className="flex-1 min-w-0 overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <TabOptionsRow />
+            <TabTitle />
+            <StudentList />
           </div>
         </div>
-      </DndProvider>
-    </NestProviders>
+        <div className="flex-none">
+          <BankSidebar />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <NestProviders providers={providers}>
+        <DndProvider backend={HTML5Backend}>
+          <Routes>
+            <Route path="/" element={<MainApp />} />
+            <Route path="/demo" element={<ZustandDemo />} />
+          </Routes>
+        </DndProvider>
+      </NestProviders>
+    </Router>
   );
 };
 
