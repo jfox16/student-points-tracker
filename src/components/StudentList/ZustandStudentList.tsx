@@ -1,14 +1,14 @@
 import { useMemo } from "react";
-import { useAppContext } from "../../context/AppContext";
 import { useTabStore } from "../../stores/useTabStore";
 import { useStudentStore } from "../../stores/useStudentStore";
+import { useAppOptionsStore } from "../../stores/useAppOptionsStore";
 import { ZustandStudentCard } from "../StudentCard/ZustandStudentCard";
 import { AddStudentButton } from "./AddStudentButton/AddStudentButton";
 import './StudentList.css';
 import { cnsMerge } from "../../utils/cnsMerge";
 
 export const ZustandStudentList = () => {
-  const { appOptions: { reverseOrder }} = useAppContext();
+  const { appOptions: { reverseOrder }} = useAppOptionsStore();
   const { activeTab } = useTabStore();
   const { students } = useStudentStore();
 
