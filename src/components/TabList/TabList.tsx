@@ -24,7 +24,7 @@ export const TabList = () => {
     <div
       className="h-full flex bg-gray-100 border-r border-gray-400"
     >
-      <div className={cnsMerge("TabList h-full flex", !open && 'hidden')}>
+      <div className={cnsMerge("TabList h-full flex pr-2", !open && 'hidden')}>
         {tabs.map(tab => (
           <TabCard
             tab={tab}
@@ -35,11 +35,11 @@ export const TabList = () => {
       </div>
 
       <div
-        className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
+        className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
         onClick={toggleOpen}
       >
         {open
-          ? <ArrowBackIosIcon className="pl-1" fontSize="small" />
+          ? <ArrowBackIosIcon fontSize="small" />
           : <ArrowForwardIosIcon className="pl-1" fontSize="small" />
         }
       </div>
