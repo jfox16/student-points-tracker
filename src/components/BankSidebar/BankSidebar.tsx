@@ -61,20 +61,20 @@ export const BankSidebar: React.FC = () => {
   }, [students, bankedPoints, sortOption]);
 
   return (
-    <div className="w-128 h-full bg-white border-l border-gray-200 p-4 flex flex-col">
-      <div className="flex flex-col gap-2 p-4 border-b border-gray-200">
+    <div className="w-64 h-full bg-gray-100 border-l border-gray-400 p-4 pr-0 flex flex-col">
+      <div className="flex flex-col gap-2 border-b border-gray-400 pr-4">
         <div className="text-2xl font-bold text-gray-900">Points Bank</div>
         <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
       </div>
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pr-6">
           <StudentList 
             students={sortedStudents} 
             sortOption={sortOption} 
-            onSortChange={setSortOption} 
+            onSortChange={setSortOption}
           />
         </div>
-        <div className="mt-4">
+        <div className="mt-4 pr-4">
           <ClearPointsButton onClick={handleClearPoints} onDeposit={handleClearPoints} />
         </div>
       </div>

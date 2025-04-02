@@ -34,16 +34,24 @@ const App: React.FC = () => {
   return (
     <NestProviders providers={providers}>
       <DndProvider backend={HTML5Backend}>
-        <div className="App h-screen flex flex-col">
-          <AppHeader />
-          <div className="App-row h-full">
-            <TabList />
-            <div className="flex flex-col gap-4">
-              <TabOptionsRow />
-              <TabTitle />
-              <StudentList />
+        <div className="App h-screen flex flex-col overflow-hidden">
+          <div className="flex-none">
+            <AppHeader />
+          </div>
+          <div className="App-row flex-1 flex min-h-0">
+            <div className="flex-none">
+              <TabList />
             </div>
-            <BankSidebar />
+            <div className="flex-1 min-w-0 overflow-y-auto">
+              <div className="flex flex-col gap-4">
+                <TabOptionsRow />
+                <TabTitle />
+                <StudentList />
+              </div>
+            </div>
+            <div className="flex-none">
+              <BankSidebar />
+            </div>
           </div>
         </div>
       </DndProvider>

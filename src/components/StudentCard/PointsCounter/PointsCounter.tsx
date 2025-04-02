@@ -30,15 +30,10 @@ export const PointsCounter = ({
   const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
   const [animationTrigger, setAnimationTrigger] = useState(student.points);
-  const [clickEnabled, setClickEnabled] = useState(true);
 
   const debouncedResetRecentChange = useDebounce(() => {
     setRecentChange(undefined);
   }, 2000);
-
-  const enableClickAfterDelay = useDebounce(() => {
-    setClickEnabled(true);
-  }, 100);
 
   useEffect(() => {
     if (typeof prevPoints !== "number") return;
@@ -68,20 +63,12 @@ export const PointsCounter = ({
   }, [student, updateStudent]);
 
   const handleIncrementClick = useCallback(() => {
-    if (clickEnabled) {
-      addPointsToStudent(student.id, 1);
-      setClickEnabled(false);
-      enableClickAfterDelay();
-    }
-  }, [clickEnabled, setClickEnabled, addPointsToStudent, enableClickAfterDelay]);
+    addPointsToStudent(student.id, 1);
+  }, [addPointsToStudent]);
 
   const handleDecrementClick = useCallback(() => {
-    if (clickEnabled) {
-      addPointsToStudent(student.id, -1);
-      setClickEnabled(false);
-      enableClickAfterDelay();
-    }
-  }, [clickEnabled, setClickEnabled, addPointsToStudent, enableClickAfterDelay]);
+    addPointsToStudent(student.id, -1);
+  }, [addPointsToStudent]);
 
   return (
     <>
@@ -101,7 +88,6 @@ export const PointsCounter = ({
         <PointsButton
           onClick={handleDecrementClick}
           symbol="-"
-          disabled={!clickEnabled}
         />
 
         <PointsDisplay
@@ -114,7 +100,6 @@ export const PointsCounter = ({
         <PointsButton
           onClick={handleIncrementClick}
           symbol="+"
-          disabled={!clickEnabled}
         />
       </div>
     </>

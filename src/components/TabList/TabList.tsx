@@ -29,7 +29,6 @@ export const TabList = () => {
           <TabCard
             tab={tab}
             key={tab.id}
-            
           />
         ))}
         <AddTabButton />
