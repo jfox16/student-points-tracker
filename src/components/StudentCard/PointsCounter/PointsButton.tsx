@@ -1,31 +1,31 @@
-import { useCallback } from "react";
 import { cnsMerge } from "../../../utils/cnsMerge";
 
 interface PointsButtonProps {
-  symbol: "+" | "-";
   onClick: () => void;
+  symbol: "+" | "-";
   disabled?: boolean;
   className?: string;
 }
 
-export const PointsButton = ({ symbol, onClick, disabled = false, className }: PointsButtonProps) => {
-  const handleClick = useCallback(() => {
-    if (!disabled) {
-      onClick();
-    }
-  }, [onClick, disabled]);
-
+export const PointsButton = ({ 
+  onClick, 
+  symbol, 
+  disabled,
+  className 
+}: PointsButtonProps) => {
   return (
     <div
       className={cnsMerge(
-        "flex-1 flex items-center justify-center cursor-pointer select-none p-1",
-        "text-gray-400 hover:text-gray-600 hover:bg-gray-100",
+        "flex items-center justify-center",
+        "cursor-pointer p-[0.2em] flex-1",
+        "text-gray-400 hover:text-gray-600",
+        "hover:bg-[#e0e0e0] select-none",
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
-      onClick={handleClick}
+      onClick={onClick}
     >
-      <span className="text-lg font-bold">{symbol}</span>
+      <span className="pointer-events-none">{symbol}</span>
     </div>
   );
 }; 
