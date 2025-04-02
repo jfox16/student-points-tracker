@@ -67,6 +67,9 @@ export const useZustandKeyBindings = () => {
   // Handle key presses
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
+      // Don't handle key presses if Ctrl is held down
+      if (event.ctrlKey) return;
+
       const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
 
       if (isTyping) return;
