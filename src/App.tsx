@@ -63,7 +63,7 @@ const MainApp: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <Router basename="/student-points-tracker">
       <Routes>
         <Route path="/" element={<MainApp />} />
         <Route path="/demo" element={<ZustandDemo />} />
