@@ -6,17 +6,17 @@ interface BankedPoints {
   [studentId: string]: number;
 }
 
-export enum SortOption {
-  FIRST_NAME = 'firstName',
-  LAST_NAME = 'lastName',
-  POINTS = 'points'
-}
-
 interface BankContextValue {
   bankedPoints: BankedPoints;
   depositPoints: (updates: BankedPoints) => void;
   sortOption: SortOption;
   setSortOption: (option: SortOption) => void;
+}
+
+export enum SortOption {
+  ALPHABETICAL = 'alphabetical',
+  LAST_NAME = 'lastName',
+  POINTS = 'points'
 }
 
 const BankContext = createContext<BankContextValue | undefined>(undefined);
@@ -46,7 +46,7 @@ export const BankContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   );
 };
 
-export const useBankContext = () => {
+export const useBankContext = (): BankContextValue => {
   const context = useContext(BankContext);
   if (context === undefined) {
     throw new Error('useBankContext must be used within a BankContextProvider');

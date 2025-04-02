@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 export enum LocalStorageKey {
   APP_OPTIONS = 'app_options',
   SAVED_TABS = 'saved_tabs',
-  BANKED_POINTS = 'banked_points',
 }
 
 export function useLocalStorage<T>(key: LocalStorageKey, initialValue: T) {

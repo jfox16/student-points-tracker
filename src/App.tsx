@@ -38,7 +38,7 @@ const App: React.FC = () => {
           <AppHeader />
           <div className="App-row h-full">
             <TabList />
-            <div className="flex flex-col gap-4 flex-1">
+            <div className="flex flex-col gap-4">
               <TabOptionsRow />
               <TabTitle />
               <StudentList />
