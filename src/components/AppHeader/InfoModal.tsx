@@ -1,4 +1,3 @@
-
 import GitHubIcon from "@mui/icons-material/GitHub";
 import InfoIcon from "@mui/icons-material/Info";
 import { useCallback } from "react";
@@ -32,6 +31,8 @@ export const InfoModal = () => {
         <p><strong>Keyboard Shortcuts:</strong></p>
         <ul className="list-disc pl-5">
           <li><kbd>Space</kbd> - Add points to all/selected students</li>
+          <li><kbd>Shift</kbd> + <kbd>Space</kbd> - Subtract points from all/selected students</li>
+          <li><kbd>Shift</kbd> + <kbd>Student Key</kbd> - Subtract point from specific student</li>
           <li><kbd>Enter</kbd> - Confirm modal</li>
           <li><kbd>Escape</kbd> - Close modal</li>
         </ul>
