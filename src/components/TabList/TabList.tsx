@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import { useTabContext } from "../../context/TabContext";
+import { useTabStore } from "../../stores/useTabStore";
 import { cnsMerge } from "../../utils/cnsMerge";
 import { TabCard } from "../TabCard/TabCard";
 import { AddTabButton } from "./AddTabButton/AddTabButton";
@@ -11,7 +11,7 @@ import { Tooltip } from "../Tooltip/Tooltip";
 import './TabList.css';
 
 export const TabList = () => {
-  const { tabs } = useTabContext();
+  const { tabs } = useTabStore();
   const [ open, setOpen ] = useState(true);
 
   const toggleOpen = useCallback(() => {

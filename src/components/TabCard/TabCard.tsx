@@ -1,12 +1,11 @@
 import cns from 'classnames';
 import { useCallback, useState } from "react";
-import { useTabContext } from "../../context/TabContext";
+import { useTabStore } from "../../stores/useTabStore";
+import { useModalStore } from "../../stores/useModalStore";
 import { Tab } from "../../types/tab.type"
 import './TabCard.css';
 import { HoverInput } from '../HoverInput/HoverInput';
 import { CardHeader } from '../CardHeader/CardHeader';
-import { useModal } from '../../context/ModalContext';
-
 
 interface TabCardProps {
   tab: Tab;
@@ -15,8 +14,8 @@ interface TabCardProps {
 export const TabCard = ({
   tab,
 }: TabCardProps) => {
-  const { showModal } = useModal();
-  const { activeTab, setActiveTabId, updateTab, deleteTab } = useTabContext();
+  const { openModal } = useModalStore();
+  const { activeTab, setActiveTabId, updateTab, deleteTab } = useTabStore();
   const [ isCardHovered, setIsCardHovered ] = useState(false);
 
   const onClick = useCallback(() => {
@@ -35,13 +34,14 @@ export const TabCard = ({
 
   const openDeleteTabModal = useCallback(() => {
     const tabName = tab.name ? ` (${tab.name})` : '';
-    showModal(
-      `Are you sure you want to delete this tab?${tabName}`,
-      { onAccept: () => deleteTab(tab.id) }
-    );
+    openModal({
+      title: 'Delete Tab',
+      content: `Are you sure you want to delete this tab?${tabName}`,
+      onConfirm: () => deleteTab(tab.id)
+    });
   }, [
     deleteTab,
-    showModal,
+    openModal,
     tab.id,
     tab.name,
   ])

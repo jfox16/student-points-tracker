@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { useAppContext } from "../../context/AppContext";
-import { useStudentContext } from "../../context/StudentContext";
-import { useTabContext } from "../../context/TabContext";
+import { useAppOptionsStore } from "../../stores/useAppOptionsStore";
+import { useStudentStore } from "../../stores/useStudentStore";
+import { useTabStore } from "../../stores/useTabStore";
+import { useModalStore } from "../../stores/useModalStore";
 import { useCardDrag } from "../../hooks/useCardDrag";
 import { Student } from "../../types/student.type";
 
-import { useModal } from '../../context/ModalContext';
 import { cnsMerge } from '../../utils/cnsMerge';
 
 import { HoverInput } from '../HoverInput/HoverInput';
@@ -24,12 +24,8 @@ interface StudentCardProps {
 export const StudentCard = (props: StudentCardProps) => {
   const { className, student, index } = props;
 
-  const {
-    appOptions,
-  } = useAppContext();
-  const {
-    activeTab: { tabOptions },
-  } = useTabContext();
+  const { appOptions } = useAppOptionsStore();
+  const { activeTab } = useTabStore();
   const {
     deleteStudent,
     updateStudent,
@@ -37,11 +33,9 @@ export const StudentCard = (props: StudentCardProps) => {
     setDragHoverIndex,
     dragHoverIndex,
     keyBindingsMap,
-    addPointsToStudent,
-    addPointsToAllStudents,
-  } = useStudentContext();
+  } = useStudentStore();
   
-  const { showModal } = useModal();
+  const { openModal } = useModalStore();
 
   const {
     dragObjectRef,
@@ -67,13 +61,14 @@ export const StudentCard = (props: StudentCardProps) => {
 
   const openDeleteStudentModal = useCallback(() => {
     const studentName = student.name ? ` (${student.name})` : '';
-    showModal(
-      `Are you sure you want to delete this student?${studentName}`,
-      { onAccept: () => deleteStudent(student.id) },
-    )
+    openModal({
+      title: 'Delete Student',
+      content: `Are you sure you want to delete this student?${studentName}`,
+      onConfirm: () => deleteStudent(student.id)
+    });
   }, [
     deleteStudent,
-    showModal,
+    openModal,
     student.id,
     student.name,
   ]);
@@ -96,7 +91,7 @@ export const StudentCard = (props: StudentCardProps) => {
   const kbKey = useMemo(() => {
     if (appOptions.enableKeybinds) {
       const kbKey = keyBindingsMap[student.id];
-      return kbKey ?? ' '; // Empty character to take the same space
+      return kbKey ?? ' '; // Empty character to take the same space
     }
     return '';
   }, [

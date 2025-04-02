@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useSoundContext } from "../../../context/SoundContext";
-import {
-  studentIdsWithDelayedPointsAnimation,
-  studentIdsWithNextPointsAnimation,
-  useStudentContext
-} from "../../../context/StudentContext";
+import { useSoundStore } from "../../../stores/useSoundStore";
+import { useStudentStore } from "../../../stores/useStudentStore";
 import usePrevious from "../../../hooks/usePrevious";
 import { Student } from "../../../types/student.type";
 import { cnsMerge } from '../../../utils/cnsMerge';
@@ -13,6 +9,10 @@ import { useDebounce } from "../../../utils/useDebounce";
 
 import { PointsButton } from "./PointsButton";
 import { PointsDisplay } from "./PointsDisplay";
+
+// Track animation states
+const studentIdsWithDelayedPointsAnimation = new Set<string>();
+const studentIdsWithNextPointsAnimation = new Set<string>();
 
 interface PointsCounterProps {
   className?: string;
@@ -25,8 +25,8 @@ export const PointsCounter = ({
   student, 
   index 
 }: PointsCounterProps) => {
-  const { updateStudent, addPointsToStudent } = useStudentContext();
-  const { playPointSound } = useSoundContext();
+  const { updateStudent, addPointsToStudent } = useStudentStore();
+  const { playSound } = useSoundStore();
   const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
   const prevPoints = usePrevious(student.points);
   const [animationTrigger, setAnimationTrigger] = useState(student.points);
@@ -49,14 +49,14 @@ export const PointsCounter = ({
       const delay = 8 * index;
       setTimeout(() => {
         setAnimationTrigger(student.points);
-        playPointSound(1);
+        playSound('ding');
       }, delay);
     } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
       studentIdsWithNextPointsAnimation.delete(student.id);
       setAnimationTrigger(student.points);
-      playPointSound(5);
+      playSound('bubble');
     }
-  }, [prevPoints, student.points]);
+  }, [prevPoints, student.points, playSound, index]);
 
   const handleInputChange = useCallback((points: number) => {
     updateStudent(student.id, { points });
@@ -64,11 +64,11 @@ export const PointsCounter = ({
 
   const handleIncrementClick = useCallback(() => {
     addPointsToStudent(student.id, 1);
-  }, [addPointsToStudent]);
+  }, [addPointsToStudent, student.id]);
 
   const handleDecrementClick = useCallback(() => {
     addPointsToStudent(student.id, -1);
-  }, [addPointsToStudent]);
+  }, [addPointsToStudent, student.id]);
 
   return (
     <>

@@ -1,7 +1,8 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { useBankContext, SortOption } from '../../context/BankContext';
-import { useStudentContext } from '../../context/StudentContext';
-import { useModal } from '../../context/ModalContext';
+import { useStudentStore } from '../../stores/useStudentStore';
+import { useBankStore } from '../../stores/useBankStore';
+import { useModalStore } from '../../stores/useModalStore';
+import { useTabStore } from '../../stores/useTabStore';
 import { Student } from '../../types/student.type';
 import { StudentList } from './StudentList';
 import { ClearPointsButton } from './ClearPointsButton';
@@ -11,49 +12,55 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { cnsMerge } from '../../utils/cnsMerge';
 
-export const BankSidebar: React.FC = () => {
-  const { bankedPoints, depositPoints, sortOption, setSortOption } = useBankContext();
-  const { students } = useStudentContext();
-  const { showModal } = useModal();
-  const [open, setOpen] = useState(true);
+// Define sort options if not already defined elsewhere
+export enum SortOption {
+  ALPHABETICAL = 'alphabetical',
+  LAST_NAME = 'lastName',
+  POINTS = 'points'
+}
 
-  const toggleOpen = useCallback(() => {
-    setOpen(!open);
-  }, [open]);
+export const BankSidebar: React.FC = () => {
+  const { students } = useStudentStore();
+  const { activeTab } = useTabStore();
+  const { bankedPoints, setBankedPoints, toggleSidebar, sidebarVisible } = useBankStore();
+  const { openModal } = useModalStore();
+  const [sortOption, setSortOption] = useState<SortOption>(SortOption.POINTS);
 
   const handleClearPoints = () => {
-    showModal(
-      <div className="text-center">
-        <p className="mb-4">Are you sure you want to clear all banked points?</p>
-        <p className="text-sm text-gray-600">This will reset all students' banked points to 0.</p>
-      </div>,
-      {
-        onAccept: () => {
-          // Clear all banked points by setting them to 0
-          const clearedPoints = Object.keys(bankedPoints).reduce((acc, studentId) => {
-            acc[studentId] = 0;
-            return acc;
-          }, {} as { [key: string]: number });
-          depositPoints(clearedPoints);
-        },
-        acceptText: 'Clear',
-        cancelText: 'Cancel'
-      }
-    );
+    openModal({
+      title: 'Clear Banked Points',
+      content: (
+        <div className="text-center">
+          <p className="mb-4">Are you sure you want to clear all banked points?</p>
+          <p className="text-sm text-gray-600">This will reset all students' banked points to 0.</p>
+        </div>
+      ),
+      onConfirm: () => {
+        // Clear all banked points by setting them to 0
+        students.forEach(student => {
+          setBankedPoints(activeTab.id, student.id, 0);
+        });
+      },
+      confirmText: 'Clear',
+      cancelText: 'Cancel'
+    });
   };
 
   const totalPoints = useMemo(() => {
     return students
       .filter(student => student.name.trim() !== '')
-      .reduce((sum, student) => sum + (bankedPoints[student.id] || 0), 0);
-  }, [students, bankedPoints]);
+      .reduce((sum, student) => {
+        const studentPoints = bankedPoints[activeTab.id]?.[student.id] || 0;
+        return sum + studentPoints;
+      }, 0);
+  }, [students, bankedPoints, activeTab.id]);
 
   const sortedStudents = useMemo(() => {
     return [...students]
       .filter(student => student.name.trim() !== '')
       .map(student => ({
         ...student,
-        bankedPoints: bankedPoints[student.id] || 0
+        bankedPoints: bankedPoints[activeTab.id]?.[student.id] || 0
       }))
       .sort((a, b) => {
         switch (sortOption) {
@@ -67,22 +74,22 @@ export const BankSidebar: React.FC = () => {
             return 0;
         }
       });
-  }, [students, bankedPoints, sortOption]);
+  }, [students, bankedPoints, sortOption, activeTab.id]);
 
   return (
     <div className="h-full flex bg-gray-100 border-l border-gray-400">
-      <Tooltip text={open ? "Close points bank" : "Open points bank"}>
+      <Tooltip text={sidebarVisible ? "Close points bank" : "Open points bank"}>
         <div
-          className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
-          onClick={toggleOpen}
+          className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', sidebarVisible && 'w-4')}
+          onClick={toggleSidebar}
         >
-          {open
+          {sidebarVisible
             ? <ArrowForwardIosIcon className="pl-1" fontSize="small" />
             : <ArrowBackIosIcon className="pl-1" fontSize="small" />
           }
         </div>
       </Tooltip>
-      <div className={cnsMerge("w-64 h-full bg-gray-100 flex flex-col py-4 pl-3 pr-0", !open && 'hidden')}>
+      <div className={cnsMerge("w-64 h-full bg-gray-100 flex flex-col py-4 pl-3 pr-0", !sidebarVisible && 'hidden')}>
         <div className="flex-none border-b border-gray-400">
           <div className="text-2xl font-bold text-gray-900">Points Bank 🏦</div>
           <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>

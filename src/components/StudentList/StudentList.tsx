@@ -1,25 +1,21 @@
-
 import { useMemo } from "react";
-
-import { useStudentContext } from "../../context/StudentContext";
-import { useTabContext } from "../../context/TabContext";
 
 import { StudentCard } from "../StudentCard/StudentCard";
 import { AddStudentButton } from "./AddStudentButton/AddStudentButton";
 
 import './StudentList.css';
 import { cnsMerge } from "../../utils/cnsMerge";
-import { useAppContext } from "../../context/AppContext";
-import { reverse } from "dns";
+import { useAppOptionsStore } from "../../stores/useAppOptionsStore";
+import { useTabStore } from "../../stores/useTabStore";
+import { useStudentStore } from "../../stores/useStudentStore";
 
 export const StudentList = () => {
+  const { appOptions: { reverseOrder }} = useAppOptionsStore();
+  const { activeTab } = useTabStore();
+  const { students } = useStudentStore();
 
-  const { appOptions: { reverseOrder }} = useAppContext();
-  const { activeTab: { tabOptions } } = useTabContext();
-  const { students, } = useStudentContext();
-
-  const fontSize = useMemo(() => getDynamicFontSize(tabOptions?.columns), [
-    tabOptions?.columns,
+  const fontSize = useMemo(() => getDynamicFontSize(activeTab.tabOptions?.columns ?? 1), [
+    activeTab.tabOptions?.columns,
   ]);
 
   return (
@@ -29,7 +25,7 @@ export const StudentList = () => {
       <div
         className={cnsMerge('students', reverseOrder && 'rotate-180' )}
         style={{
-          gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (tabOptions?.columns ?? 1)))}, minmax(50px, 1fr))`
+          gridTemplateColumns: `repeat(${Math.min(16, Math.max(1, (activeTab.tabOptions?.columns ?? 1)))}, minmax(50px, 1fr))`
         }}
       >
         {students.map((student, i) => {
