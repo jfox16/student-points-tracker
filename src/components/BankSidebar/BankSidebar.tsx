@@ -1,16 +1,25 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useBankContext, SortOption } from '../../context/BankContext';
 import { useStudentContext } from '../../context/StudentContext';
 import { useModal } from '../../context/ModalContext';
 import { Student } from '../../types/student.type';
 import { StudentList } from './StudentList';
 import { ClearPointsButton } from './ClearPointsButton';
+import { Tooltip } from '../Tooltip/Tooltip';
 import './BankSidebar.css';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { cnsMerge } from '../../utils/cnsMerge';
 
 export const BankSidebar: React.FC = () => {
   const { bankedPoints, depositPoints, sortOption, setSortOption } = useBankContext();
   const { students } = useStudentContext();
   const { showModal } = useModal();
+  const [open, setOpen] = useState(true);
+
+  const toggleOpen = useCallback(() => {
+    setOpen(!open);
+  }, [open]);
 
   const handleClearPoints = () => {
     showModal(
@@ -61,21 +70,34 @@ export const BankSidebar: React.FC = () => {
   }, [students, bankedPoints, sortOption]);
 
   return (
-    <div className="w-128 h-full bg-white border-l border-gray-200 p-4 flex flex-col">
-      <div className="flex flex-col gap-2 p-4 border-b border-gray-200">
-        <div className="text-2xl font-bold text-gray-900">Points Bank</div>
-        <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
-      </div>
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto">
-          <StudentList 
-            students={sortedStudents} 
-            sortOption={sortOption} 
-            onSortChange={setSortOption} 
-          />
+    <div className="h-full flex bg-gray-100 border-l border-gray-400">
+      <Tooltip text={open ? "Close points bank" : "Open points bank"}>
+        <div
+          className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
+          onClick={toggleOpen}
+        >
+          {open
+            ? <ArrowForwardIosIcon className="pl-1" fontSize="small" />
+            : <ArrowBackIosIcon className="pl-1" fontSize="small" />
+          }
         </div>
-        <div className="mt-4">
-          <ClearPointsButton onClick={handleClearPoints} onDeposit={handleClearPoints} />
+      </Tooltip>
+      <div className={cnsMerge("w-64 h-full bg-gray-100 flex flex-col py-4 pl-3 pr-0", !open && 'hidden')}>
+        <div className="flex-none border-b border-gray-400">
+          <div className="text-2xl font-bold text-gray-900">Points Bank</div>
+          <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
+        </div>
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto pr-6">
+            <StudentList 
+              students={sortedStudents} 
+              sortOption={sortOption} 
+              onSortChange={setSortOption}
+            />
+          </div>
+          <div className="mt-4 pr-4">
+            <ClearPointsButton onClick={handleClearPoints} onDeposit={handleClearPoints} />
+          </div>
         </div>
       </div>
     </div>
