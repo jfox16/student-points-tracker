@@ -1,4 +1,3 @@
-
 export type StudentId = string;
 
 export interface Student {
@@ -7,6 +6,7 @@ export interface Student {
   points: number;
   selected?: boolean;
   state?: StudentState;
+  className?: string;
 }
 
 export interface StudentState {

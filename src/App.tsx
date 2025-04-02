@@ -3,12 +3,14 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { AppHeader } from "./components/AppHeader/AppHeader";
+import { BankSidebar } from "./components/BankSidebar/BankSidebar";
 import { StudentList } from "./components/StudentList/StudentList";
 import { TabList } from "./components/TabList/TabList";
 import { TabOptionsRow } from "./components/TabOptionsRow/TabOptionsRow";
 import { TabTitle } from "./components/TabTitle/TabTitle";
 
 import { AppContextProvider } from "./context/AppContext";
+import { BankContextProvider } from "./context/BankContext";
 import { ModalProvider } from "./context/ModalContext";
 import { SoundContextProvider } from "./context/SoundContext";
 import { StudentContextProvider } from "./context/StudentContext";
@@ -25,6 +27,7 @@ const providers = [
   StudentContextProvider,
   SoundContextProvider,
   ModalProvider,
+  BankContextProvider,
 ];
 
 const App: React.FC = () => {
@@ -32,17 +35,15 @@ const App: React.FC = () => {
     <NestProviders providers={providers}>
       <DndProvider backend={HTML5Backend}>
         <div className="App h-screen flex flex-col">
-
           <AppHeader />
-
           <div className="App-row h-full">
-
             <TabList />
-              <div className="flex flex-col gap-4">
-                <TabOptionsRow />
-                <TabTitle />
-                <StudentList />
-              </div>
+            <div className="flex flex-col gap-4 flex-1">
+              <TabOptionsRow />
+              <TabTitle />
+              <StudentList />
+            </div>
+            <BankSidebar />
           </div>
         </div>
       </DndProvider>
