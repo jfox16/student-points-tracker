@@ -11,6 +11,7 @@ import { PointSoundWidget } from "./Widgets/PointSoundWidget";
 import { ResetAllWidget } from "./Widgets/ResetAllWidget";
 import { SelectAllWidget } from "./Widgets/SelectAllWidget";
 import { ReverseWidget } from "./Widgets/ReverseWidget";
+import { DepositPointsWidget } from "./Widgets/DepositPointsWidget/DepositPointsWidget";
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
@@ -41,8 +42,7 @@ export const TabOptionsRow = () => {
         className={cnsMerge(
           "TabOptionsRow",
           "flex items-center h-12 px-4 gap-4",
-          "bg-gray-200 opacity-40",
-          showOnHover,
+          "bg-gray-200",
         )}
       >
         {/* Columns Input */}
@@ -65,6 +65,10 @@ export const TabOptionsRow = () => {
 
         <div className={showOnHover}>
           <ResetAllWidget />
+        </div>
+
+        <div className={showOnHover}>
+          <DepositPointsWidget />
         </div>
 
         <div className={showOnHover}>

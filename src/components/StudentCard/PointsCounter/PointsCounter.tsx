@@ -85,20 +85,6 @@ export const PointsCounter = (props: PointsCounterProps) => {
     enableClickAfterDelay,
   ]);
 
-  const handleDecrementClick = useCallback(() => {
-    // Avoid accidental double click bug
-    if (clickEnabled) {
-      addPointsToStudent(student.id, -1);
-      setClickEnabled(false);
-      enableClickAfterDelay();
-    }
-  }, [
-    clickEnabled,
-    setClickEnabled,
-    addPointsToStudent,
-    enableClickAfterDelay,
-  ]);
-
   const dynamicTextColor = useMemo(() => {
     return getDynamicColor(student.points);
   }, [student.points]);
@@ -111,45 +97,28 @@ export const PointsCounter = (props: PointsCounterProps) => {
 
   return (
     <div className={cnsMerge("PointsCounter px-[4%]", className)}>
-      <div className="relative flex-1 h-full">
-        {/* Left clickable area for decrement */}
+      <div className={cnsMerge("relative flex-1 bounce h-full")} key={animationTrigger}>
         <div
-          className="absolute inset-0 w-[40%] cursor-pointer hover:bg-gray-100/50"
-          onClick={handleDecrementClick}
-          style={{ zIndex: 1 }}
-        />
-        
-        {/* Right clickable area for increment */}
-        <div
-          className="absolute inset-0 w-[40%] cursor-pointer hover:bg-gray-100/50"
-          onClick={handleIncrementClick}
-          style={{ left: '60%', zIndex: 1 }}
-        />
-
-        {/* Main content */}
-        <div className="relative flex-1 bounce h-full" key={animationTrigger}>
-          <div
-            className={cnsMerge(
-              "absolute inset-0 top-[-0.5em]",
-              "flex justify-center",
-              "pointer-events-none",
-              "font-xs text-gray-400"
-            )}
-          >
-            {recentChangeString}
-          </div>
-          <NumberInput
-            className={cnsMerge("points-input h-full w-full")}
-            value={student.points}
-            onChange={handleInputChange}
-            inputProps={{
-              style: {
-                color: dynamicTextColor,
-                fontSize: "1.5em",
-              },
-            }}
-          />
+          className={cnsMerge(
+            "absolute inset-0 top-[-0.5em]",
+            "flex justify-center",
+            "pointer-events-none",
+            "font-xs text-gray-400"
+          )}
+        >
+          {recentChangeString}
         </div>
+        <NumberInput
+          className={cnsMerge("points-input h-full w-full")}
+          value={student.points}
+          onChange={handleInputChange}
+          inputProps={{
+            style: {
+              color: dynamicTextColor,
+              fontSize: "1.5em",
+            },
+          }}
+        />
       </div>
 
       <div

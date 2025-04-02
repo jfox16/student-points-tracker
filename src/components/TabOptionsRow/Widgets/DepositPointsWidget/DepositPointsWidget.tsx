@@ -3,6 +3,7 @@ import { useBankContext } from '../../../../context/BankContext';
 import { useStudentContext } from '../../../../context/StudentContext';
 import { useModal } from '../../../../context/ModalContext';
 import { cnsMerge } from '../../../../utils/cnsMerge';
+import { PillButton } from '../../../../components/PillButton/PillButton';
 
 interface DepositPointsWidgetProps {
   className?: string;
@@ -10,7 +11,7 @@ interface DepositPointsWidgetProps {
 
 export const DepositPointsWidget: React.FC<DepositPointsWidgetProps> = ({ className }) => {
   const { bankedPoints, depositPoints } = useBankContext();
-  const { students, updateStudent } = useStudentContext();
+  const { students, updateAllStudents } = useStudentContext();
   const { showModal } = useModal();
 
   const handleDeposit = () => {
@@ -33,11 +34,7 @@ export const DepositPointsWidget: React.FC<DepositPointsWidgetProps> = ({ classN
           depositPoints(bankedPointsUpdates);
 
           // Reset all student points to 0
-          students.forEach(student => {
-            if (student.points > 0) {
-              updateStudent(student.id, { points: 0 });
-            }
-          });
+          updateAllStudents({ points: 0 });
         },
         acceptText: 'Deposit',
         cancelText: 'Cancel'
@@ -46,14 +43,16 @@ export const DepositPointsWidget: React.FC<DepositPointsWidgetProps> = ({ classN
   };
 
   return (
-    <button
-      className={cnsMerge(
-        'px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors',
-        className
-      )}
-      onClick={handleDeposit}
-    >
-      Deposit Points
-    </button>
+    <div className="relative group">
+      <PillButton
+        className={className}
+        onClick={handleDeposit}
+      >
+        Deposit Points
+      </PillButton>
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        Deposit all student points to the bank
+      </div>
+    </div>
   );
 }; 
