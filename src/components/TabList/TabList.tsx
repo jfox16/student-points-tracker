@@ -24,7 +24,7 @@ export const TabList = () => {
     <div
       className="h-full flex bg-gray-100 border-r border-gray-400"
     >
-      <div className={cnsMerge("TabList h-full flex", !open && 'hidden')}>
+      <div className={cnsMerge("TabList h-full flex pr-2", !open && 'hidden')}>
         {tabs.map(tab => (
           <TabCard
             tab={tab}

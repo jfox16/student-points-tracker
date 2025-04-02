@@ -3,4 +3,6 @@
   flex-direction: column;
   gap: 8px;
   flex-shrink: 0;
+  overflow-y: auto;
+  height: 100%;
 }
