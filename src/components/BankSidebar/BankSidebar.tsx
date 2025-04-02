@@ -34,8 +34,10 @@ export const BankSidebar: React.FC = () => {
   };
 
   const totalPoints = useMemo(() => {
-    return students.reduce((sum, student) => sum + student.points, 0);
-  }, [students]);
+    return students
+      .filter(student => student.name.trim() !== '')
+      .reduce((sum, student) => sum + (bankedPoints[student.id] || 0), 0);
+  }, [students, bankedPoints]);
 
   const sortedStudents = useMemo(() => {
     return [...students]
@@ -60,24 +62,17 @@ export const BankSidebar: React.FC = () => {
 
   return (
     <div className="w-128 h-full bg-white border-l border-gray-200 p-4 flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Points Bank</h2>
-        <div className="text-sm text-gray-500">Class Total: {totalPoints}</div>
+      <div className="flex flex-col gap-2 p-4 border-b border-gray-200">
+        <div className="text-2xl font-bold text-gray-900">Points Bank</div>
+        <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
       </div>
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="mb-4">
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value as SortOption)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value={SortOption.ALPHABETICAL}>Sort by Name</option>
-            <option value={SortOption.LAST_NAME}>Sort by Last Name</option>
-            <option value={SortOption.POINTS}>Sort by Points</option>
-          </select>
-        </div>
         <div className="flex-1 overflow-y-auto">
-          <StudentList students={sortedStudents} sortOption={sortOption} onSortChange={setSortOption} />
+          <StudentList 
+            students={sortedStudents} 
+            sortOption={sortOption} 
+            onSortChange={setSortOption} 
+          />
         </div>
         <div className="mt-4">
           <ClearPointsButton onClick={handleClearPoints} onDeposit={handleClearPoints} />
