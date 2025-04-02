@@ -84,7 +84,7 @@ export const BankSidebar: React.FC = () => {
       </Tooltip>
       <div className={cnsMerge("w-64 h-full bg-gray-100 flex flex-col py-4 pl-3 pr-0", !open && 'hidden')}>
         <div className="flex-none border-b border-gray-400">
-          <div className="text-2xl font-bold text-gray-900">Points Bank</div>
+          <div className="text-2xl font-bold text-gray-900">Points Bank 🏦</div>
           <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
         </div>
         <div className="flex-1 overflow-hidden flex flex-col">

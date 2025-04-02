@@ -1,11 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
-
 import { useAppContext } from "../../context/AppContext";
-import { useStudentContext } from "../../context/StudentContext";
-import { useTabContext } from "../../context/TabContext";
-import { useCardDrag } from "../../hooks/useCardDrag";
+import { useStudentStore } from "../../stores/useStudentStore";
 import { Student } from "../../types/student.type";
-
+import { useCardDrag } from "../../hooks/useCardDrag";
 import { useModal } from '../../context/ModalContext';
 import { cnsMerge } from '../../utils/cnsMerge';
 
@@ -21,25 +18,18 @@ interface StudentCardProps {
   index: number; // index of Student in list. Needed for drag and drop
 }
 
-export const StudentCard = (props: StudentCardProps) => {
+export const ZustandStudentCard = (props: StudentCardProps) => {
   const { className, student, index } = props;
 
-  const {
-    appOptions,
-  } = useAppContext();
-  const {
-    activeTab: { tabOptions },
-  } = useTabContext();
+  const { appOptions } = useAppContext();
   const {
     deleteStudent,
     updateStudent,
     moveStudent,
-    setDragHoverIndex,
     dragHoverIndex,
+    setDragHoverIndex,
     keyBindingsMap,
-    addPointsToStudent,
-    addPointsToAllStudents,
-  } = useStudentContext();
+  } = useStudentStore();
   
   const { showModal } = useModal();
 
@@ -96,7 +86,7 @@ export const StudentCard = (props: StudentCardProps) => {
   const kbKey = useMemo(() => {
     if (appOptions.enableKeybinds) {
       const kbKey = keyBindingsMap[student.id];
-      return kbKey ?? ' '; // Empty character to take the same space
+      return kbKey ?? ' '; // Empty character to take the same space
     }
     return '';
   }, [
@@ -154,4 +144,4 @@ export const StudentCard = (props: StudentCardProps) => {
       </div>
     </div>
   );
-}
+}; 
