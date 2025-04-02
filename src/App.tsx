@@ -34,40 +34,40 @@ const providers = [
 
 const MainApp: React.FC = () => {
   return (
-    <div className="App h-screen flex flex-col overflow-hidden">
-      <div className="flex-none">
-        <AppHeader />
-      </div>
-      <div className="App-row flex-1 flex min-h-0">
-        <div className="flex-none">
-          <TabList />
-        </div>
-        <div className="flex-1 min-w-0 overflow-y-auto">
-          <div className="flex flex-col gap-4">
-            <TabOptionsRow />
-            <TabTitle />
-            <StudentList />
+    <NestProviders providers={providers}>
+      <DndProvider backend={HTML5Backend}>
+        <div className="App h-screen flex flex-col overflow-hidden">
+          <div className="flex-none">
+            <AppHeader />
+          </div>
+          <div className="App-row flex-1 flex min-h-0">
+            <div className="flex-none">
+              <TabList />
+            </div>
+            <div className="flex-1 min-w-0 overflow-y-auto">
+              <div className="flex flex-col gap-4">
+                <TabOptionsRow />
+                <TabTitle />
+                <StudentList />
+              </div>
+            </div>
+            <div className="flex-none">
+              <BankSidebar />
+            </div>
           </div>
         </div>
-        <div className="flex-none">
-          <BankSidebar />
-        </div>
-      </div>
-    </div>
+      </DndProvider>
+    </NestProviders>
   );
 };
 
 const App: React.FC = () => {
   return (
     <Router>
-      <NestProviders providers={providers}>
-        <DndProvider backend={HTML5Backend}>
-          <Routes>
-            <Route path="/" element={<MainApp />} />
-            <Route path="/demo" element={<ZustandDemo />} />
-          </Routes>
-        </DndProvider>
-      </NestProviders>
+      <Routes>
+        <Route path="/" element={<MainApp />} />
+        <Route path="/demo" element={<ZustandDemo />} />
+      </Routes>
     </Router>
   );
 };
