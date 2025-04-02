@@ -26,7 +26,6 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
 
     const rows = Math.floor(students.length / columns);
     const offset = reverseOrder ? columns - (students.length % columns) : 0;
-    console.log({ offset })
 
     students.forEach((student, index) => {
       let row = Math.floor(index / columns);
@@ -55,15 +54,14 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   // Handle key presses
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      const holdingOtherKeys = event.ctrlKey || event.shiftKey || event.altKey;
       const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
 
-      if (holdingOtherKeys || isTyping) return;
+      if (isTyping) return;
 
       const kbKey = event.key.toLowerCase();
 
       if (kbKey === " ") {
-        addPointsToAllStudents(1);
+        addPointsToAllStudents(event.shiftKey ? -1 : 1);
         event.preventDefault();
         return;
       }
@@ -71,7 +69,7 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
       const studentId = keyToIdMap[kbKey];
 
       if (enableKeybinds && studentId !== undefined) {
-        addPointsToStudent(studentId, 1);
+        addPointsToStudent(studentId, event.shiftKey ? -1 : 1);
         event.preventDefault();
         return;
       }
