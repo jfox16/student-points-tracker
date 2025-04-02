@@ -42,7 +42,7 @@ For AI agents working with this codebase, please refer to the `ai_docs/` directo
 ## Getting Started
 
 ```bash
-git clone <repo>
-cd <repo>
+git clone https://github.com/jfox16/student-points-tracker/
+cd student-points-tracker
 npm install
 npm run dev
