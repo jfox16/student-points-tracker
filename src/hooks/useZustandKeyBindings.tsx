@@ -67,27 +67,31 @@ export const useZustandKeyBindings = () => {
   // Handle key presses
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      // Don't handle key presses if Ctrl is held down
-      if (event.ctrlKey) return;
+      // Don't handle key presses if Ctrl or Cmd is held down
+      if (event.ctrlKey || event.metaKey) return;
 
       const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
 
       if (isTyping) return;
 
       const kbKey = event.key.toLowerCase();
+      let handled = false;
 
       if (kbKey === " ") {
         addPointsToAllStudents(event.shiftKey ? -1 : 1);
-        event.preventDefault();
-        return;
+        handled = true;
+      } else {
+        const studentId = keyToIdMap[kbKey];
+
+        if (enableKeybinds && studentId !== undefined) {
+          addPointsToStudent(studentId, event.shiftKey ? -1 : 1);
+          handled = true;
+        }
       }
 
-      const studentId = keyToIdMap[kbKey];
-
-      if (enableKeybinds && studentId !== undefined) {
-        addPointsToStudent(studentId, event.shiftKey ? -1 : 1);
+      // Only prevent default if we actually handled the key press
+      if (handled) {
         event.preventDefault();
-        return;
       }
     },
     [enableKeybinds, keyToIdMap, addPointsToStudent, addPointsToAllStudents]
