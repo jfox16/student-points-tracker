@@ -76,12 +76,10 @@ export const TabOptionsRow = () => {
       <div
         className={cnsMerge(
           "TabOptionsRow",
-          "flex items-center h-12 px-4 gap-4",
+          "flex items-center h-14 px-4 pt-1 gap-4",
           "bg-gray-200",
           "min-w-max",
           "relative",
-          "overflow-y-hidden",
-          "pr-16"
         )}
       >
         {/* Columns Input */}
