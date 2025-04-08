@@ -8,7 +8,6 @@ import { StudentList } from "./components/StudentList/StudentList";
 import { TabList } from "./components/TabList/TabList";
 import { TabOptionsRow } from "./components/TabOptionsRow/TabOptionsRow";
 import { TabTitle } from "./components/TabTitle/TabTitle";
-import { SaveStatus } from "./components/SaveStatus/SaveStatus";
 
 import { AppContextProvider } from "./context/AppContext";
 import { BankContextProvider } from "./context/BankContext";
@@ -21,7 +20,6 @@ import { NestProviders } from "./utils/NestProviders";
 
 import './App.css';
 import './output.css'; // import generated tailwind styles
-import { useSaveStatusStore } from "./stores/useSaveStatusStore";
 
 const providers = [
   AppContextProvider,
@@ -33,8 +31,6 @@ const providers = [
 ];
 
 const App: React.FC = () => {
-  const { isSaving, isSaved } = useSaveStatusStore();
-
   return (
     <NestProviders providers={providers}>
       <DndProvider backend={HTML5Backend}>
@@ -57,7 +53,6 @@ const App: React.FC = () => {
               <BankSidebar />
             </div>
           </div>
-          <SaveStatus isSaving={isSaving} isSaved={isSaved} />
         </div>
       </DndProvider>
     </NestProviders>
