@@ -35,15 +35,34 @@ export const TabList = () => {
         <AddTabButton />
       </div>
 
-      <div
-        className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
-        onClick={toggleOpen}
-      >
-        {open
-          ? <ArrowBackIosIcon fontSize="small" />
-          : <ArrowForwardIosIcon className="pl-1" fontSize="small" />
-        }
-      </div>
+      {open ? (
+        <Tooltip text="Close classes" placement="right">
+          <div
+            className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
+            onClick={toggleOpen}
+          >
+            <div className="flex flex-col items-center justify-center h-full">
+              <ArrowBackIosIcon fontSize="small" />
+            </div>
+          </div>
+        </Tooltip>
+      ) : (
+        <Tooltip text="Open classes" placement="right">
+          <div
+            className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
+            onClick={toggleOpen}
+          >
+            <div className="flex flex-col items-center justify-center h-full">
+              <ArrowForwardIosIcon className="pl-1" fontSize="small" />
+              <div className="text-[10px] text-gray-400 tracking-wider mt-2">
+                {"CLASSES".split('').map((letter, i) => (
+                  <div key={i} className="text-center leading-[0.9]">{letter}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Tooltip>
+      )}
     </div>
   );
 }

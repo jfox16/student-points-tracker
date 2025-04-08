@@ -31,14 +31,18 @@ export const StudentList: React.FC<StudentListProps> = ({ students, sortOption, 
 
       <div className="mt-4">
         <div className="text-sm font-semibold mb-2">Banked Points by Student:</div>
-        <div className="space-y-2">
-          {students.map(student => (
-            <div key={student.id} className="flex justify-between items-center">
-              <span className="text-sm">{student.name}</span>
-              <span className="font-semibold">{student.bankedPoints}</span>
-            </div>
-          ))}
-        </div>
+        {students.length > 0 ? (
+          <div className="space-y-2">
+            {students.map(student => (
+              <div key={student.id} className="flex justify-between items-center">
+                <span className="text-sm">{student.name}</span>
+                <span className="font-semibold">{student.bankedPoints}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-sm text-gray-500 italic">No named students yet</div>
+        )}
       </div>
     </div>
   );
