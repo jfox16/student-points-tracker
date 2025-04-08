@@ -17,7 +17,7 @@ export const CollapseButton: React.FC<CollapseButtonProps> = ({ isOpen, onToggle
         onClick={onToggle}
       >
         <div className="flex flex-col items-center justify-center h-full">
-          <ArrowBackIosIcon fontSize="small" />
+          <ArrowForwardIosIcon fontSize="small" />
         </div>
       </div>
     </Tooltip>
@@ -28,11 +28,18 @@ export const CollapseButton: React.FC<CollapseButtonProps> = ({ isOpen, onToggle
         onClick={onToggle}
       >
         <div className="flex flex-col items-center justify-center h-full">
-          <ArrowForwardIosIcon className="pl-1" fontSize="small" />
-          <div className="text-[10px] text-gray-400 tracking-wider mt-2">
-            {"POINTS BANK".split('').map((letter, i) => (
-              <div key={i} className="text-center leading-[0.9]">{letter}</div>
-            ))}
+          <ArrowBackIosIcon className="pl-1" fontSize="small" />
+          <div className="flex flex-col gap-2 text-[10px] text-gray-400 tracking-wider mt-2">
+            <div>
+              {"POINTS".split('').map((letter, i) => (
+                <div key={i} className="text-center leading-[0.9]">{letter}</div>
+              ))}
+            </div>
+            <div>
+              {"BANK".split('').map((letter, i) => (
+                <div key={i} className="text-center leading-[0.9]">{letter}</div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
