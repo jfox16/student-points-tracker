@@ -1,12 +1,9 @@
 import { useCallback, useState } from 'react';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
 import { useTabContext } from "../../context/TabContext";
 import { cnsMerge } from "../../utils/cnsMerge";
 import { TabCard } from "../TabCard/TabCard";
 import { AddTabButton } from "./AddTabButton/AddTabButton";
-import { Tooltip } from "../Tooltip/Tooltip";
+import { CollapsibleSidebarButton } from '../CollapsibleSidebarButton/CollapsibleSidebarButton';
 
 import './TabList.css';
 
@@ -35,15 +32,12 @@ export const TabList = () => {
         <AddTabButton />
       </div>
 
-      <div
-        className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-3')}
+      <CollapsibleSidebarButton
+        isOpen={open}
         onClick={toggleOpen}
-      >
-        {open
-          ? <ArrowBackIosIcon fontSize="small" />
-          : <ArrowForwardIosIcon className="pl-1" fontSize="small" />
-        }
-      </div>
+        side="right"
+        label="Classes"
+      />
     </div>
   );
 }

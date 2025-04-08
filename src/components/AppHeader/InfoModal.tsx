@@ -23,7 +23,7 @@ export const InfoModal = () => {
             jfox16/student-points-tracker
           </a>
         </p>
-        <p><strong>Version:</strong> 1.0.0</p>
+        <p><strong>Version:</strong> 2.0.0</p>
         <p><strong>License:</strong> MIT</p>
 
         <hr className="my-2" />

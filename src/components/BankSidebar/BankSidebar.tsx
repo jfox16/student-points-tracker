@@ -2,14 +2,10 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { useBankContext, SortOption } from '../../context/BankContext';
 import { useStudentContext } from '../../context/StudentContext';
 import { useModal } from '../../context/ModalContext';
-import { Student } from '../../types/student.type';
-import { StudentList } from './StudentList';
-import { ClearPointsButton } from './ClearPointsButton';
-import { Tooltip } from '../Tooltip/Tooltip';
+import { BankHeader } from './BankHeader';
+import { BankContent } from './BankContent';
+import { CollapsibleSidebarButton } from '../CollapsibleSidebarButton/CollapsibleSidebarButton';
 import './BankSidebar.css';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { cnsMerge } from '../../utils/cnsMerge';
 
 export const BankSidebar: React.FC = () => {
   const { bankedPoints, depositPoints, sortOption, setSortOption } = useBankContext();
@@ -29,9 +25,9 @@ export const BankSidebar: React.FC = () => {
       </div>,
       {
         onAccept: () => {
-          // Clear all banked points by setting them to 0
-          const clearedPoints = Object.keys(bankedPoints).reduce((acc, studentId) => {
-            acc[studentId] = 0;
+          // Clear points only for current class students
+          const clearedPoints = students.reduce((acc, student) => {
+            acc[student.id] = 0;
             return acc;
           }, {} as { [key: string]: number });
           depositPoints(clearedPoints);
@@ -44,23 +40,39 @@ export const BankSidebar: React.FC = () => {
 
   const totalPoints = useMemo(() => {
     return students
-      .filter(student => student.name.trim() !== '')
       .reduce((sum, student) => sum + (bankedPoints[student.id] || 0), 0);
   }, [students, bankedPoints]);
 
   const sortedStudents = useMemo(() => {
     return [...students]
-      .filter(student => student.name.trim() !== '')
       .map(student => ({
         ...student,
-        bankedPoints: bankedPoints[student.id] || 0
+        bankedPoints: student.id in bankedPoints ? bankedPoints[student.id] : undefined
       }))
       .sort((a, b) => {
+        // If either student doesn't have banked points, put them at the end
+        if (a.bankedPoints === undefined) return 1;
+        if (b.bankedPoints === undefined) return -1;
+        
+        // If either student has no name, put them at the end
+        const aHasName = a.name.trim();
+        const bHasName = b.name.trim();
+        if (!aHasName && !bHasName) {
+          // If both are unnamed, sort by ID
+          return a.id.localeCompare(b.id);
+        }
+        if (!aHasName) return 1;
+        if (!bHasName) return -1;
+        
         switch (sortOption) {
           case SortOption.ALPHABETICAL:
+            // Sort by full name for alphabetical
             return a.name.localeCompare(b.name);
           case SortOption.LAST_NAME:
-            return a.name.split(' ').pop()?.localeCompare(b.name.split(' ').pop() || '') || 0;
+            // Sort by last word in the name
+            const aLastName = a.name.split(' ').pop() || '';
+            const bLastName = b.name.split(' ').pop() || '';
+            return aLastName.localeCompare(bLastName);
           case SortOption.POINTS:
             return b.bankedPoints - a.bankedPoints;
           default:
@@ -71,35 +83,23 @@ export const BankSidebar: React.FC = () => {
 
   return (
     <div className="h-full flex bg-gray-100 border-l border-gray-400">
-      <Tooltip text={open ? "Close points bank" : "Open points bank"}>
-        <div
-          className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
-          onClick={toggleOpen}
-        >
-          {open
-            ? <ArrowForwardIosIcon className="pl-1" fontSize="small" />
-            : <ArrowBackIosIcon className="pl-1" fontSize="small" />
-          }
+      <CollapsibleSidebarButton
+        isOpen={open}
+        onClick={toggleOpen}
+        side="left"
+        label="Points Bank"
+      />
+      {open && (
+        <div className="w-64 h-full flex flex-col py-4 pl-3 pr-0">
+          <BankHeader totalPoints={totalPoints} />
+          <BankContent
+            students={sortedStudents}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            onClearPoints={handleClearPoints}
+          />
         </div>
-      </Tooltip>
-      <div className={cnsMerge("w-64 h-full bg-gray-100 flex flex-col py-4 pl-3 pr-0", !open && 'hidden')}>
-        <div className="flex-none border-b border-gray-400">
-          <div className="text-2xl font-bold text-gray-900">Points Bank</div>
-          <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
-        </div>
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto pr-6">
-            <StudentList 
-              students={sortedStudents} 
-              sortOption={sortOption} 
-              onSortChange={setSortOption}
-            />
-          </div>
-          <div className="mt-4 pr-4">
-            <ClearPointsButton onClick={handleClearPoints} onDeposit={handleClearPoints} />
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }; 

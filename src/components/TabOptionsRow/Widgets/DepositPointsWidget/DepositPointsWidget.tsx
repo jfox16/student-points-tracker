@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tooltip } from '@mui/material';
 import { useBankContext } from '../../../../context/BankContext';
 import { useStudentContext } from '../../../../context/StudentContext';
 import { useModal } from '../../../../context/ModalContext';
@@ -43,16 +44,15 @@ export const DepositPointsWidget: React.FC<DepositPointsWidgetProps> = ({ classN
   };
 
   return (
-    <div className="relative group">
-      <PillButton
-        className={className}
-        onClick={handleDeposit}
-      >
-        Deposit Points
-      </PillButton>
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-        Deposit all student points to the bank
+    <Tooltip title="Deposit all student points to the bank" enterDelay={1000}>
+      <div>
+        <PillButton
+          className={className}
+          onClick={handleDeposit}
+        >
+          Deposit Points
+        </PillButton>
       </div>
-    </div>
+    </Tooltip>
   );
 }; 

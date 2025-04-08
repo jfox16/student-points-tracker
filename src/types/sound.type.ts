@@ -1,0 +1,1 @@
+export type PointSoundName = "none" | "pop" | "ding" | "bark" | "meow"; 

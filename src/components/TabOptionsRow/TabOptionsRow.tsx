@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
+import { Tooltip } from '@mui/material';
 
 import { useTabContext } from "../../context/TabContext"
 import { TabOptions } from "../../types/tabOptions.type";
@@ -15,6 +16,8 @@ import { DepositPointsWidget } from "./Widgets/DepositPointsWidget/DepositPoints
 
 export const TabOptionsRow = () => {
   const { activeTab, updateTab } = useTabContext();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isHoveredRef = useRef(false);
   
   const updateTabOptions = useCallback((changes: Partial<TabOptions>) => {
     updateTab(activeTab.id, {
@@ -34,26 +37,63 @@ export const TabOptionsRow = () => {
     updateTabOptions,
   ]);
 
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (isHoveredRef.current) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    };
+
+    const handleMouseEnter = () => {
+      isHoveredRef.current = true;
+    };
+
+    const handleMouseLeave = () => {
+      isHoveredRef.current = false;
+    };
+
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
   const showOnHover = cnsMerge('opacity-70', 'hover:opacity-100')
 
   return (
-    <div>
+    <div 
+      ref={scrollContainerRef}
+      className="overflow-x-auto"
+    >
       <div
         className={cnsMerge(
           "TabOptionsRow",
-          "flex items-center h-12 px-4 gap-4",
+          "flex items-center h-14 px-4 pt-1 gap-4",
           "bg-gray-200",
+          "min-w-max",
+          "relative",
         )}
       >
         {/* Columns Input */}
-        <div className={cnsMerge('flex items-center', showOnHover)}>
-          <div className="flex-none">Columns:</div>
-          <NumberInput
-            className="w-6"
-            value={activeTab.tabOptions?.columns ?? 1}
-            onChange={onColumnsChange}
-          />
-        </div>
+        <Tooltip title="Number of columns in the student grid" enterDelay={1000}>
+          <div className={cnsMerge('flex items-center', showOnHover)}>
+            <div className="flex-none">Columns:</div>
+            <NumberInput
+              className="w-6"
+              value={activeTab.tabOptions?.columns ?? 1}
+              onChange={onColumnsChange}
+            />
+          </div>
+        </Tooltip>
 
         <GroupSelectWidget
           className={showOnHover}
@@ -71,17 +111,23 @@ export const TabOptionsRow = () => {
           <DepositPointsWidget />
         </div>
 
-        <div className={showOnHover}>
-          <EnableKeybindsToggle />
-        </div>
+        <Tooltip title="Enable keyboard shortcuts for point management" enterDelay={1000}>
+          <div className={showOnHover}>
+            <EnableKeybindsToggle />
+          </div>
+        </Tooltip>
         
-        <div className={showOnHover}>
-          <ReverseWidget />
-        </div>
+        <Tooltip title="Reverse the order of students in the list" enterDelay={1000}>
+          <div className={showOnHover}>
+            <ReverseWidget />
+          </div>
+        </Tooltip>
 
-        <div className={showOnHover}>
-          <PointSoundWidget />
-        </div>
+        <Tooltip title="Select a sound to play when points are added" enterDelay={1000}>
+          <div className={showOnHover}>
+            <PointSoundWidget />
+          </div>
+        </Tooltip>
       </div>
     </div>
   )
