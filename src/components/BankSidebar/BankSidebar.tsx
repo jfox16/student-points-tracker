@@ -71,52 +71,51 @@ export const BankSidebar: React.FC = () => {
 
   return (
     <div className="h-full flex bg-gray-100 border-l border-gray-400">
-      <div className={cnsMerge("w-64 h-full bg-gray-100 flex flex-col py-4 pl-3 pr-0", !open && 'hidden')}>
-        <div className="flex-none border-b border-gray-400">
-          <div className="text-2xl font-bold text-gray-900">Points Bank</div>
-          <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
-        </div>
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto pr-6">
-            <StudentList 
-              students={sortedStudents} 
-              sortOption={sortOption} 
-              onSortChange={setSortOption}
-            />
+      {open && (
+        <div className="w-64 h-full flex flex-col py-4 pl-3 pr-0">
+          <div className="flex-none border-b border-gray-400">
+            <div className="text-2xl font-bold text-gray-900">Points Bank</div>
+            <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
           </div>
-          <div className="mt-4 pr-4">
-            <ClearPointsButton onClick={handleClearPoints} />
-          </div>
-        </div>
-      </div>
-      {open ? (
-        <Tooltip text="Close points bank" placement="left">
-          <div
-            className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
-            onClick={toggleOpen}
-          >
-            <div className="flex flex-col items-center justify-center h-full">
-              <ArrowForwardIosIcon className="pl-1" fontSize="small" />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto pr-6">
+              <StudentList 
+                students={sortedStudents} 
+                sortOption={sortOption} 
+                onSortChange={setSortOption}
+              />
+            </div>
+            <div className="mt-4 pr-4">
+              <ClearPointsButton onClick={handleClearPoints} />
             </div>
           </div>
-        </Tooltip>
-      ) : (
-        <Tooltip text="Open points bank" placement="left">
-          <div
-            className={cnsMerge('flex text-gray-400 items-center bg-gray-100 hover:bg-gray-200 cursor-pointer w-6 h-full', open && 'w-4')}
-            onClick={toggleOpen}
-          >
-            <div className="flex flex-col items-center justify-center h-full">
-              <ArrowBackIosIcon className="pl-1" fontSize="small" />
-              <div className="text-[10px] text-gray-400 tracking-wider mt-2">
+        </div>
+      )}
+      <Tooltip text={open ? "Close points bank" : "Open points bank"} placement="left">
+        <div
+          className={cnsMerge(
+            'flex items-center justify-center h-full w-6 cursor-pointer',
+            'bg-gray-100 hover:bg-gray-200',
+            'text-gray-400',
+            open && 'w-4'
+          )}
+          onClick={toggleOpen}
+        >
+          <div className="flex flex-col items-center">
+            {open
+              ? <ArrowForwardIosIcon className="pl-1" fontSize="small" />
+              : <ArrowBackIosIcon className="pl-1" fontSize="small" />
+            }
+            {!open && (
+              <div className="text-[10px] tracking-wider mt-2">
                 {"POINTS BANK".split('').map((letter, i) => (
                   <div key={i} className="text-center leading-[0.9]">{letter}</div>
                 ))}
               </div>
-            </div>
+            )}
           </div>
-        </Tooltip>
-      )}
+        </div>
+      </Tooltip>
     </div>
   );
 }; 

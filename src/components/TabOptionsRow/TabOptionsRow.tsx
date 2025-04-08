@@ -79,7 +79,9 @@ export const TabOptionsRow = () => {
           "flex items-center h-12 px-4 gap-4",
           "bg-gray-200",
           "min-w-max",
-          "relative"
+          "relative",
+          "overflow-y-hidden",
+          "pr-16"
         )}
       >
         {/* Columns Input */}
