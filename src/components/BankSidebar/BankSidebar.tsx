@@ -4,7 +4,7 @@ import { useStudentContext } from '../../context/StudentContext';
 import { useModal } from '../../context/ModalContext';
 import { BankHeader } from './BankHeader';
 import { BankContent } from './BankContent';
-import { CollapseButton } from './CollapseButton';
+import { CollapsibleSidebarButton } from '../CollapsibleSidebarButton/CollapsibleSidebarButton';
 import './BankSidebar.css';
 
 export const BankSidebar: React.FC = () => {
@@ -83,7 +83,12 @@ export const BankSidebar: React.FC = () => {
 
   return (
     <div className="h-full flex bg-gray-100 border-l border-gray-400">
-      <CollapseButton isOpen={open} onToggle={toggleOpen} />
+      <CollapsibleSidebarButton
+        isOpen={open}
+        onClick={toggleOpen}
+        side="left"
+        label="Points Bank"
+      />
       {open && (
         <div className="w-64 h-full flex flex-col py-4 pl-3 pr-0">
           <BankHeader totalPoints={totalPoints} />

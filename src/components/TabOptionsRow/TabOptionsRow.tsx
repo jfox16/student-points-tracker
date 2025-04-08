@@ -1,4 +1,5 @@
 import { useCallback, useState, useRef, useEffect } from "react";
+import { Tooltip } from '@mui/material';
 
 import { useTabContext } from "../../context/TabContext"
 import { TabOptions } from "../../types/tabOptions.type";
@@ -83,14 +84,16 @@ export const TabOptionsRow = () => {
         )}
       >
         {/* Columns Input */}
-        <div className={cnsMerge('flex items-center', showOnHover)}>
-          <div className="flex-none">Columns:</div>
-          <NumberInput
-            className="w-6"
-            value={activeTab.tabOptions?.columns ?? 1}
-            onChange={onColumnsChange}
-          />
-        </div>
+        <Tooltip title="Number of columns in the student grid" enterDelay={1000}>
+          <div className={cnsMerge('flex items-center', showOnHover)}>
+            <div className="flex-none">Columns:</div>
+            <NumberInput
+              className="w-6"
+              value={activeTab.tabOptions?.columns ?? 1}
+              onChange={onColumnsChange}
+            />
+          </div>
+        </Tooltip>
 
         <GroupSelectWidget
           className={showOnHover}
@@ -108,17 +111,23 @@ export const TabOptionsRow = () => {
           <DepositPointsWidget />
         </div>
 
-        <div className={showOnHover}>
-          <EnableKeybindsToggle />
-        </div>
+        <Tooltip title="Enable keyboard shortcuts for point management" enterDelay={1000}>
+          <div className={showOnHover}>
+            <EnableKeybindsToggle />
+          </div>
+        </Tooltip>
         
-        <div className={showOnHover}>
-          <ReverseWidget />
-        </div>
+        <Tooltip title="Reverse the order of students in the list" enterDelay={1000}>
+          <div className={showOnHover}>
+            <ReverseWidget />
+          </div>
+        </Tooltip>
 
-        <div className={showOnHover}>
-          <PointSoundWidget />
-        </div>
+        <Tooltip title="Select a sound to play when points are added" enterDelay={1000}>
+          <div className={showOnHover}>
+            <PointSoundWidget />
+          </div>
+        </Tooltip>
       </div>
     </div>
   )

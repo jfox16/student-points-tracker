@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { Tooltip } from '@mui/material';
 import { useStudentContext } from "../../../context/StudentContext"
 import { PillButton } from "../../PillButton/PillButton";
 import { useModal } from "../../../context/ModalContext";
@@ -29,10 +30,14 @@ export const ResetAllWidget = () => {
   ])
 
   return (
-    <PillButton
-      onClick={openResetPointsModal}
-    >
-      Reset points
-    </PillButton>
+    <Tooltip title="Reset all student points to 0" enterDelay={1000}>
+      <div>
+        <PillButton
+          onClick={openResetPointsModal}
+        >
+          Reset points
+        </PillButton>
+      </div>
+    </Tooltip>
   )
 }
