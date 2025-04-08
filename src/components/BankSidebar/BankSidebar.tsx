@@ -2,14 +2,10 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { useBankContext, SortOption } from '../../context/BankContext';
 import { useStudentContext } from '../../context/StudentContext';
 import { useModal } from '../../context/ModalContext';
-import { Student } from '../../types/student.type';
-import { StudentList } from './StudentList';
-import { ClearPointsButton } from './ClearPointsButton';
-import { Tooltip } from '../Tooltip/Tooltip';
+import { BankHeader } from './BankHeader';
+import { BankContent } from './BankContent';
+import { CollapseButton } from './CollapseButton';
 import './BankSidebar.css';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { cnsMerge } from '../../utils/cnsMerge';
 
 export const BankSidebar: React.FC = () => {
   const { bankedPoints, depositPoints, sortOption, setSortOption } = useBankContext();
@@ -44,23 +40,31 @@ export const BankSidebar: React.FC = () => {
 
   const totalPoints = useMemo(() => {
     return students
-      .filter(student => student.name.trim() !== '')
       .reduce((sum, student) => sum + (bankedPoints[student.id] || 0), 0);
   }, [students, bankedPoints]);
 
   const sortedStudents = useMemo(() => {
     return [...students]
-      .filter(student => student.name.trim() !== '')
       .map(student => ({
         ...student,
-        bankedPoints: bankedPoints[student.id] || 0
+        bankedPoints: student.id in bankedPoints ? bankedPoints[student.id] : undefined
       }))
       .sort((a, b) => {
+        // If either student doesn't have banked points, put them at the end
+        if (a.bankedPoints === undefined) return 1;
+        if (b.bankedPoints === undefined) return -1;
+        
+        // If either student has no name, put them at the end
+        if (!a.name.trim()) return 1;
+        if (!b.name.trim()) return -1;
+        
         switch (sortOption) {
           case SortOption.ALPHABETICAL:
             return a.name.localeCompare(b.name);
           case SortOption.LAST_NAME:
-            return a.name.split(' ').pop()?.localeCompare(b.name.split(' ').pop() || '') || 0;
+            const aLastName = a.name.split(' ').pop() || '';
+            const bLastName = b.name.split(' ').pop() || '';
+            return aLastName.localeCompare(bLastName);
           case SortOption.POINTS:
             return b.bankedPoints - a.bankedPoints;
           default:
@@ -71,51 +75,18 @@ export const BankSidebar: React.FC = () => {
 
   return (
     <div className="h-full flex bg-gray-100 border-l border-gray-400">
+      <CollapseButton isOpen={open} onToggle={toggleOpen} />
       {open && (
         <div className="w-64 h-full flex flex-col py-4 pl-3 pr-0">
-          <div className="flex-none border-b border-gray-400">
-            <div className="text-2xl font-bold text-gray-900">Points Bank</div>
-            <div className="text-lg font-semibold text-gray-900">Class Total: {totalPoints}</div>
-          </div>
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto pr-6">
-              <StudentList 
-                students={sortedStudents} 
-                sortOption={sortOption} 
-                onSortChange={setSortOption}
-              />
-            </div>
-            <div className="mt-4 pr-4">
-              <ClearPointsButton onClick={handleClearPoints} />
-            </div>
-          </div>
+          <BankHeader totalPoints={totalPoints} />
+          <BankContent
+            students={sortedStudents}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            onClearPoints={handleClearPoints}
+          />
         </div>
       )}
-      <Tooltip text={open ? "Close points bank" : "Open points bank"} placement="left">
-        <div
-          className={cnsMerge(
-            'flex items-center justify-center h-full w-6 cursor-pointer',
-            'bg-gray-100 hover:bg-gray-200',
-            'text-gray-400',
-            open && 'w-4'
-          )}
-          onClick={toggleOpen}
-        >
-          <div className="flex flex-col items-center">
-            {open
-              ? <ArrowForwardIosIcon className="pl-1" fontSize="small" />
-              : <ArrowBackIosIcon className="pl-1" fontSize="small" />
-            }
-            {!open && (
-              <div className="text-[10px] tracking-wider mt-2">
-                {"POINTS BANK".split('').map((letter, i) => (
-                  <div key={i} className="text-center leading-[0.9]">{letter}</div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </Tooltip>
     </div>
   );
 }; 

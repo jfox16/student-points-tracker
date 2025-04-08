@@ -4,7 +4,7 @@ import { SortOption } from '../../context/BankContext';
 interface Student {
   id: string;
   name: string;
-  bankedPoints: number;
+  bankedPoints: number | undefined;
 }
 
 interface StudentListProps {
@@ -14,6 +14,9 @@ interface StudentListProps {
 }
 
 export const StudentList: React.FC<StudentListProps> = ({ students, sortOption, onSortChange }) => {
+  // Filter out students who don't have a defined bankedPoints value
+  const studentsWithBankedPoints = students.filter(student => student.bankedPoints !== undefined);
+
   return (
     <div className="mt-4">
       <div className="flex flex-col gap-2">
@@ -31,17 +34,25 @@ export const StudentList: React.FC<StudentListProps> = ({ students, sortOption, 
 
       <div className="mt-4">
         <div className="text-sm font-semibold mb-2">Banked Points by Student:</div>
-        {students.length > 0 ? (
+        {studentsWithBankedPoints.length > 0 ? (
           <div className="space-y-2">
-            {students.map(student => (
+            {studentsWithBankedPoints.map(student => (
               <div key={student.id} className="flex justify-between items-center">
-                <span className="text-sm">{student.name}</span>
+                <div className="flex items-center gap-2">
+                  {student.name.trim() ? (
+                    <span className="font-medium">{student.name}</span>
+                  ) : (
+                    <span className="text-gray-400 italic">
+                      Unnamed student {student.id.slice(0, 3)}
+                    </span>
+                  )}
+                </div>
                 <span className="font-semibold">{student.bankedPoints}</span>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-sm text-gray-500 italic">No named students yet</div>
+          <div className="text-sm text-gray-500 italic">No points deposited yet</div>
         )}
       </div>
     </div>
