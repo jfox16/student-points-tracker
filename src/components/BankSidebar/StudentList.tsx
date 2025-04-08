@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SortOption } from '../../context/BankContext';
 
 interface Student {
@@ -10,8 +10,34 @@ interface Student {
 interface StudentListProps {
   students: Student[];
   sortOption: SortOption;
-  onSortChange: (value: SortOption) => void;
+  onSortChange: (option: SortOption) => void;
 }
+
+const CountingNumber: React.FC<{ value: number }> = ({ value }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  
+  useEffect(() => {
+    if (value === displayValue) return;
+    
+    const difference = value - displayValue;
+    const increment = difference > 0 ? 1 : -1;
+    
+    const interval = setInterval(() => {
+      setDisplayValue(prev => {
+        const next = prev + increment;
+        if ((increment > 0 && next >= value) || (increment < 0 && next <= value)) {
+          clearInterval(interval);
+          return value;
+        }
+        return next;
+      });
+    }, 16); // ~60fps animation
+    
+    return () => clearInterval(interval);
+  }, [value, displayValue]);
+  
+  return <span className="font-semibold">{displayValue}</span>;
+};
 
 export const StudentList: React.FC<StudentListProps> = ({ students, sortOption, onSortChange }) => {
   return (
@@ -35,7 +61,7 @@ export const StudentList: React.FC<StudentListProps> = ({ students, sortOption, 
           {students.map(student => (
             <div key={student.id} className="flex justify-between items-center">
               <span className="text-sm">{student.name}</span>
-              <span className="font-semibold">{student.bankedPoints}</span>
+              <CountingNumber value={student.bankedPoints} />
             </div>
           ))}
         </div>
