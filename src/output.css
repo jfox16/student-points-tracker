@@ -751,6 +751,10 @@
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
+  .font-medium {
+    --tw-font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium);
+  }
   .font-semibold {
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
@@ -927,6 +931,11 @@
       }
     }
   }
+  .focus\:text-gray-600 {
+    &:focus {
+      color: var(--color-gray-600);
+    }
+  }
   .active\:cursor-grabbing {
     &:active {
       cursor: grabbing;
@@ -940,6 +949,11 @@
   .active\:text-gray-700 {
     &:active {
       color: var(--color-gray-700);
+    }
+  }
+  .active\:text-gray-800 {
+    &:active {
+      color: var(--color-gray-800);
     }
   }
 }
