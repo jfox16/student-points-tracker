@@ -55,13 +55,21 @@ export const BankSidebar: React.FC = () => {
         if (b.bankedPoints === undefined) return -1;
         
         // If either student has no name, put them at the end
-        if (!a.name.trim()) return 1;
-        if (!b.name.trim()) return -1;
+        const aHasName = a.name.trim();
+        const bHasName = b.name.trim();
+        if (!aHasName && !bHasName) {
+          // If both are unnamed, sort by ID
+          return a.id.localeCompare(b.id);
+        }
+        if (!aHasName) return 1;
+        if (!bHasName) return -1;
         
         switch (sortOption) {
           case SortOption.ALPHABETICAL:
+            // Sort by full name for alphabetical
             return a.name.localeCompare(b.name);
           case SortOption.LAST_NAME:
+            // Sort by last word in the name
             const aLastName = a.name.split(' ').pop() || '';
             const bLastName = b.name.split(' ').pop() || '';
             return aLastName.localeCompare(bLastName);
