@@ -2,20 +2,26 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Tab, TabId } from '../types/tab.type';
 import { generateUuid } from '../utils/generateUuid';
+import { useSaveStatusStore } from "./useSaveStatusStore";
+
+const saveTabs = async (tabs: Tab[]) => {
+  // Simulate saving to local storage
+  localStorage.setItem('tabs', JSON.stringify(tabs));
+};
 
 interface TabState {
   // State
   tabs: Tab[];
-  activeTabId: string | null;
+  activeTabId: TabId | null;
   
   // Computed
   activeTab: Tab | null;
   
   // Actions
   addTab: () => void;
-  deleteTab: (id: string) => void;
-  setActiveTab: (id: string) => void;
-  updateTab: (id: string, updates: Partial<Tab>) => void;
+  deleteTab: (id: TabId) => void;
+  setActiveTab: (id: TabId) => void;
+  updateTab: (id: TabId, changes: Partial<Tab>) => Promise<void>;
   duplicateTab: (id: TabId) => void;
 }
 
@@ -36,34 +42,52 @@ export const useTabStore = create<TabState>()(
       addTab: () => {
         const newTab: Tab = {
           id: generateUuid(),
-          name: `Tab ${get().tabs.length + 1}`,
+          name: "New Tab",
+          students: [],
           tabOptions: {
-            columns: 8,
-            sortBy: 'name',
-            sortOrder: 'asc',
+            columns: 1,
           },
         };
-        set(state => ({
+        
+        set((state) => ({
           tabs: [...state.tabs, newTab],
           activeTabId: newTab.id,
         }));
       },
       
       deleteTab: (id) => {
-        set(state => ({
-          tabs: state.tabs.filter(tab => tab.id !== id),
-          activeTabId: state.activeTabId === id ? state.tabs[0]?.id || null : state.activeTabId,
-        }));
+        set((state) => {
+          const newTabs = state.tabs.filter((tab) => tab.id !== id);
+          const newActiveTabId = 
+            state.activeTabId === id 
+              ? newTabs[0]?.id || null 
+              : state.activeTabId;
+              
+          return {
+            tabs: newTabs,
+            activeTabId: newActiveTabId,
+          };
+        });
       },
       
       setActiveTab: (id) => set({ activeTabId: id }),
       
-      updateTab: (id, updates) => {
-        set(state => ({
-          tabs: state.tabs.map(tab =>
-            tab.id === id ? { ...tab, ...updates } : tab
+      updateTab: async (id, changes) => {
+        const { setSaving, setSaved } = useSaveStatusStore.getState();
+        setSaving(true);
+        
+        set((state) => ({
+          tabs: state.tabs.map((tab) =>
+            tab.id === id ? { ...tab, ...changes } : tab
           ),
         }));
+
+        try {
+          await saveTabs(get().tabs);
+          setSaved(true);
+        } catch (error) {
+          console.error("Failed to save tabs:", error);
+        }
       },
       
       duplicateTab: (id) => {

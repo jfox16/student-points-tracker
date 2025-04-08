@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useSaveStatusStore } from './useSaveStatusStore';
 
 export type SortOption = 'name' | 'points' | 'banked';
 
@@ -19,7 +20,9 @@ interface BankState {
   setBankedPoints: (tabId: string, studentId: string, points: number) => void;
   incrementBankedPoints: (tabId: string, studentId: string, increment: number) => void;
   withdrawAllPoints: (tabId: string, studentId: string) => number;
-  depositPoints: (students: { id: string }[]) => void;
+  depositPoints: (tabId: string, studentId: string, points: number) => Promise<void>;
+  withdrawPoints: (tabId: string, studentId: string, points: number) => Promise<void>;
+  clearPoints: (tabId: string) => Promise<void>;
   toggleSidebar: () => void;
   setSidebarVisible: (visible: boolean) => void;
   setSortOption: (option: SortOption) => void;
@@ -82,39 +85,67 @@ export const useBankStore = create<BankState>()(
         return currentPoints;
       },
       
-      depositPoints: (students) => {
-        const { bankedPoints } = get();
-        const activeTabId = localStorage.getItem('tab-storage')
-          ? JSON.parse(localStorage.getItem('tab-storage') || '{}')?.state?.activeTabId
-          : '';
+      depositPoints: async (tabId, studentId, points) => {
+        const { setSaving, setSaved } = useSaveStatusStore.getState();
+        setSaving(true);
         
-        if (!activeTabId || !students.length) return;
+        set((state) => ({
+          bankedPoints: {
+            ...state.bankedPoints,
+            [tabId]: {
+              ...state.bankedPoints[tabId],
+              [studentId]: (state.bankedPoints[tabId]?.[studentId] || 0) + points,
+            },
+          },
+        }));
+
+        try {
+          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate saving
+          setSaved(true);
+        } catch (error) {
+          console.error("Failed to save banked points:", error);
+        }
+      },
+      
+      withdrawPoints: async (tabId, studentId, points) => {
+        const { setSaving, setSaved } = useSaveStatusStore.getState();
+        setSaving(true);
         
-        const totalPoints = Object.values(bankedPoints[activeTabId] || {}).reduce(
-          (sum, points) => sum + (points || 0), 
-          0
-        );
+        set((state) => ({
+          bankedPoints: {
+            ...state.bankedPoints,
+            [tabId]: {
+              ...state.bankedPoints[tabId],
+              [studentId]: Math.max(0, (state.bankedPoints[tabId]?.[studentId] || 0) - points),
+            },
+          },
+        }));
+
+        try {
+          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate saving
+          setSaved(true);
+        } catch (error) {
+          console.error("Failed to save banked points:", error);
+        }
+      },
+      
+      clearPoints: async (tabId) => {
+        const { setSaving, setSaved } = useSaveStatusStore.getState();
+        setSaving(true);
         
-        if (totalPoints <= 0) return;
-        
-        const pointsPerStudent = Math.floor(totalPoints / students.length);
-        
-        if (pointsPerStudent <= 0) return;
-        
-        set((state) => {
-          const newBankedPoints = { ...state.bankedPoints };
-          
-          // Reset all banked points for current tab
-          if (newBankedPoints[activeTabId]) {
-            newBankedPoints[activeTabId] = {};
-          }
-          
-          return { bankedPoints: newBankedPoints };
-        });
-        
-        // Update student points using studentStore
-        // This would typically be done by calling a method on useStudentStore
-        // but we'll leave that for another implementation
+        set((state) => ({
+          bankedPoints: {
+            ...state.bankedPoints,
+            [tabId]: {},
+          },
+        }));
+
+        try {
+          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate saving
+          setSaved(true);
+        } catch (error) {
+          console.error("Failed to save banked points:", error);
+        }
       },
       
       toggleSidebar: () => {
