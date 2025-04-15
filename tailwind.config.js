@@ -12,7 +12,8 @@ module.exports = {
           'text': {
             'primary': '#111827',
             'secondary': '#9ca3af',
-            'accent': '#3b82f6'
+            'accent': '#3b82f6',
+            'negative': '#dc2626'  // Dark red for shift state
           }
         }
       }
