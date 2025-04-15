@@ -1,9 +1,8 @@
-
-
 import { useCallback, useMemo, useState } from "react";
 
 import { useAppContext } from "../../context/AppContext";
 import { useStudentContext } from "../../context/StudentContext";
+import { useUIContext } from "../../context/UIContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
 import { Student } from "../../types/student.type";
 
@@ -38,6 +37,7 @@ export const StudentCard = (props: StudentCardProps) => {
   } = useStudentContext();
   
   const { showModal } = useModal();
+  const { isShiftPressed } = useUIContext();
 
   const {
     dragObjectRef,
@@ -128,12 +128,15 @@ export const StudentCard = (props: StudentCardProps) => {
           <div
             className="flex flex-col h-full justify-center"
           >
-            {kbKey && <div className={cnsMerge('flex-1 max-h-6 text-gray-400')}>
+            {kbKey && <div className={cnsMerge(
+              'flex-1 max-h-6',
+              isShiftPressed ? 'text-red-500' : 'text-gray-400'
+            )}>
               {kbKey}
             </div>}
 
             <HoverInput
-              className="flex-1 max-h-10 w-full"
+              className="flex-1 max-h-10 w-full text-sm sm:text-xs md:text-xs lg:text-xs"
               onChange={onNameInputChange}
               placeholder="Type name here..."
               value={student.name}
