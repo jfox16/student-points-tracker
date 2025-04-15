@@ -128,10 +128,7 @@ export const StudentCard = (props: StudentCardProps) => {
           <div
             className="flex flex-col h-full justify-center"
           >
-            {kbKey && <div className={cnsMerge(
-              'flex-1 max-h-6',
-              isShiftPressed ? 'text-red-500' : 'text-gray-400'
-            )}>
+            {kbKey && <div className="flex-1 max-h-6 text-gray-400">
               {kbKey}
             </div>}
 
