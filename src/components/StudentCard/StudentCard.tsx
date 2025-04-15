@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 
 import { useAppContext } from "../../context/AppContext";
 import { useStudentContext } from "../../context/StudentContext";
-import { useUIContext } from "../../context/UIContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
 import { Student } from "../../types/student.type";
 
@@ -37,7 +36,6 @@ export const StudentCard = (props: StudentCardProps) => {
   } = useStudentContext();
   
   const { showModal } = useModal();
-  const { isShiftPressed } = useUIContext();
 
   const {
     dragObjectRef,

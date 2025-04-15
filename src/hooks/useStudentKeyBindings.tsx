@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 import { Student, StudentId } from "../types/student.type";
 import { useAppContext } from "../context/AppContext";
 import { getKeyMappingByKey } from "../utils/keyMappings";
@@ -66,6 +66,7 @@ const createKeyMaps = ({
 const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   const { columns, students, addPointsToStudent, addPointsToAllStudents } = props;
   const { appOptions: { reverseOrder = false, enableKeybinds } } = useAppContext();
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
 
   const numSelectedStudents = useMemo(() => {
     return students.filter((student) => student.selected).length;
@@ -117,14 +118,31 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
     [enableKeybinds, keyToIdMap, addPointsToStudent, addPointsToAllStudents]
   );
 
+  // Handle shift key state
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Shift") {
+      setIsShiftPressed(true);
+    }
+  }, []);
+
+  const handleKeyUp = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Shift") {
+      setIsShiftPressed(false);
+    }
+  }, []);
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleKeyPress]);
+  }, [handleKeyPress, handleKeyDown, handleKeyUp]);
 
-  return { idToKeyMap };
+  return { idToKeyMap, isShiftPressed };
 };
 
 export default useStudentKeyBindings;

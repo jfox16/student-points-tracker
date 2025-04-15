@@ -15,7 +15,6 @@ import { ModalProvider } from "./context/ModalContext";
 import { SoundContextProvider } from "./context/SoundContext";
 import { StudentContextProvider } from "./context/StudentContext";
 import { TabContextProvider } from "./context/TabContext";
-import { UIContextProvider } from "./context/UIContext";
 
 import { NestProviders } from "./utils/NestProviders";
 
@@ -29,7 +28,6 @@ const providers = [
   SoundContextProvider,
   ModalProvider,
   BankContextProvider,
-  UIContextProvider,
 ];
 
 const App: React.FC = () => {
