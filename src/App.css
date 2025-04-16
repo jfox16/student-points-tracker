@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  font-size: 0.9rem; /* This controls the base font size for em units */
+}
+
 .App {
   display: flex;
   min-height: 100vh;

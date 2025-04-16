@@ -1,11 +1,10 @@
-
-
 import { useCallback, useMemo, useState } from "react";
 
 import { useAppContext } from "../../context/AppContext";
 import { useStudentContext } from "../../context/StudentContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
 import { Student } from "../../types/student.type";
+import { useShiftKey } from "../../hooks/useShiftKey";
 
 import { useModal } from '../../context/ModalContext';
 import { cnsMerge } from '../../utils/cnsMerge';
@@ -38,6 +37,7 @@ export const StudentCard = (props: StudentCardProps) => {
   } = useStudentContext();
   
   const { showModal } = useModal();
+  const isShiftPressed = useShiftKey();
 
   const {
     dragObjectRef,
@@ -128,7 +128,10 @@ export const StudentCard = (props: StudentCardProps) => {
           <div
             className="flex flex-col h-full justify-center"
           >
-            {kbKey && <div className={cnsMerge('flex-1 max-h-6 text-gray-400')}>
+            {kbKey && <div className={cnsMerge(
+              "flex-1 max-h-6 text-gray-400",
+              isShiftPressed && "text-red-600/40"
+            )}>
               {kbKey}
             </div>}
 
