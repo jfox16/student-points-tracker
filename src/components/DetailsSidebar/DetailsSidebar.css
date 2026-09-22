@@ -1,0 +1,149 @@
+.DetailsSidebar {
+  width: 280px;
+  height: 100%;
+  box-sizing: border-box;
+  flex: none;
+  padding: 18px;
+  border-left: 1px solid #9ca3af;
+  background: #f3f4f6;
+}
+
+.DetailsSidebar__title {
+  margin: 0;
+  color: #111827;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.DetailsSidebar__empty {
+  margin-top: 16px;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
+.DetailsSidebar__content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.DetailsSidebar__selectionSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.DetailsSidebar__studentSummary {
+  display: flex;
+  max-height: 280px;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.DetailsSidebar__studentSummary li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 2px;
+  border-bottom: 1px solid #d1d5db;
+  color: #4b5563;
+  font-size: 0.85rem;
+}
+
+.DetailsSidebar__fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.EditableField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.EditableField__label {
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.EditableField__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  outline: none;
+  background: #fff;
+  color: #111827;
+  font: inherit;
+}
+
+.EditableField__input:focus {
+  border-color: #2563eb;
+  outline: 2px solid rgb(37 99 235 / 20%);
+}
+
+.DetailsSidebar__pointActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.DetailsSidebar__rotationActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.DetailsSidebar__rotationActions .DetailsSidebar__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.DetailsSidebar__pointActions button,
+.DetailsSidebar__button {
+  padding: 7px 10px;
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  font: inherit;
+}
+
+.DetailsSidebar__pointActions button:hover,
+.DetailsSidebar__button:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.DetailsSidebar__button:disabled {
+  cursor: not-allowed;
+  opacity: 50%;
+}
+
+.DetailsSidebar__button--danger {
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.DetailsSidebar__button--danger:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.DetailsSidebar__hint {
+  color: #6b7280;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}

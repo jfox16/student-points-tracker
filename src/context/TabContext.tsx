@@ -20,6 +20,8 @@ interface TabContextValue {
 
 export const DEFAULT_TAB_OPTIONS: Required<TabOptions> = {
   columns: 8,
+  viewMode: 'list',
+  mapEditMode: false,
 }
 
 export const DEFAULT_TAB: Tab = {

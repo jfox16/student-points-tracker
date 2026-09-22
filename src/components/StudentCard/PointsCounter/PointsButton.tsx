@@ -5,16 +5,19 @@ interface PointsButtonProps {
   symbol: "+" | "-";
   disabled?: boolean;
   className?: string;
+  "aria-label"?: string;
 }
 
 export const PointsButton = ({ 
   onClick, 
   symbol, 
   disabled,
-  className 
+  className,
+  "aria-label": ariaLabel,
 }: PointsButtonProps) => {
   return (
     <div
+      aria-label={ariaLabel}
       className={cnsMerge(
         "flex items-center justify-center",
         "cursor-pointer p-[0.2em] flex-1",
@@ -23,7 +26,8 @@ export const PointsButton = ({
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      role="button"
     >
       <span className="pointer-events-none">{symbol}</span>
     </div>

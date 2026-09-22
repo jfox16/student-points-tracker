@@ -8,6 +8,7 @@ interface UseStudentKeyBindingsProps {
   students: Student[];
   addPointsToStudent: (id: StudentId, points: number) => void;
   addPointsToAllStudents: (points: number) => void;
+  enabled?: boolean;
 }
 
 interface KeyMaps {
@@ -64,7 +65,13 @@ const createKeyMaps = ({
 };
 
 const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
-  const { columns, students, addPointsToStudent, addPointsToAllStudents } = props;
+  const {
+    columns,
+    students,
+    addPointsToStudent,
+    addPointsToAllStudents,
+    enabled = true,
+  } = props;
   const { appOptions: { reverseOrder = false, enableKeybinds } } = useAppContext();
 
   const numSelectedStudents = useMemo(() => {
@@ -95,7 +102,7 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
       const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes((event.target as HTMLElement).tagName);
-      if (isTyping) return;
+      if (isTyping || !enabled) return;
 
       // Ignore if any modifier keys other than shift are pressed
       if (event.altKey || event.ctrlKey || event.metaKey) return;
@@ -114,7 +121,13 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
         return;
       }
     },
-    [enableKeybinds, keyToIdMap, addPointsToStudent, addPointsToAllStudents]
+    [
+      addPointsToAllStudents,
+      addPointsToStudent,
+      enableKeybinds,
+      enabled,
+      keyToIdMap,
+    ]
   );
 
   useEffect(() => {

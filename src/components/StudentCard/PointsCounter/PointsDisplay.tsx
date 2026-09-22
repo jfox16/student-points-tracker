@@ -4,21 +4,30 @@ import { getGradientColor } from '../../../utils/getGradientColor';
 import { NumberInput } from '../../NumberInput/NumberInput';
 
 interface PointsDisplayProps {
+  className?: string;
   points: number;
   recentChange?: number;
-  onChange: (points: number) => void;
+  onChange?: (points: number) => void;
   animationTrigger: number;
+  animationDirection?: "up" | "down";
+  readOnly?: boolean;
+  colored?: boolean;
 }
 
-export const PointsDisplay = ({ 
-  points, 
-  recentChange, 
-  onChange, 
-  animationTrigger 
+export const PointsDisplay = ({
+  className,
+  points,
+  recentChange,
+  onChange,
+  animationTrigger,
+  animationDirection = "up",
+  readOnly = false,
+  colored = true,
 }: PointsDisplayProps) => {
   const dynamicTextColor = useMemo(() => {
+    if (!colored) return undefined;
     return getDynamicColor(points);
-  }, [points]);
+  }, [colored, points]);
 
   const recentChangeString = useMemo(() => {
     if (!recentChange) return "";
@@ -27,13 +36,30 @@ export const PointsDisplay = ({
   }, [recentChange]);
 
   return (
-    <div 
+    <div
       className={cnsMerge(
         "relative flex-2 h-full",
-        "animate-[pop_0.08s_ease-out]"
-      )} 
-      key={animationTrigger}
+        animationDirection === "down"
+          ? "animate-[pop-down_0.08s_ease-out]"
+          : "animate-[pop_0.08s_ease-out]",
+        className,
+      )}
+      key={`${animationTrigger}-${animationDirection}`}
     >
+      <style>
+        {`
+          @keyframes pop {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.4) translateY(-2px); }
+            100% { transform: scale(1) translateY(0); }
+          }
+          @keyframes pop-down {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(calc(1 / 1.4)) translateY(2px); }
+            100% { transform: scale(1) translateY(0); }
+          }
+        `}
+      </style>
       <div
         className={cnsMerge(
           "absolute inset-0 top-[-0.5em]",
@@ -44,20 +70,36 @@ export const PointsDisplay = ({
       >
         {recentChangeString}
       </div>
-      <NumberInput
-        className={cnsMerge(
-          "h-full w-full",
-          points < 0 && "text-red-500"
-        )}
-        value={points}
-        onChange={onChange}
-        inputProps={{
-          style: {
+      {readOnly ? (
+        <div
+          className={cnsMerge(
+            "h-full w-full",
+            points < 0 && colored && "text-red-500",
+          )}
+          style={{
             color: dynamicTextColor,
             fontSize: "1.5em",
-          },
-        }}
-      />
+            lineHeight: 1.1,
+          }}
+        >
+          {points}
+        </div>
+      ) : (
+        <NumberInput
+          className={cnsMerge(
+            "h-full w-full",
+            points < 0 && colored && "text-red-500"
+          )}
+          value={points}
+          onChange={onChange}
+          inputProps={{
+            style: {
+              color: dynamicTextColor,
+              fontSize: "1.5em",
+            },
+          }}
+        />
+      )}
     </div>
   );
 };

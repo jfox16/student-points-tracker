@@ -1,15 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
-import { useSoundContext } from "../../../context/SoundContext";
-import {
-  studentIdsWithDelayedPointsAnimation,
-  studentIdsWithNextPointsAnimation,
-  useStudentContext
-} from "../../../context/StudentContext";
-import usePrevious from "../../../hooks/usePrevious";
+import { useStudentContext } from "../../../context/StudentContext";
+import { useStudentPointsAnimation } from "../../../hooks/useStudentPointsAnimation";
 import { Student } from "../../../types/student.type";
 import { cnsMerge } from '../../../utils/cnsMerge';
-import { useDebounce } from "../../../utils/useDebounce";
 
 import { PointsButton } from "./PointsButton";
 import { PointsDisplay } from "./PointsDisplay";
@@ -26,37 +20,10 @@ export const PointsCounter = ({
   index 
 }: PointsCounterProps) => {
   const { updateStudent, addPointsToStudent } = useStudentContext();
-  const { playPointSound } = useSoundContext();
-  const [recentChange, setRecentChange] = useState<number | undefined>(undefined);
-  const prevPoints = usePrevious(student.points);
-  const [animationTrigger, setAnimationTrigger] = useState(student.points);
-
-  const debouncedResetRecentChange = useDebounce(() => {
-    setRecentChange(undefined);
-  }, 2000);
-
-  useEffect(() => {
-    if (typeof prevPoints !== "number") return;
-
-    const diff = student.points - prevPoints;
-    if (diff === 0) return;
-
-    setRecentChange((recentChange ?? 0) + diff);
-    debouncedResetRecentChange();
-
-    if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
-      studentIdsWithDelayedPointsAnimation.delete(student.id);
-      const delay = 8 * index;
-      setTimeout(() => {
-        setAnimationTrigger(student.points);
-        playPointSound(1);
-      }, delay);
-    } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
-      studentIdsWithNextPointsAnimation.delete(student.id);
-      setAnimationTrigger(student.points);
-      playPointSound(5);
-    }
-  }, [prevPoints, student.points]);
+  const { animationDirection, animationTrigger, recentChange } = useStudentPointsAnimation(
+    student,
+    index,
+  );
 
   const handleInputChange = useCallback((points: number) => {
     updateStudent(student.id, { points });
@@ -71,20 +38,10 @@ export const PointsCounter = ({
   }, [addPointsToStudent]);
 
   return (
-    <>
-      <style>
-        {`
-          @keyframes pop {
-            0% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.4) translateY(-2px); }
-            100% { transform: scale(1) translateY(0); }
-          }
-        `}
-      </style>
-      <div className={cnsMerge(
-        "flex justify-center items-stretch px-[4%]",
-        className
-      )}>
+    <div className={cnsMerge(
+      "flex justify-center items-stretch px-[4%]",
+      className
+    )}>
         <PointsButton
           onClick={handleDecrementClick}
           symbol="-"
@@ -95,13 +52,13 @@ export const PointsCounter = ({
           recentChange={recentChange}
           onChange={handleInputChange}
           animationTrigger={animationTrigger}
+          animationDirection={animationDirection}
         />
 
         <PointsButton
           onClick={handleIncrementClick}
           symbol="+"
         />
-      </div>
-    </>
+    </div>
   );
 };

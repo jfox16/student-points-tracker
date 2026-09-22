@@ -33,6 +33,12 @@ export const InfoModal = () => {
           <li><kbd>Space</kbd> - Add points to all/selected students</li>
           <li><kbd>Shift</kbd> + <kbd>Space</kbd> - Subtract points from all/selected students</li>
           <li><kbd>Shift</kbd> + <kbd>Student Key</kbd> - Subtract point from specific student</li>
+          <li><kbd>Space</kbd> + drag - Pan the classroom map</li>
+          <li><kbd>⌘/Ctrl</kbd> + click or drag - Add desks to the selection</li>
+          <li><kbd>Shift</kbd> + click or drag - Remove desks from the selection</li>
+          <li><kbd>Double-click</kbd> or <kbd>⌘/Ctrl</kbd> + <kbd>A</kbd> - Select all desks</li>
+          <li><kbd>Esc</kbd> - Clear the desk selection</li>
+          <li><kbd>⌘/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>1–9</kbd> - Add selected desks to a control group</li>
           <li><kbd>Enter</kbd> - Confirm modal</li>
           <li><kbd>Escape</kbd> - Close modal</li>
         </ul>
