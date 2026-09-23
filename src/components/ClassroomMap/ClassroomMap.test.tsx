@@ -6,6 +6,10 @@ import { ClassroomMap } from "./ClassroomMap";
 
 const addPointsToStudent = vi.fn();
 
+vi.mock("../../context/ModalContext", () => ({
+  useModal: () => ({ showModal: vi.fn(), hideModal: vi.fn() }),
+}));
+
 vi.mock("../../context/AppContext", () => ({
   useAppContext: () => ({
     appOptions: { enableKeybinds: false },

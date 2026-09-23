@@ -228,6 +228,123 @@ export const getClosestValidClassroomDeskPosition = (
     : { x: desk.x, y: desk.y };
 };
 
+const PLACEMENT_PROBE_STUDENT_ID = "classroom-desk-placement-probe";
+
+const ceilToClassroomGrid = (value: number) =>
+  Math.ceil(value / CLASSROOM_GRID_SIZE) * CLASSROOM_GRID_SIZE;
+
+const placementProbe = (
+  rotation: DeskRotation,
+  position: Pick<ClassroomDesk, "x" | "y"> = { x: 0, y: 0 },
+): ClassroomDesk => ({
+  studentId: PLACEMENT_PROBE_STUDENT_ID,
+  rotation,
+  ...position,
+});
+
+// First open cell in reading order after a desk: the rest of its row,
+// then the rows below, then the rows above, then the cells behind it.
+export const getNextAvailableClassroomDeskPosition = (
+  afterDesk: Pick<ClassroomDesk, "x" | "y" | "rotation">,
+  desks: ClassroomDesk[],
+  rotation: DeskRotation = afterDesk.rotation,
+  bounds: ClassroomBounds = CLASSROOM_BOUNDS,
+): Pick<ClassroomDesk, "x" | "y"> | undefined => {
+  const anchorFootprint = getClassroomDeskFootprint({
+    ...placementProbe(afterDesk.rotation, afterDesk),
+    studentId: `${PLACEMENT_PROBE_STUDENT_ID}-anchor`,
+  });
+  const placedFootprint = getClassroomDeskFootprint(placementProbe(rotation));
+  const maxX = bounds.width - placedFootprint.width;
+  const maxY = bounds.height - placedFootprint.height;
+  if (maxX < 0 || maxY < 0) return undefined;
+
+  const startX = ceilToClassroomGrid(anchorFootprint.x + anchorFootprint.width);
+  const startY = snapToClassroomGrid(afterDesk.y);
+  const step = CLASSROOM_GRID_SIZE;
+  const placementAt = (x: number, y: number) =>
+    isClassroomDeskPlacementValid(placementProbe(rotation, { x, y }), desks, bounds)
+      ? { x, y }
+      : undefined;
+
+  const scanRow = (y: number, fromX: number, toX: number) => {
+    for (let x = fromX; x <= toX; x += step) {
+      const position = placementAt(x, y);
+      if (position) return position;
+    }
+    return undefined;
+  };
+
+  if (startY >= 0 && startY <= maxY) {
+    const besideAnchor = scanRow(startY, Math.max(0, startX), maxX);
+    if (besideAnchor) return besideAnchor;
+  }
+
+  for (let y = Math.max(0, startY + step); y <= maxY; y += step) {
+    const position = scanRow(y, 0, maxX);
+    if (position) return position;
+  }
+
+  for (let y = 0; y <= Math.min(maxY, startY - step); y += step) {
+    const position = scanRow(y, 0, maxX);
+    if (position) return position;
+  }
+
+  if (startY >= 0 && startY <= maxY && startX > 0) {
+    return scanRow(startY, 0, Math.min(maxX, startX - step));
+  }
+
+  return undefined;
+};
+
+export const getClassroomDeskPositionNearCenter = (
+  rotation: DeskRotation,
+  desks: ClassroomDesk[],
+  bounds: ClassroomBounds = CLASSROOM_BOUNDS,
+): Pick<ClassroomDesk, "x" | "y"> | undefined => {
+  const footprint = getClassroomDeskFootprint(placementProbe(rotation));
+  const preferred = placementProbe(rotation, {
+    x: snapToClassroomGrid((bounds.width - footprint.width) / 2),
+    y: snapToClassroomGrid((bounds.height - footprint.height) / 2),
+  });
+  if (!isClassroomDeskPlacementValid(preferred, [], bounds)) return undefined;
+
+  const position = getClosestValidClassroomDeskPosition(preferred, desks, bounds);
+  return isClassroomDeskPlacementValid({ ...preferred, ...position }, desks, bounds)
+    ? position
+    : undefined;
+};
+
+export const findClassroomDeskPastePositions = (
+  copies: readonly Pick<ClassroomDesk, "rotation">[],
+  desks: ClassroomDesk[],
+  anchor?: Pick<ClassroomDesk, "x" | "y" | "rotation">,
+  bounds: ClassroomBounds = CLASSROOM_BOUNDS,
+): Pick<ClassroomDesk, "x" | "y" | "rotation">[] => {
+  const occupied = [...desks];
+  const positions: Pick<ClassroomDesk, "x" | "y" | "rotation">[] = [];
+  let nextAnchor = anchor;
+
+  for (let index = 0; index < copies.length; index += 1) {
+    const rotation = copies[index].rotation;
+    const position = nextAnchor
+      ? getNextAvailableClassroomDeskPosition(nextAnchor, occupied, rotation, bounds)
+      : getClassroomDeskPositionNearCenter(rotation, occupied, bounds);
+    if (!position) break;
+
+    const placed: ClassroomDesk = {
+      studentId: `${PLACEMENT_PROBE_STUDENT_ID}-${index}`,
+      rotation,
+      ...position,
+    };
+    occupied.push(placed);
+    positions.push({ ...position, rotation });
+    nextAnchor = placed;
+  }
+
+  return positions;
+};
+
 export const getClassroomLabelSize = (
   label: Partial<Pick<ClassroomLabel, "width" | "height">> = {},
   bounds: ClassroomBounds = CLASSROOM_BOUNDS,
