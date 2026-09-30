@@ -23,7 +23,6 @@
     "react-dom": "^19.0.0",
     "react-resizable": "^3.0.5",
     "tailwind-merge": "^2.6.0",
-    "typescript": "^4.4.2",
     "uuid": "^11.0.5",
     "web-vitals": "^2.1.0",
     "zustand": "^5.0.15"
@@ -33,6 +32,7 @@
     "build": "yarn tailwind:build && vite build",
     "preview": "vite preview",
     "test": "vitest",
+    "typecheck": "tsc --noEmit",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build",
     "tailwind:watch": "npx tailwindcss -i ./src/assets/css/tailwind.css -o ./src/output.css --watch",
@@ -61,6 +61,7 @@
     "jsdom": "^26.0.0",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0",
+    "typescript": "^7.0.2",
     "vite": "^6.2.4",
     "vitest": "^3.1.1"
   },
