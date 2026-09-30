@@ -84,7 +84,7 @@ const SelectionHarness = ({
             Array.from(currentStudentIds).every((studentId) =>
               nextStudentIds.has(studentId)
             );
-          return selectionIsUnchanged ? currentStudentIds : nextStudentIds;
+          return selectionIsUnchanged ? currentStudentIds : new Set(nextStudentIds);
         });
       }}
       selectedStudentIds={selectedStudentIds}
