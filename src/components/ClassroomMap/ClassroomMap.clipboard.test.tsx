@@ -89,7 +89,7 @@ const SelectionHarness = ({
 }: {
   initialSelection: string[];
 }) => {
-  const [selectedStudentIds, setSelectedStudentIds] = useState(
+  const [selectedStudentIds, setSelectedStudentIds] = useState<ReadonlySet<string>>(
     () => new Set(initialSelection),
   );
 
