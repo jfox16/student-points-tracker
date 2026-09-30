@@ -9,7 +9,7 @@ import { Student } from "../types/student.type";
 import { useDebounce } from "../utils/useDebounce";
 import usePrevious from "./usePrevious";
 
-export const useStudentPointsAnimation = (student: Student, _index = 0) => {
+export const useStudentPointsAnimation = (student: Student) => {
   const { playPointSound } = useSoundContext();
   const [recentChange, setRecentChange] = useState<number | undefined>(
     undefined,

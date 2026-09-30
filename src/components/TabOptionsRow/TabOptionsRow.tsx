@@ -1,11 +1,6 @@
 import ViewSidebarOutlinedIcon from "@mui/icons-material/ViewSidebarOutlined";
 import { useCallback, useRef, useEffect } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import SchoolIcon from "@mui/icons-material/School";
 import {
-  MenuItem,
-  Select,
-  SelectChangeEvent,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
@@ -30,19 +25,6 @@ import { ResetAllWidget } from "./Widgets/ResetAllWidget";
 import { SelectAllWidget } from "./Widgets/SelectAllWidget";
 import { ReverseWidget } from "./Widgets/ReverseWidget";
 import { DepositPointsWidget } from "./Widgets/DepositPointsWidget/DepositPointsWidget";
-
-type MapMode = "class" | "edit";
-
-const MapModeLabel = ({ mode }: { mode: MapMode }) => (
-  <span className="flex items-center gap-2">
-    {mode === "edit" ? (
-      <EditIcon aria-hidden="true" fontSize="small" />
-    ) : (
-      <SchoolIcon aria-hidden="true" fontSize="small" />
-    )}
-    {mode === "edit" ? "Edit Mode" : "Class Mode"}
-  </span>
-);
 
 const sidebarIcon = (mirrored = false) => (
   <ViewSidebarOutlinedIcon
@@ -84,15 +66,10 @@ export const TabOptionsRow = () => {
     [updateTabOptions],
   );
 
-  const onMapModeChange = useCallback(
-    (event: SelectChangeEvent<MapMode>) => {
-      updateTabOptions({ mapEditMode: event.target.value === "edit" });
-    },
-    [updateTabOptions],
-  );
-
+  // react-dnd's HTML5 backend cancels unrecognized native drags from its window listener.
   const handleDeskDragStart = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
+      event.stopPropagation();
       event.dataTransfer.setData(CLASSROOM_DESK_DRAG_TYPE, "new-desk");
       event.dataTransfer.effectAllowed = "copy";
     },
@@ -101,6 +78,7 @@ export const TabOptionsRow = () => {
 
   const handleLabelDragStart = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
+      event.stopPropagation();
       event.dataTransfer.setData(CLASSROOM_LABEL_DRAG_TYPE, "new-label");
       event.dataTransfer.effectAllowed = "copy";
     },
@@ -140,7 +118,6 @@ export const TabOptionsRow = () => {
   const showOnHover = cnsMerge('opacity-70', 'hover:opacity-100')
   const isMapMode = (activeTab.tabOptions?.viewMode ?? "list") === "map";
   const rightLabel = isMapMode ? "details" : "points bank";
-  const mapEditMode = activeTab.tabOptions?.mapEditMode ?? false;
   const placedDesks = getPlacedClassroomDesks(
     activeTab.students,
     activeTab.classroomLayout,
@@ -198,73 +175,46 @@ export const TabOptionsRow = () => {
 
           {isMapMode && (
             <>
-              <Select<MapMode>
-                aria-label="Map mode"
-                onChange={onMapModeChange}
-                size="small"
-                sx={{
-                  height: 40,
-                  minWidth: 168,
-                  backgroundColor: "#fff",
-                  ".MuiSelect-select": {
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                }}
-                value={mapEditMode ? "edit" : "class"}
+              <Tooltip
+                title={
+                  unplacedStudentCount > 0
+                    ? "Drag onto the map to place the next student"
+                    : "Every student already has a desk"
+                }
               >
-                <MenuItem value="class">
-                  <MapModeLabel mode="class" />
-                </MenuItem>
-                <MenuItem value="edit">
-                  <MapModeLabel mode="edit" />
-                </MenuItem>
-              </Select>
-
-              {mapEditMode && (
-                <>
-                <Tooltip
-                  title={
+                <div
+                  aria-disabled={unplacedStudentCount === 0}
+                  aria-label="New desk"
+                  className={cnsMerge(
+                    "flex items-center gap-2 rounded border border-gray-400 bg-gray-100 px-3 py-1",
                     unplacedStudentCount > 0
-                      ? "Drag onto the map to place the next student"
-                      : "Every student already has a desk"
-                  }
+                      ? "cursor-grab hover:bg-white"
+                      : "cursor-not-allowed opacity-40",
+                  )}
+                  draggable={unplacedStudentCount > 0}
+                  onDragStart={handleDeskDragStart}
+                >
+                  <div className="relative h-7 w-9" aria-hidden="true">
+                    <div className="absolute left-0 top-0 h-4 w-9 rounded border-2 border-gray-500 bg-gray-300" />
+                    <div className="absolute bottom-0 left-3 h-4 w-3 rounded-b-lg border-2 border-gray-400 bg-gray-200" />
+                  </div>
+                  <span>Desk ({unplacedStudentCount})</span>
+                </div>
+              </Tooltip>
+              <Tooltip title="Drag onto the map to add a rectangle">
+                <div
+                  aria-label="New rectangle"
+                  className="flex cursor-grab items-center gap-2 rounded border border-gray-400 bg-white px-3 py-1 hover:bg-gray-50"
+                  draggable
+                  onDragStart={handleLabelDragStart}
                 >
                   <div
-                    aria-disabled={unplacedStudentCount === 0}
-                    aria-label="New desk"
-                    className={cnsMerge(
-                      "flex items-center gap-2 rounded border border-gray-400 bg-gray-100 px-3 py-1",
-                      unplacedStudentCount > 0
-                        ? "cursor-grab hover:bg-white"
-                        : "cursor-not-allowed opacity-40",
-                    )}
-                    draggable={unplacedStudentCount > 0}
-                    onDragStart={handleDeskDragStart}
-                  >
-                    <div className="relative h-7 w-9" aria-hidden="true">
-                      <div className="absolute left-0 top-0 h-4 w-9 rounded border-2 border-gray-500 bg-gray-300" />
-                      <div className="absolute bottom-0 left-3 h-4 w-3 rounded-b-lg border-2 border-gray-400 bg-gray-200" />
-                    </div>
-                    <span>Desk ({unplacedStudentCount})</span>
-                  </div>
-                </Tooltip>
-                <Tooltip title="Drag onto the map to add a rectangle">
-                  <div
-                    aria-label="New rectangle"
-                    className="flex cursor-grab items-center gap-2 rounded border border-gray-400 bg-white px-3 py-1 hover:bg-gray-50"
-                    draggable
-                    onDragStart={handleLabelDragStart}
-                  >
-                    <div
-                      aria-hidden="true"
-                      className="h-6 w-10 rounded-sm border-2 border-gray-500 bg-white"
-                    />
-                    <span>Rectangle</span>
-                  </div>
-                </Tooltip>
-                </>
-              )}
+                    aria-hidden="true"
+                    className="h-6 w-10 rounded-sm border-2 border-gray-500 bg-white"
+                  />
+                  <span>Rectangle</span>
+                </div>
+              </Tooltip>
             </>
           )}
 
@@ -297,14 +247,14 @@ export const TabOptionsRow = () => {
                   <ReverseWidget />
                 </div>
               </Tooltip>
+
+              <Tooltip title="Select a sound to play when points are added" enterDelay={1000}>
+                <div className={showOnHover}>
+                  <PointSoundWidget />
+                </div>
+              </Tooltip>
             </>
           )}
-
-          <Tooltip title="Select a sound to play when points are added" enterDelay={1000}>
-            <div className={showOnHover}>
-              <PointSoundWidget />
-            </div>
-          </Tooltip>
         </div>
       </div>
       <div className="flex flex-none items-center pr-2">

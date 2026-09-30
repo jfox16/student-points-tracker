@@ -4,8 +4,11 @@ import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
 import { useAppContext } from "../../../context/AppContext";
 import { PointSoundName } from "../../../context/SoundContext";
 
-export const PointSoundWidget = () => {
+interface PointSoundWidgetProps {
+  fullWidth?: boolean;
+}
 
+export const PointSoundWidget = ({ fullWidth = false }: PointSoundWidgetProps) => {
   const {
     appOptions,
     updateAppOptions,
@@ -19,18 +22,26 @@ export const PointSoundWidget = () => {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <Select
-        value={pointSound}
-        onChange={handleChange}
-        style={{ height: 40 }}
-      >
-        <MenuItem value="none">No point sound</MenuItem>
-        <MenuItem value="pop">Pop</MenuItem>
-        <MenuItem value="ding">Ding</MenuItem>
-        <MenuItem value="bark">Bark</MenuItem>
-        <MenuItem value="meow">Meow</MenuItem>
-      </Select>
-    </div>
+    <Select
+      fullWidth={fullWidth}
+      SelectDisplayProps={{ "aria-label": "Point sound" }}
+      onChange={handleChange}
+      size="small"
+      sx={{
+        height: 40,
+        backgroundColor: "#fff",
+        ".MuiSelect-select": {
+          display: "flex",
+          alignItems: "center",
+        },
+      }}
+      value={pointSound}
+    >
+      <MenuItem value="none">No point sound</MenuItem>
+      <MenuItem value="pop">🫧 Pop</MenuItem>
+      <MenuItem value="ding">🔔 Ding</MenuItem>
+      <MenuItem value="bark">🐶 Bark</MenuItem>
+      <MenuItem value="meow">🐱 Meow</MenuItem>
+    </Select>
   )
 }

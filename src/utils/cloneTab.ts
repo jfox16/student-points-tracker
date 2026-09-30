@@ -57,6 +57,9 @@ const cloneClassroomLayout = (
       id: createId(),
     })),
     controlGroups: remapControlGroups(layout.controlGroups, idMap),
+    controlGroupNames: layout.controlGroupNames
+      ? { ...layout.controlGroupNames }
+      : undefined,
   };
 };
 

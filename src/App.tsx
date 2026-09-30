@@ -127,6 +127,10 @@ const AppWorkspace = () => {
         {viewMode === "map" ? (
           <DeskDetailsSidebar
             onDeskDeleted={() => setSelectedDeskStudentIds(new Set())}
+            onDeskSelectionChange={(nextStudentIds) => {
+              setSelectedLabelId(null);
+              handleDeskSelectionChange(nextStudentIds);
+            }}
             selectedLabelId={selectedLabelId}
             studentIds={selectedDeskStudentIds}
           />

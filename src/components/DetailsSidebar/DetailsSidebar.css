@@ -1,8 +1,10 @@
 .DetailsSidebar {
-  width: 280px;
+  position: relative;
+  display: flex;
   height: 100%;
   box-sizing: border-box;
   flex: none;
+  flex-direction: column;
   padding: 18px;
   border-left: 1px solid #9ca3af;
   background: #f3f4f6;
@@ -23,19 +25,26 @@
 
 .DetailsSidebar__content {
   display: flex;
+  flex: 1;
+  min-height: 0;
   flex-direction: column;
   gap: 18px;
   margin-top: 20px;
+  overflow-y: auto;
 }
 
 .DetailsSidebar__selectionSummary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
   padding: 10px 12px;
   border-radius: 6px;
   background: #e5e7eb;
   color: #374151;
+}
+
+.DetailsSidebar__selectionSummary .PointAdjuster {
+  margin-left: auto;
 }
 
 .DetailsSidebar__studentSummary {
@@ -50,12 +59,20 @@
 
 .DetailsSidebar__studentSummary li {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 8px 2px;
   border-bottom: 1px solid #d1d5db;
   color: #4b5563;
   font-size: 0.85rem;
+}
+
+.DetailsSidebar__studentSummary li > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .DetailsSidebar__fieldGroup {
@@ -93,12 +110,6 @@
   outline: 2px solid rgb(37 99 235 / 20%);
 }
 
-.DetailsSidebar__pointActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
 .DetailsSidebar__rotationActions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -112,7 +123,6 @@
   gap: 5px;
 }
 
-.DetailsSidebar__pointActions button,
 .DetailsSidebar__button {
   padding: 7px 10px;
   border: 1px solid #9ca3af;
@@ -123,7 +133,6 @@
   font: inherit;
 }
 
-.DetailsSidebar__pointActions button:hover,
 .DetailsSidebar__button:hover:not(:disabled) {
   background: #e5e7eb;
 }
@@ -146,4 +155,180 @@
   color: #6b7280;
   font-size: 0.75rem;
   line-height: 1.35;
+}
+
+.DetailsSidebar__teams {
+  width: 100%;
+  border-collapse: collapse;
+  color: #374151;
+  font-size: 0.82rem;
+}
+
+.DetailsSidebar__teams th {
+  padding: 4px 0 6px;
+  border-bottom: 1px solid #d1d5db;
+  color: #6b7280;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.DetailsSidebar__teams th:nth-child(2),
+.DetailsSidebar__teams td:nth-child(2) {
+  text-align: right;
+}
+
+.DetailsSidebar__teams td:nth-child(2) .PointAdjuster {
+  justify-content: flex-end;
+}
+
+.DetailsSidebar__teams td {
+  padding: 6px 0;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.DetailsSidebar__teamIdentity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.DetailsSidebar__teamName {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #374151;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.DetailsSidebar__teamName:hover,
+.DetailsSidebar__teamName:focus {
+  border-color: #9ca3af;
+  background: #fff;
+  color: #111827;
+}
+
+.DetailsSidebar__teamName:focus {
+  border-color: #2563eb;
+  outline: 2px solid rgb(37 99 235 / 20%);
+}
+
+.DetailsSidebar__teamSelect {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.DetailsSidebar__teamSelect:hover {
+  color: #111827;
+}
+
+.DetailsSidebar__teamMeta {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.DetailsSidebar__teamBadge {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid #64748b;
+  border-radius: 50%;
+  place-items: center;
+  background: #64748b;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.DetailsSidebar__teamBadge--1 {
+  border-color: #d3453c;
+  background: #e25b52;
+}
+
+.DetailsSidebar__teamBadge--2 {
+  border-color: #2f68c9;
+  background: #3d7eef;
+}
+
+.DetailsSidebar__teamBadge--3 {
+  border-color: #2b8a4e;
+  background: #36a35e;
+}
+
+.DetailsSidebar__teamBadge--4 {
+  border-color: #d4a41f;
+  background: #f0c43a;
+  color: #5c4512;
+}
+
+.DetailsSidebar__teamBadge--5 {
+  border-color: #6d4cb8;
+  background: #8660d4;
+}
+
+.DetailsSidebar__teamBadge--6 {
+  border-color: #1c8c86;
+  background: #2aa8a0;
+}
+
+.DetailsSidebar__teamBadge--7 {
+  border-color: #d67a22;
+  background: #f0913a;
+}
+
+.DetailsSidebar__teamBadge--8 {
+  border-color: #d15482;
+  background: #e86b9a;
+}
+
+.DetailsSidebar__shortcuts {
+  display: flex;
+  margin-top: auto;
+  padding-top: 16px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.DetailsSidebar__shortcutList {
+  display: flex;
+  padding-top: 10px;
+  border-top: 1px solid #d1d5db;
+  flex-direction: column;
+  gap: 5px;
+  color: #6b7280;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.DetailsSidebar__shortcutHeading {
+  color: #374151;
+  font-weight: 600;
+}
+
+.DetailsSidebar__shortcutList kbd {
+  padding: 1px 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  color: #374151;
+  font: inherit;
+  font-weight: 600;
 }
