@@ -1,26 +1,32 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { NodeProps, NodeResizer } from "@xyflow/react";
 
 import { useTabContext } from "../../context/TabContext";
 import { CLASSROOM_LAYOUT_VERSION } from "../../types/classroomLayout.type";
 import {
-  CLASSROOM_BOUNDS,
   CLASSROOM_LABEL_MIN_HEIGHT,
   CLASSROOM_LABEL_MIN_WIDTH,
-  CLASSROOM_MAP_HEIGHT,
-  CLASSROOM_MAP_WIDTH,
   clampClassroomLabelPosition,
   getClassroomLabelSize,
+  getClassroomLabelTextSize,
   getClassroomLabels,
+  getClassroomMapSize,
 } from "../../utils/classroomLayout";
 import { LabelNode } from "./classroomMapStore";
 
 export const ClassroomLabelNode = memo(({
   id,
   data,
+  height,
+  selected,
+  width,
 }: NodeProps<LabelNode>) => {
   const { activeTab, updateActiveTab } = useTabContext();
-  const canEdit = (activeTab.tabOptions?.mapEditMode ?? false) && !data.preview;
+  const [hovered, setHovered] = useState(false);
+  const [resizing, setResizing] = useState(false);
+  const canEdit = !data.preview;
+  const mapSize = getClassroomMapSize(activeTab.classroomLayout);
+  const textSize = getClassroomLabelTextSize({ width, height });
 
   const className = [
     "ClassroomLabel",
@@ -29,18 +35,25 @@ export const ClassroomLabelNode = memo(({
   ].filter(Boolean).join(" ");
 
   return (
-    <div className={className}>
+    <div
+      className={className}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {canEdit && (
         <NodeResizer
+          isVisible={Boolean(selected) || hovered || resizing}
           minWidth={CLASSROOM_LABEL_MIN_WIDTH}
           minHeight={CLASSROOM_LABEL_MIN_HEIGHT}
           color="#64748b"
+          onResizeStart={() => setResizing(true)}
           onResizeEnd={(_event, params) => {
+            setResizing(false);
             const size = getClassroomLabelSize(params);
             const position = clampClassroomLabelPosition(
               params.x,
               params.y,
-              CLASSROOM_BOUNDS,
+              mapSize,
               size,
             );
             const labels = getClassroomLabels(activeTab.classroomLayout);
@@ -60,12 +73,14 @@ export const ClassroomLabelNode = memo(({
           shouldResize={(_event, params) =>
             params.x >= 0 &&
             params.y >= 0 &&
-            params.x + params.width <= CLASSROOM_MAP_WIDTH &&
-            params.y + params.height <= CLASSROOM_MAP_HEIGHT
+            params.x + params.width <= mapSize.width &&
+            params.y + params.height <= mapSize.height
           }
         />
       )}
-      <div className="ClassroomLabel__text">{data.text}</div>
+      <div className={`ClassroomLabel__text ClassroomLabel__text--${textSize}`}>
+        {data.text}
+      </div>
     </div>
   );
 });

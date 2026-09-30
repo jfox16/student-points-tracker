@@ -7,6 +7,10 @@ import { ClassroomMap } from "./ClassroomMap";
 
 const onDeskSelectionChange = vi.fn();
 
+vi.mock("../../context/ModalContext", () => ({
+  useModal: () => ({ showModal: vi.fn(), hideModal: vi.fn() }),
+}));
+
 vi.mock("../../context/AppContext", () => ({
   useAppContext: () => ({
     appOptions: { enableKeybinds: true },
@@ -41,7 +45,7 @@ vi.mock("../../context/TabContext", () => ({
         { id: "student-1", name: "Ada", points: 3 },
         { id: "student-2", name: "Grace", points: 1 },
       ],
-      tabOptions: { viewMode: "map", mapEditMode: false },
+      tabOptions: { viewMode: "map" },
       classroomLayout: {
         version: CLASSROOM_LAYOUT_VERSION,
         desks: [
@@ -70,7 +74,7 @@ const SelectionHarness = ({
 }: {
   initialSelection: string[];
 }) => {
-  const [selectedStudentIds, setSelectedStudentIds] = useState(
+  const [selectedStudentIds, setSelectedStudentIds] = useState<ReadonlySet<string>>(
     () => new Set(initialSelection),
   );
 
@@ -84,7 +88,7 @@ const SelectionHarness = ({
             Array.from(currentStudentIds).every((studentId) =>
               nextStudentIds.has(studentId)
             );
-          return selectionIsUnchanged ? currentStudentIds : new Set(nextStudentIds);
+          return selectionIsUnchanged ? currentStudentIds : nextStudentIds;
         });
       }}
       selectedStudentIds={selectedStudentIds}
@@ -133,26 +137,19 @@ describe("ClassroomMap army selection", () => {
     expect(selectedIdsFromLastCall()).toEqual(["student-1", "student-2"]);
   });
 
-  it("shows selection hotkeys beside the map hotkeys only while desks are selected", () => {
-    const { rerender } = render(
-      <ClassroomMap
-        onDeskSelectionChange={onDeskSelectionChange}
-        selectedStudentIds={new Set()}
-      />,
-    );
+  it("does not select or move desks while space is held", () => {
+    const { container } = render(<SelectionHarness initialSelection={["student-1"]} />);
+    const desk = () => container.querySelector(".react-flow__node");
 
-    expect(screen.queryByText(/click or drag adds/)).not.toBeInTheDocument();
-    expect(screen.getByText(/\+1 point/)).toBeInTheDocument();
+    fireEvent.keyDown(window, { code: "Space" });
 
-    rerender(
-      <ClassroomMap
-        onDeskSelectionChange={onDeskSelectionChange}
-        selectedStudentIds={new Set(["student-1"])}
-      />,
-    );
+    expect(desk()).not.toHaveClass("draggable");
+    expect(desk()).not.toHaveClass("selectable");
+    expect(onDeskSelectionChange).not.toHaveBeenCalled();
 
-    expect(screen.getByText(/click or drag adds/)).toBeInTheDocument();
-    expect(screen.getByText(/\+1 point/)).toBeInTheDocument();
+    fireEvent.keyUp(window, { code: "Space" });
+    expect(desk()).toHaveClass("draggable");
+    expect(desk()).toHaveClass("selectable");
   });
 
   it("clears the selection with escape", () => {

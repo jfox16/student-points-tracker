@@ -20,6 +20,7 @@ const source: Tab = {
     ],
     labels: [{ id: "label-1", x: 0, y: 0, text: "Front", width: 80, height: 40 }],
     controlGroups: { 1: ["student-1", "student-2"] },
+    controlGroupNames: { 1: "Front row" },
   },
 };
 
@@ -51,6 +52,7 @@ describe("cloneTab", () => {
       ],
       labels: [{ id: "label-copy", x: 0, y: 0, text: "Front", width: 80, height: 40 }],
       controlGroups: { 1: ["s-copy-1", "s-copy-2"] },
+      controlGroupNames: { 1: "Front row" },
     });
     expect(copy.tabOptions).toEqual(source.tabOptions);
     expect(copy.tabOptions).not.toBe(source.tabOptions);

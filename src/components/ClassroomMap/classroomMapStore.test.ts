@@ -11,7 +11,6 @@ const createNode = (id: string, x = 0): DeskNode => ({
   position: { x, y: 0 },
   data: {
     student: { id, name: id, points: 0 },
-    studentNumber: 1,
     rotation: 0,
   },
 });

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { Modal, Box, Button, IconButton } from "@mui/material";
+import type { ButtonProps } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useKeypress } from "../utils/useKeypress";
 
@@ -8,6 +9,9 @@ interface ModalOptions {
   onCancel?: () => void;
   acceptText?: string;
   cancelText?: string;
+  acceptColor?: ButtonProps["color"];
+  cancelColor?: ButtonProps["color"];
+  cancelVariant?: ButtonProps["variant"];
 }
 
 interface ModalContextProps {
@@ -24,6 +28,9 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [onCancel, setOnCancel] = useState<(() => void) | undefined>();
   const [acceptText, setAcceptText] = useState<string>("Accept");
   const [cancelText, setCancelText] = useState<string>("Cancel");
+  const [acceptColor, setAcceptColor] = useState<ButtonProps["color"]>("primary");
+  const [cancelColor, setCancelColor] = useState<ButtonProps["color"]>("error");
+  const [cancelVariant, setCancelVariant] = useState<ButtonProps["variant"]>("outlined");
 
   const hideModal = useCallback(() => {
     setIsOpen(false);
@@ -35,6 +42,9 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setOnCancel(() => options?.onCancel || hideModal);
     setAcceptText(options?.acceptText || "Accept");
     setCancelText(options?.cancelText || "Cancel");
+    setAcceptColor(options?.acceptColor ?? "primary");
+    setCancelColor(options?.cancelColor ?? "error");
+    setCancelVariant(options?.cancelVariant ?? "outlined");
     setIsOpen(true);
   }, [hideModal]);
 
@@ -87,12 +97,12 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           <div>{modalContent}</div>
           <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
             {onCancel && (
-              <Button variant="outlined" color="error" onClick={cancel}>
+              <Button variant={cancelVariant} color={cancelColor} onClick={cancel}>
                 {cancelText}
               </Button>
             )}
             {onAccept && (
-              <Button variant="contained" color="primary" onClick={accept}>
+              <Button variant="contained" color={acceptColor} onClick={accept}>
                 {acceptText}
               </Button>
             )}
