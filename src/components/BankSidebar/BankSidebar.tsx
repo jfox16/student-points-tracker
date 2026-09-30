@@ -1,21 +1,18 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useBankContext, SortOption } from '../../context/BankContext';
+import { useSidebarLayout } from '../../context/SidebarLayoutContext';
 import { useStudentContext } from '../../context/StudentContext';
 import { useModal } from '../../context/ModalContext';
+import { ResizableSidebar } from '../ResizableSidebar/ResizableSidebar';
 import { BankHeader } from './BankHeader';
 import { BankContent } from './BankContent';
-import { CollapsibleSidebarButton } from '../CollapsibleSidebarButton/CollapsibleSidebarButton';
 import './BankSidebar.css';
 
 export const BankSidebar: React.FC = () => {
   const { bankedPoints, depositPoints, sortOption, setSortOption } = useBankContext();
   const { students } = useStudentContext();
   const { showModal } = useModal();
-  const [open, setOpen] = useState(true);
-
-  const toggleOpen = useCallback(() => {
-    setOpen(!open);
-  }, [open]);
+  const { rightOpen } = useSidebarLayout();
 
   const handleClearPoints = () => {
     showModal(
@@ -81,25 +78,27 @@ export const BankSidebar: React.FC = () => {
       });
   }, [students, bankedPoints, sortOption]);
 
+  if (!rightOpen) return null;
+
   return (
-    <div className="h-full flex bg-gray-100 border-l border-gray-400">
-      <CollapsibleSidebarButton
-        isOpen={open}
-        onClick={toggleOpen}
-        side="left"
-        label="Points Bank"
-      />
-      {open && (
-        <div className="w-64 h-full flex flex-col py-4 pl-3 pr-0">
-          <BankHeader totalPoints={totalPoints} />
-          <BankContent
-            students={sortedStudents}
-            sortOption={sortOption}
-            onSortChange={setSortOption}
-            onClearPoints={handleClearPoints}
-          />
-        </div>
-      )}
-    </div>
+    <ResizableSidebar
+      className="bg-gray-100 border-l border-gray-400"
+      defaultWidth={256}
+      handleEdge="left"
+      label="Resize points bank"
+      maxWidth={560}
+      minWidth={240}
+      storageKey="details_sidebar_width"
+    >
+      <div className="BankSidebar h-full min-w-0 flex flex-col overflow-y-auto py-4 pl-3 pr-3">
+        <BankHeader totalPoints={totalPoints} />
+        <BankContent
+          students={sortedStudents}
+          sortOption={sortOption}
+          onSortChange={setSortOption}
+          onClearPoints={handleClearPoints}
+        />
+      </div>
+    </ResizableSidebar>
   );
 }; 

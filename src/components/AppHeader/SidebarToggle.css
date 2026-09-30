@@ -1,0 +1,30 @@
+.SidebarToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  margin: 0;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.SidebarToggle:hover {
+  background: #d1d5db;
+  color: #1f2937;
+}
+
+.SidebarToggle__icon {
+  display: inline-flex;
+  font-size: 20px;
+}
+
+.SidebarToggle__icon svg {
+  font-size: 20px;
+}
+
+.SidebarToggle__chevron {
+  font-size: 14px;
+}

@@ -1,9 +1,12 @@
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Student } from '../types/student.type';
 import { Tab, TabId } from '../types/tab.type';
 import { TabOptions } from '../types/tabOptions.type';
+import { cloneTab } from '../utils/cloneTab';
 import { generateUuid } from '../utils/generateUuid';
+import { moveItem } from '../utils/moveItem';
 import { useDebounce } from '../utils/useDebounce';
 import { useLocalStorage, LocalStorageKey } from '../utils/useLocalStorage';
 import useDocumentTitle from '../utils/useDocumentTitle';
@@ -13,6 +16,8 @@ interface TabContextValue {
   addTab: () => void;
   updateTab: (id: TabId|undefined, updates: Partial<Tab>) => void;
   deleteTab: (id: TabId|undefined) => void;
+  moveTab: (fromIndex: number, toIndex: number) => void;
+  duplicateTab: (id: TabId) => void;
   activeTab: Tab;
   updateActiveTab: (updates: Partial<Tab>) => void;
   setActiveTabId: (id: TabId) => void;
@@ -31,19 +36,28 @@ export const DEFAULT_TAB: Tab = {
   tabOptions: DEFAULT_TAB_OPTIONS,
 }
 
-export const generateStudents = (n: number = 30) => {
-  const students = Array.from({ length: n }, (_, i) => ({
-    id: '',
-    name: '',
+export const defaultStudentName = (index: number) => `Student ${index + 1}`;
+
+export const nextDefaultStudentName = (students: { name: string }[]) => {
+  const usedNames = new Set(students.map((student) => student.name));
+  let number = 1;
+  while (usedNames.has(`Student ${number}`)) number += 1;
+  return `Student ${number}`;
+};
+
+export const nameUnnamedStudents = (students: Student[]) =>
+  students.map((student, index) =>
+    student.name?.trim()
+      ? student
+      : { ...student, name: defaultStudentName(index) },
+  );
+
+export const generateStudents = (n: number = 30) =>
+  Array.from({ length: n }, (_, index) => ({
+    id: generateUuid(),
+    name: defaultStudentName(index),
     points: 0,
   }));
-
-  for (const student of students) {
-    student.id = generateUuid();
-  }
-
-  return students;
-}
 
 interface LocalStorageTabData {
   activeTabId?: TabId,
@@ -79,6 +93,25 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
   const [activeTabId, setActiveTabId] = useState<TabId|undefined>(savedTabData.activeTabId);
 
   const [documentTitle, setDocumentTitle] = useDocumentTitle();
+  const didNameStudents = useRef(false);
+
+  useEffect(() => {
+    if (didNameStudents.current) return;
+    didNameStudents.current = true;
+
+    setTabs((currentTabs) => {
+      const namedTabs = currentTabs.map((tab) => ({
+        ...tab,
+        students: nameUnnamedStudents(tab.students ?? []),
+      }));
+      const changed = namedTabs.some((tab, tabIndex) =>
+        tab.students.some((student, studentIndex) =>
+          student.name !== currentTabs[tabIndex]?.students[studentIndex]?.name
+        )
+      );
+      return changed ? namedTabs : currentTabs;
+    });
+  }, []);
 
   useEffect(() => {
     if (tabs.length === 0) {
@@ -86,7 +119,6 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
       for (const tab of newTabs) {
         tab.students = generateStudents();
       }
-      console.log({newTabs})
       setTabs(newTabs);
     }
   }, [
@@ -172,6 +204,24 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
   ]);
 
+  const moveTab = useCallback((fromIndex: number, toIndex: number) => {
+    setTabs((currentTabs) => moveItem(currentTabs, fromIndex, toIndex));
+  }, []);
+
+  const duplicateTab = useCallback((id: TabId) => {
+    const sourceIndex = tabs.findIndex((tab) => tab.id === id);
+    const source = tabs[sourceIndex];
+    if (!source) return;
+
+    const newTab = cloneTab(source);
+    setTabs([
+      ...tabs.slice(0, sourceIndex + 1),
+      newTab,
+      ...tabs.slice(sourceIndex + 1),
+    ]);
+    setActiveTabId(newTab.id);
+  }, [tabs]);
+
   const updateActiveTab = useCallback((updates: Partial<Tab>) => {
     updateTab(activeTab.id, updates);
   }, [
@@ -219,6 +269,8 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
       tabs,
       addTab,
       deleteTab,
+      moveTab,
+      duplicateTab,
       updateTab,
       activeTab,
       updateActiveTab,
@@ -229,6 +281,8 @@ export const TabContextProvider = (props: { children: React.ReactNode }) => {
     tabs,
     addTab,
     deleteTab,
+    moveTab,
+    duplicateTab,
     updateTab,
     activeTab,
     updateActiveTab,

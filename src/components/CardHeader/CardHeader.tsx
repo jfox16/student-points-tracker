@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
-
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Checkbox } from '@mui/material';
+import { Checkbox, Tooltip } from '@mui/material';
 
 import { cnsMerge } from '../../utils/cnsMerge';
 
@@ -10,6 +9,8 @@ import './CardHeader.css';
 interface CardHeaderProps {
   autoHide?: boolean;
   onClickDelete?: () => void;
+  onClickDuplicate?: () => void;
+  duplicateLabel?: string;
   onSelectChange?: (selected: boolean) => void;
   selected?: boolean;
   dragHandleRef?: React.Ref<HTMLDivElement>;
@@ -19,7 +20,9 @@ export const CardHeader = (props: CardHeaderProps) => {
   const {
     autoHide = false,
     selected = false,
+    duplicateLabel = "Duplicate",
     onClickDelete,
+    onClickDuplicate,
     onSelectChange,
     dragHandleRef,
   } = props;
@@ -61,11 +64,26 @@ export const CardHeader = (props: CardHeaderProps) => {
           )}
         </div>
         {/* Right Side */}
-        {onClickDelete && <DeleteIcon
-          className={cnsMerge('opacity-20 cursor-pointer hover:opacity-80')}
-          onClick={onClickDelete}
-          fontSize="small"
-        />}
+        <div className="flex items-center">
+          {onClickDuplicate && (
+            <Tooltip title={duplicateLabel}>
+              <ContentCopyIcon
+                aria-label={duplicateLabel}
+                className={cnsMerge('opacity-20 cursor-pointer hover:opacity-80')}
+                fontSize="small"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onClickDuplicate();
+                }}
+              />
+            </Tooltip>
+          )}
+          {onClickDelete && <DeleteIcon
+            className={cnsMerge('opacity-20 cursor-pointer hover:opacity-80')}
+            onClick={onClickDelete}
+            fontSize="small"
+          />}
+        </div>
       </div>
     </div>
   )
