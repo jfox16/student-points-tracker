@@ -7,6 +7,10 @@ import { ClassroomMap } from "./ClassroomMap";
 
 const onDeskSelectionChange = vi.fn();
 
+vi.mock("../../context/ModalContext", () => ({
+  useModal: () => ({ showModal: vi.fn(), hideModal: vi.fn() }),
+}));
+
 vi.mock("../../context/AppContext", () => ({
   useAppContext: () => ({
     appOptions: { enableKeybinds: true },

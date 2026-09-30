@@ -25,9 +25,12 @@ import {
   toggleClassroomControlGroup,
   classroomDeskFootprintsOverlap,
   classroomDesksMatch,
+  findClassroomDeskPastePositions,
   getClassroomDeskFootprint,
   getClassroomControlGroupNumber,
+  getClassroomDeskPositionNearCenter,
   getClosestValidClassroomDeskPosition,
+  getNextAvailableClassroomDeskPosition,
   clampClassroomLabelPosition,
   getClassroomLabels,
   getPlacedClassroomDesks,
@@ -265,6 +268,90 @@ describe("classroom desk placement", () => {
     expect(
       getClosestValidClassroomDeskPosition(movingDesk, [obstructingDesk]),
     ).toEqual({ x: 0, y: 0 });
+  });
+
+  it("places the next desk in the first open space after an anchor", () => {
+    const bounds = {
+      width: CLASSROOM_DESK_FOOTPRINT_WIDTH * 4,
+      height: CLASSROOM_DESK_FOOTPRINT_HEIGHT * 2,
+    };
+    const blocker: ClassroomDesk = {
+      studentId: "student-2",
+      x: CLASSROOM_DESK_FOOTPRINT_WIDTH - CLASSROOM_GRID_SIZE,
+      y: 0,
+      rotation: 0,
+    };
+
+    expect(
+      getNextAvailableClassroomDeskPosition(firstDesk, [firstDesk], 0, bounds),
+    ).toEqual({ x: CLASSROOM_DESK_FOOTPRINT_WIDTH, y: 0 });
+    expect(
+      getNextAvailableClassroomDeskPosition(
+        firstDesk,
+        [firstDesk, blocker],
+        90,
+        bounds,
+      ),
+    ).toEqual({
+      x: blocker.x + CLASSROOM_DESK_FOOTPRINT_WIDTH,
+      y: 0,
+    });
+    expect(
+      getNextAvailableClassroomDeskPosition(firstDesk, [firstDesk], 0, {
+        width: CLASSROOM_DESK_FOOTPRINT_WIDTH,
+        height: CLASSROOM_DESK_FOOTPRINT_HEIGHT * 2,
+      }),
+    ).toEqual({ x: 0, y: CLASSROOM_DESK_FOOTPRINT_HEIGHT });
+  });
+
+  it("places a desk near the middle when that spot is open or blocked", () => {
+    const footprint = getClassroomDeskFootprint(firstDesk);
+    const center = {
+      x: snapToClassroomGrid((CLASSROOM_MAP_WIDTH - footprint.width) / 2),
+      y: snapToClassroomGrid((CLASSROOM_MAP_HEIGHT - footprint.height) / 2),
+    };
+
+    expect(getClassroomDeskPositionNearCenter(0, [])).toEqual(center);
+
+    const centerDesk: ClassroomDesk = {
+      ...firstDesk,
+      ...center,
+    };
+    const besideCenter = getClassroomDeskPositionNearCenter(0, [centerDesk]);
+    expect(besideCenter).toBeDefined();
+    expect(isClassroomDeskPlacementValid(
+      { ...firstDesk, studentId: "student-2", ...besideCenter },
+      [centerDesk],
+    )).toBe(true);
+    expect(
+      (besideCenter!.x - center.x) ** 2 + (besideCenter!.y - center.y) ** 2,
+    ).toBe(footprint.height ** 2);
+  });
+
+  it("chains pasted desks after the anchor, or from the middle when there is none", () => {
+    const center = getClassroomDeskPositionNearCenter(0, [])!;
+    const footprint = getClassroomDeskFootprint(firstDesk);
+
+    expect(findClassroomDeskPastePositions(
+      [{ rotation: 0 }, { rotation: 180 }],
+      [],
+    )).toEqual([
+      { ...center, rotation: 0 },
+      {
+        x: center.x + footprint.width,
+        y: center.y,
+        rotation: 180,
+      },
+    ]);
+    expect(findClassroomDeskPastePositions(
+      [{ rotation: 90 }],
+      [firstDesk],
+      firstDesk,
+    )).toEqual([{
+      x: CLASSROOM_DESK_FOOTPRINT_WIDTH,
+      y: 0,
+      rotation: 90,
+    }]);
   });
 });
 

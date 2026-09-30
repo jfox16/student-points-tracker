@@ -23,6 +23,7 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import { useAppContext } from "../../context/AppContext";
+import { useModal } from "../../context/ModalContext";
 import { useStudentContext } from "../../context/StudentContext";
 import { useTabContext } from "../../context/TabContext";
 import { useStudentPointsAnimation } from "../../hooks/useStudentPointsAnimation";
@@ -55,6 +56,7 @@ import {
   getClassroomLabelSize,
   addToClassroomControlGroup,
   toggleClassroomControlGroup,
+  findClassroomDeskPastePositions,
   getClosestValidClassroomDeskPosition,
   getClassroomControlGroupNumber,
   getClassroomLabels,
@@ -63,6 +65,10 @@ import {
   isClassroomLabelPlacementValid,
   snapToClassroomGrid,
 } from "../../utils/classroomLayout";
+import {
+  copyClassroomDesks,
+  getCopiedClassroomDesks,
+} from "../../utils/deskClipboard";
 import { generateUuid } from "../../utils/generateUuid";
 import { applyDeskSelection, getDeskSelectionMode } from "../../utils/deskSelection";
 import { PointsDisplay } from "../StudentCard/PointsCounter/PointsDisplay";
@@ -418,6 +424,7 @@ const ClassroomFlow = memo(({
               <span><kbd>Shift</kbd> click or drag removes</span>
               <span><kbd>Double-click</kbd> or <kbd>⌘/Ctrl</kbd>+<kbd>A</kbd> selects all</span>
               <span><kbd>Esc</kbd> clears</span>
+              {mapEditMode && <span><kbd>Backspace</kbd> deletes</span>}
               <span><kbd>⌘/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>1–9</kbd> adds to group</span>
             </div>
           )}
@@ -426,6 +433,9 @@ const ClassroomFlow = memo(({
             <span><kbd>1–9</kbd> +1 point</span>
             <span><kbd>Shift</kbd> + <kbd>1–9</kbd> −1 point</span>
             <span><kbd>Space</kbd> + drag pans</span>
+            {mapEditMode && (
+              <span><kbd>⌘/Ctrl</kbd>+<kbd>C</kbd>/<kbd>V</kbd> copy and paste desks</span>
+            )}
           </div>
         </div>
       </Panel>
@@ -456,6 +466,7 @@ const ClassroomMapContent = ({
 }: ClassroomMapContentProps) => {
   const mapEditMode = activeTab.tabOptions?.mapEditMode ?? false;
   const { appOptions } = useAppContext();
+  const { showModal } = useModal();
   const { addPointsToStudents } = useStudentContext();
   const controlGroups = activeTab.classroomLayout?.controlGroups ?? {};
   const reactFlowInstance = useClassroomMapStore(
@@ -519,7 +530,7 @@ const ClassroomMapContent = ({
   useEffect(() => {
     if (!mapEditMode) return;
 
-    const handleDeleteLabel = (event: KeyboardEvent) => {
+    const handleDeleteSelection = (event: KeyboardEvent) => {
       if (event.key !== "Delete" && event.key !== "Backspace") return;
       if (isTypingTarget(event.target) || event.metaKey || event.ctrlKey || event.altKey) {
         return;
@@ -531,34 +542,87 @@ const ClassroomMapContent = ({
           .filter((node) => node.type === "label" && node.selected)
           .map((node) => node.id),
       );
-      if (selectedLabelIds.size === 0) return;
+      const selectedDeskIds = new Set(
+        desks
+          .map((desk) => desk.studentId)
+          .filter((studentId) => selectedStudentIds.has(studentId)),
+      );
+      if (selectedDeskIds.size === 0 && selectedLabelIds.size === 0) return;
 
       event.preventDefault();
-      updateActiveTab({
-        classroomLayout: {
-          ...activeTab.classroomLayout,
-          version: CLASSROOM_LAYOUT_VERSION,
-          desks: activeTab.classroomLayout?.desks ?? [],
-          labels: labels.filter((label) => !selectedLabelIds.has(label.id)),
+      if (selectedDeskIds.size === 0) {
+        updateActiveTab({
+          classroomLayout: {
+            ...activeTab.classroomLayout,
+            version: CLASSROOM_LAYOUT_VERSION,
+            desks: activeTab.classroomLayout?.desks ?? [],
+            labels: labels.filter((label) => !selectedLabelIds.has(label.id)),
+          },
+        });
+        return;
+      }
+
+      showModal("Are you sure?", {
+        acceptText: "Yes",
+        cancelText: "No",
+        acceptColor: "success",
+        cancelColor: "error",
+        cancelVariant: "contained",
+        onAccept: () => {
+          const controlGroups = Object.fromEntries(
+            Object.entries(activeTab.classroomLayout?.controlGroups ?? {})
+              .map(([groupNumber, groupedStudentIds]) => [
+                groupNumber,
+                groupedStudentIds.filter((studentId) => !selectedDeskIds.has(studentId)),
+              ]),
+          ) as ClassroomControlGroups;
+
+          updateActiveTab({
+            classroomLayout: {
+              ...activeTab.classroomLayout,
+              version: CLASSROOM_LAYOUT_VERSION,
+              desks: desks.filter((desk) => !selectedDeskIds.has(desk.studentId)),
+              controlGroups,
+              labels: labels.filter((label) => !selectedLabelIds.has(label.id)),
+            },
+          });
+          onDeskSelectionChange?.(new Set());
+          if (selectedLabelIds.size > 0) onLabelSelectionChange?.(null);
         },
       });
     };
 
-    window.addEventListener("keydown", handleDeleteLabel);
-    return () => window.removeEventListener("keydown", handleDeleteLabel);
+    window.addEventListener("keydown", handleDeleteSelection);
+    return () => window.removeEventListener("keydown", handleDeleteSelection);
   }, [
     activeTab.classroomLayout,
+    desks,
     labels,
     mapEditMode,
     mapStore,
+    onDeskSelectionChange,
+    onLabelSelectionChange,
+    selectedStudentIds,
+    showModal,
     updateActiveTab,
   ]);
 
   const previewNode = useClassroomMapStore((state) => state.previewNode);
   const selectedStudentIdsRef = useRef(selectedStudentIds);
   const selectedLabelIdRef = useRef(selectedLabelId);
+  const selectionOrderRef = useRef<StudentId[]>([]);
   selectedStudentIdsRef.current = selectedStudentIds;
   selectedLabelIdRef.current = selectedLabelId;
+  useEffect(() => {
+    const previousIds = selectionOrderRef.current;
+    const previousIdSet = new Set(previousIds);
+    selectionOrderRef.current = [
+      ...previousIds.filter((studentId) => selectedStudentIds.has(studentId)),
+      ...Array.from(selectedStudentIds).filter(
+        (studentId) => !previousIdSet.has(studentId),
+      ),
+    ];
+  }, [selectedStudentIds]);
   const handleSelectionChange: OnSelectionChangeFunc<ClassroomMapNode> = useCallback(
     ({ nodes: selectedNodes }) => {
       const nextLabelId = selectedNodes.find(
@@ -753,6 +817,83 @@ const ClassroomMapContent = ({
     desks,
     onDeskSelectionChange,
     selectedStudentIds,
+    updateActiveTab,
+  ]);
+
+  useEffect(() => {
+    const handleClipboardKeyDown = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target) || event.altKey || event.shiftKey || event.repeat) {
+        return;
+      }
+      if (!(event.metaKey || event.ctrlKey)) return;
+      if (document.querySelector(".MuiModal-root") || !mapEditMode) return;
+
+      if (event.code === "KeyC") {
+        const desksByStudentId = new Map(
+          desks.map((desk) => [desk.studentId, desk]),
+        );
+        const studentsById = new Map(
+          activeTab.students.map((student) => [student.id, student]),
+        );
+        const copies = selectionOrderRef.current.flatMap((studentId) => {
+          const desk = desksByStudentId.get(studentId);
+          const student = studentsById.get(studentId);
+          if (!desk || !student) return [];
+          return [{ name: student.name, rotation: desk.rotation }];
+        });
+        if (copies.length === 0) return;
+
+        copyClassroomDesks(copies);
+        event.preventDefault();
+        return;
+      }
+
+      if (event.code !== "KeyV") return;
+
+      const copies = getCopiedClassroomDesks();
+      if (copies.length === 0) return;
+
+      const lastSelectedId = selectionOrderRef.current.at(-1);
+      const anchor = lastSelectedId
+        ? desks.find((desk) => desk.studentId === lastSelectedId)
+        : undefined;
+      const positions = findClassroomDeskPastePositions(copies, desks, anchor);
+      event.preventDefault();
+      if (positions.length === 0) return;
+
+      const newStudents: Student[] = positions.map((_position, index) => ({
+        id: generateUuid(),
+        name: copies[index].name,
+        points: 0,
+      }));
+      const newDesks: ClassroomDesk[] = newStudents.map((student, index) => ({
+        studentId: student.id,
+        x: positions[index].x,
+        y: positions[index].y,
+        rotation: positions[index].rotation,
+      }));
+
+      const pastedStudentIds = newDesks.map((desk) => desk.studentId);
+      selectionOrderRef.current = pastedStudentIds;
+      updateActiveTab({
+        students: [...activeTab.students, ...newStudents],
+        classroomLayout: {
+          ...activeTab.classroomLayout,
+          version: CLASSROOM_LAYOUT_VERSION,
+          desks: [...desks, ...newDesks],
+        },
+      });
+      onDeskSelectionChange?.(new Set(pastedStudentIds));
+    };
+
+    window.addEventListener("keydown", handleClipboardKeyDown);
+    return () => window.removeEventListener("keydown", handleClipboardKeyDown);
+  }, [
+    activeTab.classroomLayout,
+    activeTab.students,
+    desks,
+    mapEditMode,
+    onDeskSelectionChange,
     updateActiveTab,
   ]);
 
