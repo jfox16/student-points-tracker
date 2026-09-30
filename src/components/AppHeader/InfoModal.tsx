@@ -30,9 +30,9 @@ export const InfoModal = () => {
         
         <p><strong>Keyboard Shortcuts:</strong></p>
         <ul className="list-disc pl-5">
-          <li><kbd>Space</kbd> - Add points to all/selected students</li>
-          <li><kbd>Shift</kbd> + <kbd>Space</kbd> - Subtract points from all/selected students</li>
           <li><kbd>Shift</kbd> + <kbd>Student Key</kbd> - Subtract point from specific student</li>
+          <li>Drag the handle on a class to reorder it</li>
+          <li>Hover a class and choose duplicate to clone it</li>
           <li><kbd>Space</kbd> + drag - Pan the classroom map</li>
           <li><kbd>⌘/Ctrl</kbd> + click or drag - Add desks to the selection</li>
           <li><kbd>Shift</kbd> + click or drag - Remove desks from the selection</li>

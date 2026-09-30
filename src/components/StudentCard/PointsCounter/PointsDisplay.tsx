@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { cnsMerge } from "../../../utils/cnsMerge";
 import { getGradientColor } from '../../../utils/getGradientColor';
 import { NumberInput } from '../../NumberInput/NumberInput';
@@ -35,16 +35,27 @@ export const PointsDisplay = ({
     return `${sign}${recentChange}`;
   }, [recentChange]);
 
+  const animationKey = `${animationTrigger}-${animationDirection}`;
+  const previousAnimationKey = useRef<string | null>(null);
+  const hasPointChange = useRef(false);
+
+  if (previousAnimationKey.current !== animationKey) {
+    hasPointChange.current = previousAnimationKey.current !== null;
+    previousAnimationKey.current = animationKey;
+  }
+
   return (
     <div
       className={cnsMerge(
         "relative flex-2 h-full",
-        animationDirection === "down"
-          ? "animate-[pop-down_0.08s_ease-out]"
-          : "animate-[pop_0.08s_ease-out]",
+        hasPointChange.current
+          ? animationDirection === "down"
+            ? "animate-[pop-down_0.08s_ease-out]"
+            : "animate-[pop_0.08s_ease-out]"
+          : undefined,
         className,
       )}
-      key={`${animationTrigger}-${animationDirection}`}
+      key={animationKey}
     >
       <style>
         {`
@@ -60,46 +71,49 @@ export const PointsDisplay = ({
           }
         `}
       </style>
-      <div
-        className={cnsMerge(
-          "absolute inset-0 top-[-0.5em]",
-          "flex justify-center",
-          "pointer-events-none",
-          "font-xs text-gray-400"
-        )}
-      >
-        {recentChangeString}
-      </div>
-      {readOnly ? (
-        <div
-          className={cnsMerge(
-            "h-full w-full",
-            points < 0 && colored && "text-red-500",
+      <div className="relative flex h-full w-full items-center justify-center">
+        <div className="relative">
+          {readOnly ? (
+            <div
+              className={cnsMerge(
+                points < 0 && colored && "text-red-500",
+              )}
+              style={{
+                color: dynamicTextColor,
+                fontSize: "1.5em",
+                lineHeight: 1.1,
+              }}
+            >
+              {points}
+            </div>
+          ) : (
+            <NumberInput
+              className={cnsMerge(
+                "h-full",
+                points < 0 && colored && "text-red-500"
+              )}
+              value={points}
+              onChange={onChange}
+              inputProps={{
+                style: {
+                  color: dynamicTextColor,
+                  fontSize: "1.5em",
+                  width: `${Math.max(String(points).length, 1)}ch`,
+                },
+              }}
+            />
           )}
-          style={{
-            color: dynamicTextColor,
-            fontSize: "1.5em",
-            lineHeight: 1.1,
-          }}
-        >
-          {points}
+          {recentChangeString && (
+            <span
+              aria-hidden="true"
+              className="PointsDisplay__delta pointer-events-none absolute left-full top-1/2 -translate-y-1/2 whitespace-nowrap font-semibold leading-none text-gray-700"
+              style={{ marginLeft: "0.15em", fontSize: "1.15em" }}
+            >
+              {recentChangeString}
+            </span>
+          )}
         </div>
-      ) : (
-        <NumberInput
-          className={cnsMerge(
-            "h-full w-full",
-            points < 0 && colored && "text-red-500"
-          )}
-          value={points}
-          onChange={onChange}
-          inputProps={{
-            style: {
-              color: dynamicTextColor,
-              fontSize: "1.5em",
-            },
-          }}
-        />
-      )}
+      </div>
     </div>
   );
 };

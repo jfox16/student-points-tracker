@@ -9,7 +9,7 @@ import { Student } from "../types/student.type";
 import { useDebounce } from "../utils/useDebounce";
 import usePrevious from "./usePrevious";
 
-export const useStudentPointsAnimation = (student: Student, index = 0) => {
+export const useStudentPointsAnimation = (student: Student, _index = 0) => {
   const { playPointSound } = useSoundContext();
   const [recentChange, setRecentChange] = useState<number | undefined>(
     undefined,
@@ -22,7 +22,7 @@ export const useStudentPointsAnimation = (student: Student, index = 0) => {
 
   const debouncedResetRecentChange = useDebounce(() => {
     setRecentChange(undefined);
-  }, 2000);
+  }, 1000);
 
   useEffect(() => {
     if (typeof prevPoints !== "number") return;
@@ -42,11 +42,8 @@ export const useStudentPointsAnimation = (student: Student, index = 0) => {
 
     if (studentIdsWithDelayedPointsAnimation.has(student.id)) {
       studentIdsWithDelayedPointsAnimation.delete(student.id);
-      const delay = 8 * index;
-      setTimeout(() => {
-        playAnimation();
-        playPointSound(1);
-      }, delay);
+      playAnimation();
+      playPointSound(1);
     } else if (studentIdsWithNextPointsAnimation.has(student.id)) {
       studentIdsWithNextPointsAnimation.delete(student.id);
       playAnimation();
@@ -54,7 +51,6 @@ export const useStudentPointsAnimation = (student: Student, index = 0) => {
     }
   }, [
     debouncedResetRecentChange,
-    index,
     playPointSound,
     prevPoints,
     student.id,

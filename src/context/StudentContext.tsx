@@ -13,7 +13,7 @@ import {
   takeRedoCommand,
   takeUndoCommand,
 } from "../utils/undoStack";
-import { useTabContext } from "./TabContext";
+import { nextDefaultStudentName, useTabContext } from "./TabContext";
 
 interface StudentContextValue {
   students: Student[];
@@ -201,7 +201,11 @@ export const StudentContextProvider = ({ children }: { children: React.ReactNode
   /** 🎯 Manage Student List */
   const addStudent = useCallback(() => {
     const id = generateUuid();
-    const newStudent: Student = { id, points: 0, name: "" };
+    const newStudent: Student = {
+      id,
+      points: 0,
+      name: nextDefaultStudentName(students),
+    };
     setStudents([...students, newStudent]);
   }, [students, setStudents]);
 
@@ -260,7 +264,6 @@ export const StudentContextProvider = ({ children }: { children: React.ReactNode
       columns: activeTab.tabOptions?.columns ?? 1,
       students,
       addPointsToStudent,
-      addPointsToAllStudents,
       enabled: activeTab.tabOptions?.viewMode !== "map",
     }).idToKeyMap,
   };
