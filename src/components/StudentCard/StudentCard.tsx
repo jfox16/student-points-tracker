@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { useStudentContext } from "../../context/StudentContext";
 import { useCardDrag } from "../../hooks/useCardDrag";
+import { useStudentNameDraft } from "../../hooks/useStudentNameDraft";
 import { Student } from "../../types/student.type";
 import { useShiftKey } from "../../hooks/useShiftKey";
 
@@ -53,13 +54,7 @@ export const StudentCard = (props: StudentCardProps) => {
   });
 
   const [ isHovered, setIsHovered ] = useState(false);
-
-  const onNameInputChange = useCallback((name: string) => {
-    updateStudent(student.id, { name });
-  }, [
-    student.id,
-    updateStudent,
-  ]);
+  const { draftName, onNameChange, onNameBlur } = useStudentNameDraft(student);
 
   const openDeleteStudentModal = useCallback(() => {
     const studentName = student.name ? ` (${student.name})` : '';
@@ -137,16 +132,15 @@ export const StudentCard = (props: StudentCardProps) => {
 
             <HoverInput
               className="flex-1 max-h-10 w-full"
-              onChange={onNameInputChange}
-              placeholder="Type name here..."
-              value={student.name}
+              onBlur={onNameBlur}
+              onChange={onNameChange}
+              value={draftName}
             />
 
             
             <PointsCounter
               className="flex-1 w-full max-h-[3em] min-h-[2.6em]"
               student={student}
-              index={index}
             />
           </div>
         </div>

@@ -29,6 +29,46 @@
     var(--classroom-grid-size) var(--classroom-grid-size);
 }
 
+.ClassroomMap__resize {
+  position: absolute;
+  z-index: 5;
+  padding: 0;
+  border: 0;
+  pointer-events: auto;
+  background: transparent;
+  touch-action: none;
+}
+
+.ClassroomMap__resize:hover,
+.ClassroomMap__resize:focus-visible {
+  background: rgb(37 99 235 / 28%);
+}
+
+.ClassroomMap__resize--right {
+  top: 0;
+  right: calc(var(--classroom-resize-handle, 12px) / -2);
+  width: var(--classroom-resize-handle, 12px);
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.ClassroomMap__resize--bottom {
+  bottom: calc(var(--classroom-resize-handle, 12px) / -2);
+  left: 0;
+  width: 100%;
+  height: var(--classroom-resize-handle, 12px);
+  cursor: ns-resize;
+}
+
+.ClassroomMap__resize--corner {
+  right: calc(var(--classroom-resize-corner, 16px) / -2);
+  bottom: calc(var(--classroom-resize-corner, 16px) / -2);
+  width: var(--classroom-resize-corner, 16px);
+  height: var(--classroom-resize-corner, 16px);
+  border-radius: 3px;
+  cursor: nwse-resize;
+}
+
 .ClassroomMap .react-flow__pane.selection {
   cursor: default;
 }
@@ -61,34 +101,6 @@
   border-radius: 8px;
   background: rgb(255 255 255 / 88%);
   color: #475569;
-}
-
-.ClassroomMap__helpRow {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.ClassroomMap__groupHelp {
-  display: flex;
-  padding: 8px 10px;
-  border: 1px solid #94a3b8;
-  border-radius: 7px;
-  flex-direction: column;
-  gap: 4px;
-  background: rgb(255 255 255 / 92%);
-  color: #475569;
-  font-size: 0.72rem;
-}
-
-.ClassroomMap__groupHelp kbd {
-  padding: 1px 4px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #f8fafc;
-  color: #334155;
-  font: inherit;
-  font-weight: 600;
 }
 
 .ClassroomDesk {
@@ -179,17 +191,59 @@
   gap: 3px;
 }
 
-.ClassroomDesk__groups span {
+.ClassroomDesk__group {
   display: grid;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #1d4ed8;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #64748b;
   border-radius: 50%;
   place-items: center;
-  background: #2563eb;
+  background: #64748b;
   color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.ClassroomDesk__group--1 {
+  border-color: #d3453c;
+  background: #e25b52;
+}
+
+.ClassroomDesk__group--2 {
+  border-color: #2f68c9;
+  background: #3d7eef;
+}
+
+.ClassroomDesk__group--3 {
+  border-color: #2b8a4e;
+  background: #36a35e;
+}
+
+.ClassroomDesk__group--4 {
+  border-color: #d4a41f;
+  background: #f0c43a;
+  color: #5c4512;
+}
+
+.ClassroomDesk__group--5 {
+  border-color: #6d4cb8;
+  background: #8660d4;
+}
+
+.ClassroomDesk__group--6 {
+  border-color: #1c8c86;
+  background: #2aa8a0;
+}
+
+.ClassroomDesk__group--7 {
+  border-color: #d67a22;
+  background: #f0913a;
+}
+
+.ClassroomDesk__group--8 {
+  border-color: #d15482;
+  background: #e86b9a;
 }
 
 .ClassroomDesk__name {
@@ -202,26 +256,21 @@
 }
 
 .ClassroomDesk__addPoint {
-  position: relative;
-  display: flex;
   width: 100%;
   min-height: 30px;
   max-height: 60px;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
   align-self: stretch;
-  justify-content: center;
-  gap: 0;
-  padding: 0.15em 0.35em;
-  border-radius: 6px;
-  background: rgb(255 255 255 / 0%);
-  cursor: pointer;
-  user-select: none;
 }
 
-.ClassroomDesk__addPoint:hover {
-  background: rgb(255 255 255 / 50%);
+.ClassroomDesk__addPoint .PointAdjuster__button {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ClassroomDesk:hover .ClassroomDesk__addPoint .PointAdjuster__button,
+.ClassroomDesk__addPoint .PointAdjuster__button:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .ClassroomDesk__pointsValue {
@@ -230,20 +279,8 @@
   flex: none;
 }
 
-.ClassroomDesk__addPointPlus {
-  position: absolute;
-  right: 4px;
-  bottom: 2px;
-  color: #64748b;
-  font-size: 1.8em;
-  font-weight: 500;
-  line-height: 1;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.ClassroomDesk__addPoint:hover .ClassroomDesk__addPointPlus {
-  opacity: 0.35;
+.ClassroomDesk__pointsValue .PointsDisplay__delta {
+  color: #94a3b8;
 }
 
 .ClassroomDesk__chair {
@@ -325,9 +362,27 @@
   overflow-wrap: anywhere;
   background: transparent;
   color: #0f172a;
-  font: inherit;
   font-weight: 600;
-  line-height: 1.3;
   text-align: center;
   white-space: pre-wrap;
+}
+
+.ClassroomLabel__text--sm {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.ClassroomLabel__text--md {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+}
+
+.ClassroomLabel__text--lg {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+}
+
+.ClassroomLabel__text--xl {
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
 }

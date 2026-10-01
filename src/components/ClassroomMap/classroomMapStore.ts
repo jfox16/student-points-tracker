@@ -41,7 +41,6 @@ type SelectAllDesksHandler = () => void;
 
 export interface DeskNodeData extends Record<string, unknown> {
   student: Student;
-  studentNumber: number;
   rotation: DeskRotation;
   controlGroups?: ClassroomControlGroupNumber[];
   preview?: boolean;
@@ -63,6 +62,7 @@ export interface ClassroomMapState {
   previewNode: ClassroomMapNode | null;
   reactFlowInstance: ReactFlowInstance<ClassroomMapNode> | null;
   selectionGesture: DeskSelectionGesture | null;
+  spacePanActive: boolean;
   modifierSelectHandler: ModifierSelectHandler | null;
   selectAllDesksHandler: SelectAllDesksHandler | null;
   applyNodeChanges: (changes: NodeChange<ClassroomMapNode>[]) => void;
@@ -76,6 +76,7 @@ export interface ClassroomMapState {
   setNodes: (updater: NodesUpdater) => void;
   setPreviewNode: (node: ClassroomMapNode | null) => void;
   setReactFlowInstance: (instance: ReactFlowInstance<ClassroomMapNode>) => void;
+  setSpacePanActive: (spacePanActive: boolean) => void;
 }
 
 export const isDeskNode = (node: ClassroomMapNode): node is DeskNode =>
@@ -131,6 +132,7 @@ export const createClassroomMapStore = (
     previewNode: null,
     reactFlowInstance: null,
     selectionGesture: null,
+    spacePanActive: false,
     modifierSelectHandler: null,
     selectAllDesksHandler: null,
     applyNodeChanges: (changes) =>
@@ -235,6 +237,10 @@ export const createClassroomMapStore = (
           ? state
           : { reactFlowInstance }
       ),
+    setSpacePanActive: (spacePanActive) =>
+      set((state) => (
+        state.spacePanActive === spacePanActive ? state : { spacePanActive }
+      )),
   }));
 
 const ClassroomMapStoreContext = createContext<ClassroomMapStore | null>(null);

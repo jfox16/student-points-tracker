@@ -7,6 +7,7 @@ interface EditableFieldProps {
   min?: number;
   step?: number;
   onChange: (value: string) => void;
+  onBlur?: () => void;
 }
 
 export const EditableField = ({
@@ -16,6 +17,7 @@ export const EditableField = ({
   min,
   step,
   onChange,
+  onBlur,
 }: EditableFieldProps) => {
   const inputId = useId();
 
@@ -27,6 +29,7 @@ export const EditableField = ({
         id={inputId}
         min={min}
         onChange={(event) => onChange(event.target.value)}
+        onBlur={onBlur}
         step={step}
         type={type}
         value={value}

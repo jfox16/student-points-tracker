@@ -3,7 +3,6 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { AppHeader } from "./components/AppHeader/AppHeader";
-import { BankSidebar } from "./components/BankSidebar/BankSidebar";
 import { DeskDetailsSidebar } from "./components/DetailsSidebar/DeskDetailsSidebar";
 import { StudentList } from "./components/StudentList/StudentList";
 import { TabList } from "./components/TabList/TabList";
@@ -14,6 +13,7 @@ import { AppContextProvider } from "./context/AppContext";
 import { BankContextProvider } from "./context/BankContext";
 import { ModalProvider } from "./context/ModalContext";
 import { SoundContextProvider } from "./context/SoundContext";
+import { SidebarLayoutProvider } from "./context/SidebarLayoutContext";
 import { StudentContextProvider } from "./context/StudentContext";
 import { TabContextProvider, useTabContext } from "./context/TabContext";
 import { StudentId } from "./types/student.type";
@@ -123,15 +123,15 @@ const AppWorkspace = () => {
         />
       </div>
       <div className="flex-none">
-        {viewMode === "map" ? (
-          <DeskDetailsSidebar
-            onDeskDeleted={() => setSelectedDeskStudentIds(new Set())}
-            selectedLabelId={selectedLabelId}
-            studentIds={selectedDeskStudentIds}
-          />
-        ) : (
-          <BankSidebar />
-        )}
+        <DeskDetailsSidebar
+          onDeskDeleted={() => setSelectedDeskStudentIds(new Set())}
+          onDeskSelectionChange={(nextStudentIds) => {
+            setSelectedLabelId(null);
+            handleDeskSelectionChange(nextStudentIds);
+          }}
+          selectedLabelId={selectedLabelId}
+          studentIds={selectedDeskStudentIds}
+        />
       </div>
     </div>
   );
@@ -141,12 +141,14 @@ const App: React.FC = () => {
   return (
     <NestProviders providers={providers}>
       <DndProvider backend={HTML5Backend}>
-        <div className="App h-screen flex flex-col overflow-hidden">
-          <div className="flex-none">
-            <AppHeader />
+        <SidebarLayoutProvider>
+          <div className="App h-screen flex flex-col overflow-hidden">
+            <div className="flex-none">
+              <AppHeader />
+            </div>
+            <AppWorkspace />
           </div>
-          <AppWorkspace />
-        </div>
+        </SidebarLayoutProvider>
       </DndProvider>
     </NestProviders>
   );
