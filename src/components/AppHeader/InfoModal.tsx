@@ -30,17 +30,21 @@ export const InfoModal = () => {
         
         <p><strong>Keyboard Shortcuts:</strong></p>
         <ul className="list-disc pl-5">
-          <li><kbd>Space</kbd> - Add points to all/selected students</li>
-          <li><kbd>Shift</kbd> + <kbd>Space</kbd> - Subtract points from all/selected students</li>
           <li><kbd>Shift</kbd> + <kbd>Student Key</kbd> - Subtract point from specific student</li>
           <li><kbd>Space</kbd> + drag - Pan the classroom map</li>
           <li><kbd>⌘/Ctrl</kbd> + click or drag - Add desks to the selection</li>
           <li><kbd>Shift</kbd> + click or drag - Remove desks from the selection</li>
           <li><kbd>Double-click</kbd> or <kbd>⌘/Ctrl</kbd> + <kbd>A</kbd> - Select all desks</li>
           <li><kbd>Esc</kbd> - Clear the desk selection</li>
-          <li><kbd>Backspace</kbd> - Delete selected desks in Edit mode</li>
-          <li><kbd>⌘/Ctrl</kbd> + <kbd>C</kbd> / <kbd>V</kbd> - Copy and paste desks in Edit mode</li>
-          <li><kbd>⌘/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>1–9</kbd> - Add selected desks to a control group</li>
+          <li><kbd>Backspace</kbd> - Delete selected desks and rectangles</li>
+          <li>Drag the handle on a class to reorder it</li>
+          <li>Hover a class and choose duplicate to clone it</li>
+          <li><kbd>⌘/Ctrl</kbd> + <kbd>C</kbd> / <kbd>V</kbd> - Copy and paste desks and rectangles</li>
+          <li><kbd>⌘/Ctrl</kbd> + <kbd>1–8</kbd> - Set a group to the selected desks (press again to clear it)</li>
+          <li><kbd>⌘/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>1–8</kbd> - Add selected desks to a group</li>
+          <li><kbd>Option/Alt</kbd> + <kbd>1–8</kbd> - Remove selected desks from a group</li>
+          <li><kbd>1–8</kbd> / <kbd>Shift</kbd> + <kbd>1–8</kbd> - Add or subtract a point for everyone in a group</li>
+          <li>A desk can be in one group at a time; adding it to a new group moves it</li>
           <li><kbd>Enter</kbd> - Confirm modal</li>
           <li><kbd>Escape</kbd> - Close modal</li>
         </ul>

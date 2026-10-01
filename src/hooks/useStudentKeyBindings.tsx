@@ -7,7 +7,6 @@ interface UseStudentKeyBindingsProps {
   columns: number;
   students: Student[];
   addPointsToStudent: (id: StudentId, points: number) => void;
-  addPointsToAllStudents: (points: number) => void;
   enabled?: boolean;
 }
 
@@ -69,7 +68,6 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
     columns,
     students,
     addPointsToStudent,
-    addPointsToAllStudents,
     enabled = true,
   } = props;
   const { appOptions: { reverseOrder = false, enableKeybinds } } = useAppContext();
@@ -107,12 +105,6 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
       // Ignore if any modifier keys other than shift are pressed
       if (event.altKey || event.ctrlKey || event.metaKey) return;
 
-      if (event.code === "Space") {
-        addPointsToAllStudents(event.shiftKey ? -1 : 1);
-        event.preventDefault();
-        return;
-      }
-
       const studentId = keyToIdMap[event.code];
 
       if (enableKeybinds && studentId !== undefined) {
@@ -122,7 +114,6 @@ const useStudentKeyBindings = (props: UseStudentKeyBindingsProps) => {
       }
     },
     [
-      addPointsToAllStudents,
       addPointsToStudent,
       enableKeybinds,
       enabled,

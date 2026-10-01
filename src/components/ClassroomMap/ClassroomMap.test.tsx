@@ -5,7 +5,7 @@ import { CLASSROOM_LAYOUT_VERSION } from "../../types/classroomLayout.type";
 import { ClassroomMap } from "./ClassroomMap";
 
 const addPointsToStudent = vi.fn();
-
+const addPointsToStudents = vi.fn();
 vi.mock("../../context/ModalContext", () => ({
   useModal: () => ({ showModal: vi.fn(), hideModal: vi.fn() }),
 }));
@@ -41,7 +41,7 @@ vi.mock("../../context/TabContext", () => ({
       id: "tab-1",
       name: "Class 1",
       students: [{ id: "student-1", name: "Ada", points: 3 }],
-      tabOptions: { viewMode: "map", mapEditMode: false },
+      tabOptions: { viewMode: "map" },
       classroomLayout: {
         version: CLASSROOM_LAYOUT_VERSION,
         desks: [{ studentId: "student-1", x: 40, y: 40, rotation: 90 }],

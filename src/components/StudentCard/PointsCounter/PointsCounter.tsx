@@ -2,63 +2,41 @@ import { useCallback } from "react";
 
 import { useStudentContext } from "../../../context/StudentContext";
 import { useStudentPointsAnimation } from "../../../hooks/useStudentPointsAnimation";
+import { PointAdjuster } from "../../PointAdjuster/PointAdjuster";
 import { Student } from "../../../types/student.type";
-import { cnsMerge } from '../../../utils/cnsMerge';
-
-import { PointsButton } from "./PointsButton";
-import { PointsDisplay } from "./PointsDisplay";
+import { cnsMerge } from "../../../utils/cnsMerge";
 
 interface PointsCounterProps {
   className?: string;
   student: Student;
-  index: number;
 }
 
-export const PointsCounter = ({ 
-  className, 
-  student, 
-  index 
+export const PointsCounter = ({
+  className,
+  student,
 }: PointsCounterProps) => {
   const { updateStudent, addPointsToStudent } = useStudentContext();
   const { animationDirection, animationTrigger, recentChange } = useStudentPointsAnimation(
     student,
-    index,
   );
+  const studentName = student.name || "student";
 
   const handleInputChange = useCallback((points: number) => {
     updateStudent(student.id, { points });
   }, [student, updateStudent]);
 
-  const handleIncrementClick = useCallback(() => {
-    addPointsToStudent(student.id, 1);
-  }, [addPointsToStudent]);
-
-  const handleDecrementClick = useCallback(() => {
-    addPointsToStudent(student.id, -1);
-  }, [addPointsToStudent]);
-
   return (
-    <div className={cnsMerge(
-      "flex justify-center items-stretch px-[4%]",
-      className
-    )}>
-        <PointsButton
-          onClick={handleDecrementClick}
-          symbol="-"
-        />
-
-        <PointsDisplay
-          points={student.points}
-          recentChange={recentChange}
-          onChange={handleInputChange}
-          animationTrigger={animationTrigger}
-          animationDirection={animationDirection}
-        />
-
-        <PointsButton
-          onClick={handleIncrementClick}
-          symbol="+"
-        />
-    </div>
+    <PointAdjuster
+      animationDirection={animationDirection}
+      animationTrigger={animationTrigger}
+      className={cnsMerge("px-[4%]", className)}
+      decrementLabel={`Subtract one point from ${studentName}`}
+      incrementLabel={`Add one point to ${studentName}`}
+      onDecrement={() => addPointsToStudent(student.id, -1)}
+      onIncrement={() => addPointsToStudent(student.id, 1)}
+      onPointsChange={handleInputChange}
+      points={student.points}
+      recentChange={recentChange}
+    />
   );
 };

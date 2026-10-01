@@ -1,15 +1,12 @@
+import ViewSidebarOutlinedIcon from "@mui/icons-material/ViewSidebarOutlined";
 import { useCallback, useRef, useEffect } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import SchoolIcon from "@mui/icons-material/School";
 import {
-  MenuItem,
-  Select,
-  SelectChangeEvent,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
 } from '@mui/material';
 
+import { useSidebarLayout } from "../../context/SidebarLayoutContext";
 import { useTabContext } from "../../context/TabContext"
 import { TabOptions, TabViewMode } from "../../types/tabOptions.type";
 import { cnsMerge } from "../../utils/cnsMerge";
@@ -19,6 +16,7 @@ import {
   getPlacedClassroomDesks,
 } from "../../utils/classroomLayout";
 
+import { SidebarToggle } from "../AppHeader/SidebarToggle";
 import { NumberInput } from "../NumberInput/NumberInput";
 import { GroupSelectWidget } from "./Widgets/GroupSelectWidget/GroupSelectWidget";
 import { EnableKeybindsToggle } from "./Widgets/EnableKeybindsToggle";
@@ -28,20 +26,17 @@ import { SelectAllWidget } from "./Widgets/SelectAllWidget";
 import { ReverseWidget } from "./Widgets/ReverseWidget";
 import { DepositPointsWidget } from "./Widgets/DepositPointsWidget/DepositPointsWidget";
 
-type MapMode = "class" | "edit";
-
-const MapModeLabel = ({ mode }: { mode: MapMode }) => (
-  <span className="flex items-center gap-2">
-    {mode === "edit" ? (
-      <EditIcon aria-hidden="true" fontSize="small" />
-    ) : (
-      <SchoolIcon aria-hidden="true" fontSize="small" />
-    )}
-    {mode === "edit" ? "Edit Mode" : "Class Mode"}
-  </span>
+const sidebarIcon = (mirrored = false) => (
+  <ViewSidebarOutlinedIcon
+    sx={{
+      fontSize: 20,
+      ...(mirrored ? { transform: "scaleX(-1)" } : {}),
+    }}
+  />
 );
 
 export const TabOptionsRow = () => {
+  const { leftOpen, rightOpen, toggleLeft, toggleRight } = useSidebarLayout();
   const { activeTab, updateTab } = useTabContext();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
@@ -71,15 +66,10 @@ export const TabOptionsRow = () => {
     [updateTabOptions],
   );
 
-  const onMapModeChange = useCallback(
-    (event: SelectChangeEvent<MapMode>) => {
-      updateTabOptions({ mapEditMode: event.target.value === "edit" });
-    },
-    [updateTabOptions],
-  );
-
+  // react-dnd's HTML5 backend cancels unrecognized native drags from its window listener.
   const handleDeskDragStart = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
+      event.stopPropagation();
       event.dataTransfer.setData(CLASSROOM_DESK_DRAG_TYPE, "new-desk");
       event.dataTransfer.effectAllowed = "copy";
     },
@@ -88,6 +78,7 @@ export const TabOptionsRow = () => {
 
   const handleLabelDragStart = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
+      event.stopPropagation();
       event.dataTransfer.setData(CLASSROOM_LABEL_DRAG_TYPE, "new-label");
       event.dataTransfer.effectAllowed = "copy";
     },
@@ -126,7 +117,6 @@ export const TabOptionsRow = () => {
 
   const showOnHover = cnsMerge('opacity-70', 'hover:opacity-100')
   const isMapMode = (activeTab.tabOptions?.viewMode ?? "list") === "map";
-  const mapEditMode = activeTab.tabOptions?.mapEditMode ?? false;
   const placedDesks = getPlacedClassroomDesks(
     activeTab.students,
     activeTab.classroomLayout,
@@ -134,72 +124,56 @@ export const TabOptionsRow = () => {
   const unplacedStudentCount = activeTab.students.length - placedDesks.length;
 
   return (
-    <div 
-      ref={scrollContainerRef}
-      className="overflow-x-auto"
-    >
+    <div className="flex items-center bg-gray-200">
+      <div className="flex flex-none items-center pl-2">
+        <SidebarToggle
+          edge="start"
+          icon={sidebarIcon(true)}
+          label="classes"
+          open={leftOpen}
+          onClick={toggleLeft}
+        />
+      </div>
       <div
-        className={cnsMerge(
-          "TabOptionsRow",
-          "flex items-center h-14 px-4 pt-1 gap-4",
-          "bg-gray-200",
-          "min-w-max",
-          "relative",
-        )}
+        ref={scrollContainerRef}
+        className="min-w-0 flex-1 overflow-x-auto"
       >
-        <Tooltip title="Switch between the student list and classroom map" enterDelay={1000}>
-          <ToggleButtonGroup
-            exclusive
-            size="small"
-            value={activeTab.tabOptions?.viewMode ?? "list"}
-            onChange={onViewModeChange}
-          >
-            <ToggleButton value="list">List</ToggleButton>
-            <ToggleButton value="map">Map</ToggleButton>
-          </ToggleButtonGroup>
-        </Tooltip>
-
-        {/* Columns Input */}
-        {!isMapMode && (
-          <Tooltip title="Number of columns in the student grid" enterDelay={1000}>
-            <div className={cnsMerge('flex items-center', showOnHover)}>
-              <div className="flex-none">Columns:</div>
-              <NumberInput
-                className="w-6"
-                value={activeTab.tabOptions?.columns ?? 1}
-                onChange={onColumnsChange}
-              />
-            </div>
-          </Tooltip>
-        )}
-
-        {isMapMode && (
-          <>
-            <Select<MapMode>
-              aria-label="Map mode"
-              onChange={onMapModeChange}
+        <div
+          className={cnsMerge(
+            "TabOptionsRow",
+            "flex items-center h-14 px-3 pt-1 gap-4",
+            "min-w-max",
+            "relative",
+          )}
+        >
+          <Tooltip title="Switch between the student list and classroom map" enterDelay={1000}>
+            <ToggleButtonGroup
+              exclusive
               size="small"
-              sx={{
-                height: 40,
-                minWidth: 168,
-                backgroundColor: "#fff",
-                ".MuiSelect-select": {
-                  display: "flex",
-                  alignItems: "center",
-                },
-              }}
-              value={mapEditMode ? "edit" : "class"}
+              value={activeTab.tabOptions?.viewMode ?? "list"}
+              onChange={onViewModeChange}
             >
-              <MenuItem value="class">
-                <MapModeLabel mode="class" />
-              </MenuItem>
-              <MenuItem value="edit">
-                <MapModeLabel mode="edit" />
-              </MenuItem>
-            </Select>
+              <ToggleButton value="list">List</ToggleButton>
+              <ToggleButton value="map">Map</ToggleButton>
+            </ToggleButtonGroup>
+          </Tooltip>
 
-            {mapEditMode && (
-              <>
+          {/* Columns Input */}
+          {!isMapMode && (
+            <Tooltip title="Number of columns in the student grid" enterDelay={1000}>
+              <div className={cnsMerge('flex items-center', showOnHover)}>
+                <div className="flex-none">Columns:</div>
+                <NumberInput
+                  className="w-6"
+                  value={activeTab.tabOptions?.columns ?? 1}
+                  onChange={onColumnsChange}
+                />
+              </div>
+            </Tooltip>
+          )}
+
+          {isMapMode && (
+            <>
               <Tooltip
                 title={
                   unplacedStudentCount > 0
@@ -240,48 +214,56 @@ export const TabOptionsRow = () => {
                   <span>Rectangle</span>
                 </div>
               </Tooltip>
-              </>
-            )}
-          </>
-        )}
+            </>
+          )}
 
-        {!isMapMode && (
-          <>
-            <GroupSelectWidget
-              className={showOnHover}
-            />
+          {!isMapMode && (
+            <>
+              <GroupSelectWidget
+                className={showOnHover}
+              />
 
-            <div className={showOnHover}>
-              <SelectAllWidget />
-            </div>
-
-            <div className={showOnHover}>
-              <ResetAllWidget />
-            </div>
-
-            <div className={showOnHover}>
-              <DepositPointsWidget />
-            </div>
-
-            <Tooltip title="Enable keyboard shortcuts for point management" enterDelay={1000}>
               <div className={showOnHover}>
-                <EnableKeybindsToggle />
+                <SelectAllWidget />
               </div>
-            </Tooltip>
-            
-            <Tooltip title="Reverse the order of students in the list" enterDelay={1000}>
-              <div className={showOnHover}>
-                <ReverseWidget />
-              </div>
-            </Tooltip>
-          </>
-        )}
 
-        <Tooltip title="Select a sound to play when points are added" enterDelay={1000}>
-          <div className={showOnHover}>
-            <PointSoundWidget />
-          </div>
-        </Tooltip>
+              <div className={showOnHover}>
+                <ResetAllWidget />
+              </div>
+
+              <div className={showOnHover}>
+                <DepositPointsWidget />
+              </div>
+
+              <Tooltip title="Enable keyboard shortcuts for point management" enterDelay={1000}>
+                <div className={showOnHover}>
+                  <EnableKeybindsToggle />
+                </div>
+              </Tooltip>
+              
+              <Tooltip title="Reverse the order of students in the list" enterDelay={1000}>
+                <div className={showOnHover}>
+                  <ReverseWidget />
+                </div>
+              </Tooltip>
+
+              <Tooltip title="Select a sound to play when points are added" enterDelay={1000}>
+                <div className={showOnHover}>
+                  <PointSoundWidget />
+                </div>
+              </Tooltip>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-none items-center pr-2">
+        <SidebarToggle
+          edge="end"
+          icon={sidebarIcon()}
+          label="details"
+          open={rightOpen}
+          onClick={toggleRight}
+        />
       </div>
     </div>
   )

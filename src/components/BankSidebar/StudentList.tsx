@@ -39,13 +39,7 @@ export const StudentList: React.FC<StudentListProps> = ({ students, sortOption, 
             {studentsWithBankedPoints.map(student => (
               <div key={student.id} className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  {student.name.trim() ? (
-                    <span className="font-medium">{student.name}</span>
-                  ) : (
-                    <span className="text-gray-400 italic">
-                      Unnamed student {student.id.slice(0, 3)}
-                    </span>
-                  )}
+                  <span className="font-medium">{student.name}</span>
                 </div>
                 <span className="font-semibold">{student.bankedPoints}</span>
               </div>

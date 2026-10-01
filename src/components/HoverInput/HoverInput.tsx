@@ -9,6 +9,7 @@ export interface HoverInputProps {
   className?: string;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>; // Overrides other values
   onChange?: (text: string) => void;
+  onBlur?: () => void;
   onFocus?: () => void;
   placeholder?: string;
   value?: number|string;
@@ -20,6 +21,7 @@ export const HoverInput = (props: HoverInputProps) => {
     className,
     inputProps = {},
     onChange,
+    onBlur,
     onFocus,
     placeholder,
     value,
@@ -43,6 +45,7 @@ export const HoverInput = (props: HoverInputProps) => {
     <input
       {...inputProps}
       onChange={handleChange}
+      onBlur={onBlur}
       onFocus={handleFocus}
       value={value}
       placeholder={placeholder}

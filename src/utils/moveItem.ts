@@ -14,3 +14,7 @@ export const moveItem = <T,>(arr: T[], fromIndex: number, toIndex: number): T[] 
         arr[fromIndex],
         ...arr.filter((_, i) => i !== fromIndex).slice(toIndex),
       ];
+
+/** Hover index is a gap in the original list: 0 is before the first item. */
+export const reorderDestination = (fromIndex: number, hoverIndex: number) =>
+  fromIndex < hoverIndex ? hoverIndex - 1 : hoverIndex;

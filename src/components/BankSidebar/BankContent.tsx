@@ -18,15 +18,13 @@ export const BankContent: React.FC<BankContentProps> = ({
   onClearPoints,
 }) => {
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto pr-6">
-        <StudentList 
-          students={students} 
-          sortOption={sortOption} 
-          onSortChange={onSortChange}
-        />
-      </div>
-      <div className="mt-4 pr-4">
+    <div className="flex flex-col">
+      <StudentList 
+        students={students} 
+        sortOption={sortOption} 
+        onSortChange={onSortChange}
+      />
+      <div className="mt-4">
         <ClearPointsButton onClick={onClearPoints} />
       </div>
     </div>

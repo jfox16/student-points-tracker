@@ -1,8 +1,3 @@
-.BankSidebar {
-  height: 100%;
-  overflow-y: auto;
-}
-
 .BankSidebar select {
   background-color: white;
   cursor: pointer;
