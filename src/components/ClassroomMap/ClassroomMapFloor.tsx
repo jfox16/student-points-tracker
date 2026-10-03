@@ -19,7 +19,7 @@ interface ClassroomMapFloorProps {
   zoom: number;
 }
 
-const GRID_VISIBLE_MIN_ZOOM = 0.3;
+const GRID_VISIBLE_MIN_ZOOM = 0.4;
 
 const resizeLabel: Record<ResizeEdge, string> = {
   right: "Resize classroom width",

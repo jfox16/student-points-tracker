@@ -329,6 +329,50 @@ describe("rotateClassroomDesks", () => {
       "clockwise",
     )).toBeUndefined();
   });
+
+  it("nudges a rotation a few spaces to clear a nearby desk", () => {
+    expect(rotateClassroomDesks(
+      [
+        { studentId: "a", x: 40, y: 40, rotation: 0 },
+        { studentId: "b", x: 240, y: 40, rotation: 180 },
+        { studentId: "c", x: 280, y: 200, rotation: 0 },
+      ],
+      new Set(["a", "b"]),
+      "clockwise",
+    )).toEqual([
+      { studentId: "a", x: 120, y: 0, rotation: 90 },
+      { studentId: "b", x: 120, y: 200, rotation: 270 },
+      { studentId: "c", x: 280, y: 200, rotation: 0 },
+    ]);
+  });
+
+  it("allows a rotation that needs the full 3-space nudge", () => {
+    expect(rotateClassroomDesks(
+      [
+        { studentId: "a", x: 40, y: 40, rotation: 0 },
+        { studentId: "b", x: 240, y: 40, rotation: 180 },
+        { studentId: "c", x: 240, y: 200, rotation: 0 },
+      ],
+      new Set(["a", "b"]),
+      "clockwise",
+    )).toEqual([
+      { studentId: "a", x: 80, y: 0, rotation: 90 },
+      { studentId: "b", x: 80, y: 200, rotation: 270 },
+      { studentId: "c", x: 240, y: 200, rotation: 0 },
+    ]);
+  });
+
+  it("rejects a rotation whose nearest clear spot is more than 3 spaces away", () => {
+    expect(rotateClassroomDesks(
+      [
+        { studentId: "a", x: 40, y: 40, rotation: 0 },
+        { studentId: "b", x: 240, y: 40, rotation: 180 },
+        { studentId: "c", x: 220, y: 200, rotation: 0 },
+      ],
+      new Set(["a", "b"]),
+      "clockwise",
+    )).toBeUndefined();
+  });
 });
 
 describe("classroom desk placement", () => {

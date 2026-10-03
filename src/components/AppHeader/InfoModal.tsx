@@ -36,6 +36,7 @@ export const InfoModal = () => {
           <li><kbd>Shift</kbd> + click or drag - Remove desks from the selection</li>
           <li><kbd>Double-click</kbd> or <kbd>⌘/Ctrl</kbd> + <kbd>A</kbd> - Select all desks</li>
           <li><kbd>Esc</kbd> - Clear the desk selection</li>
+          <li><kbd>R</kbd> - Rotate selected desks clockwise</li>
           <li><kbd>Backspace</kbd> - Delete selected desks and rectangles</li>
           <li>Drag the handle on a class to reorder it</li>
           <li>Hover a class and choose duplicate to clone it</li>

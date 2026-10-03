@@ -14,6 +14,7 @@ export const MapShortcuts = ({
           <span><kbd>Shift</kbd> click or drag removes from selection</span>
           <span><kbd>Double-click</kbd> or <kbd>⌘/Ctrl</kbd>+<kbd>A</kbd> selects all</span>
           <span><kbd>Esc</kbd> clears selection</span>
+          <span><kbd>R</kbd> rotates clockwise</span>
           <span><kbd>Backspace</kbd> deletes</span>
         </div>
         <div className="DetailsSidebar__shortcutList">
