@@ -48,7 +48,7 @@ describe("ClassroomMapFloor", () => {
         minimumSize={{ width: 320, height: 240 }}
         onResize={vi.fn()}
         size={{ width: 400, height: 300 }}
-        zoom={0.2}
+        zoom={0.3}
       />,
     );
 

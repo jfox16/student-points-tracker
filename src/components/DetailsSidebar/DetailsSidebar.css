@@ -127,6 +127,13 @@
   gap: 5px;
 }
 
+.DetailsSidebar__keyHint {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
 .DetailsSidebar__button {
   padding: 7px 10px;
   border: 1px solid #9ca3af;

@@ -540,7 +540,47 @@ export const rotateClassroomDesks = (
   const fits = placedSelected.every((desk) =>
     isClassroomDeskPlacementValid(desk, nextDesks, bounds)
   );
-  return fits ? nextDesks : undefined;
+  if (fits) return nextDesks;
+
+  const resolved = getClosestValidClassroomDeskPositions(
+    placedSelected,
+    desks,
+    bounds,
+  );
+  const origin = placedSelected[0];
+  const resolvedOrigin = resolved?.find(
+    (desk) => desk.studentId === origin.studentId,
+  );
+  if (!resolved || !resolvedOrigin) return undefined;
+
+  const maxNudge = CLASSROOM_GRID_SIZE * 3;
+  if (
+    Math.max(
+      Math.abs(resolvedOrigin.x - origin.x),
+      Math.abs(resolvedOrigin.y - origin.y),
+    ) > maxNudge
+  ) {
+    return undefined;
+  }
+
+  const resolvedById = new Map(
+    resolved.map((desk) => [desk.studentId, desk]),
+  );
+  const nudgedSelected = placedSelected.map((desk) => {
+    const position = resolvedById.get(desk.studentId);
+    return {
+      ...desk,
+      x: snapToClassroomGrid(position?.x ?? desk.x),
+      y: snapToClassroomGrid(position?.y ?? desk.y),
+    };
+  });
+  const nudgedById = new Map(
+    nudgedSelected.map((desk) => [desk.studentId, desk]),
+  );
+  const nudgedDesks = desks.map((desk) => nudgedById.get(desk.studentId) ?? desk);
+  return nudgedSelected.every((desk) =>
+    isClassroomDeskPlacementValid(desk, nudgedDesks, bounds)
+  ) ? nudgedDesks : undefined;
 };
 
 const PLACEMENT_PROBE_STUDENT_ID = "classroom-desk-placement-probe";

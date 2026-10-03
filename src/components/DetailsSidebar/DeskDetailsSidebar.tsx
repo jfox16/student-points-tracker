@@ -3,6 +3,7 @@ import RotateRightIcon from "@mui/icons-material/RotateRight";
 import {
   ReactNode,
   useCallback,
+  useEffect,
   useMemo,
 } from "react";
 
@@ -39,6 +40,12 @@ interface DeskDetailsSidebarProps {
   selectedLabelId?: string | null;
   studentIds: ReadonlySet<StudentId>;
 }
+
+const isTypingTarget = (target: EventTarget | null) => {
+  const element = target instanceof HTMLElement ? target : document.activeElement;
+  return element instanceof HTMLElement &&
+    (["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) || element.isContentEditable);
+};
 
 const DetailsSidebarFrame = ({ children }: { children: ReactNode }) => {
   const { rightOpen } = useSidebarLayout();
@@ -191,6 +198,23 @@ export const DeskDetailsSidebar = ({
     updateActiveTab,
   ]);
 
+  useEffect(() => {
+    if (!isMapMode) return;
+
+    const handleRotateKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "r" || event.repeat) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (isTypingTarget(event.target) || document.querySelector(".MuiModal-root")) return;
+      if (!canRotateDeskClockwise) return;
+
+      event.preventDefault();
+      handleRotate("clockwise");
+    };
+
+    window.addEventListener("keydown", handleRotateKeyDown);
+    return () => window.removeEventListener("keydown", handleRotateKeyDown);
+  }, [canRotateDeskClockwise, handleRotate, isMapMode]);
+
   const handleDeleteDesk = useCallback(() => {
     if (!desk) return;
 
@@ -296,13 +320,14 @@ export const DeskDetailsSidebar = ({
                   <RotateLeftIcon aria-hidden="true" fontSize="small" />
                 </button>
                 <button
-                  aria-label="Rotate selected desks 90 degrees clockwise"
+                  aria-label="Rotate selected desks 90 degrees clockwise (R)"
                   className="DetailsSidebar__button"
                   disabled={!canRotateDeskClockwise}
                   onClick={() => handleRotate("clockwise")}
                   type="button"
                 >
                   <RotateRightIcon aria-hidden="true" fontSize="small" />
+                  <span aria-hidden="true" className="DetailsSidebar__keyHint">(R)</span>
                 </button>
               </div>
               { !canRotateDeskClockwise &&
@@ -474,13 +499,14 @@ export const DeskDetailsSidebar = ({
                   <RotateLeftIcon aria-hidden="true" fontSize="small" />
                 </button>
                 <button
-                  aria-label="Rotate desk 90 degrees clockwise"
+                  aria-label="Rotate desk 90 degrees clockwise (R)"
                   className="DetailsSidebar__button"
                   disabled={!canRotateDeskClockwise}
                   onClick={() => handleRotate("clockwise")}
                   type="button"
                 >
                   <RotateRightIcon aria-hidden="true" fontSize="small" />
+                  <span aria-hidden="true" className="DetailsSidebar__keyHint">(R)</span>
                 </button>
               </div>
               {!canRotateDeskClockwise &&

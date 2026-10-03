@@ -213,8 +213,11 @@ describe("DeskDetailsSidebar rectangle", () => {
     );
 
     fireEvent.click(screen.getByRole("button", {
-      name: "Rotate selected desks 90 degrees clockwise",
+      name: "Rotate selected desks 90 degrees clockwise (R)",
     }));
+    expect(screen.getByRole("button", {
+      name: "Rotate selected desks 90 degrees clockwise (R)",
+    })).toHaveTextContent("(R)");
 
     expect(updateActiveTab).toHaveBeenCalledWith({
       classroomLayout: expect.objectContaining({
@@ -224,5 +227,52 @@ describe("DeskDetailsSidebar rectangle", () => {
         ],
       }),
     });
+  });
+
+  it("rotates selected desks clockwise when R is pressed", () => {
+    sidebarState.students = [
+      { id: "student-1", name: "Ada", points: 1 },
+      { id: "student-2", name: "Grace", points: 2 },
+    ];
+    sidebarState.desks = [
+      { studentId: "student-1", x: 40, y: 40, rotation: 0 },
+      { studentId: "student-2", x: 240, y: 40, rotation: 90 },
+    ];
+
+    render(
+      <DeskDetailsSidebar
+        studentIds={new Set(["student-1", "student-2"])}
+      />,
+    );
+
+    fireEvent.keyDown(window, { key: "r" });
+
+    expect(updateActiveTab).toHaveBeenCalledWith({
+      classroomLayout: expect.objectContaining({
+        desks: [
+          { studentId: "student-1", x: 140, y: 0, rotation: 90 },
+          { studentId: "student-2", x: 140, y: 200, rotation: 180 },
+        ],
+      }),
+    });
+  });
+
+  it("does not rotate when R is typed into a student name", () => {
+    sidebarState.students = [
+      { id: "student-1", name: "Ada", points: 1 },
+    ];
+    sidebarState.desks = [
+      { studentId: "student-1", x: 40, y: 80, rotation: 0 },
+    ];
+
+    render(
+      <DeskDetailsSidebar studentIds={new Set(["student-1"])} />,
+    );
+
+    fireEvent.keyDown(screen.getByRole("textbox", { name: "Student name" }), {
+      key: "r",
+    });
+
+    expect(updateActiveTab).not.toHaveBeenCalled();
   });
 });
